@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — BŌRYKU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    .contact-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+    .contact-info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      margin-bottom: 16px;
+      transition: all 0.2s;
+    }
+    .contact-info-item:hover { border-color: var(--accent); }
+    .contact-info-icon {
+      width: 44px; height: 44px;
+      border-radius: var(--r-md);
+      background: var(--accent-glow);
+      border: 1px solid rgba(255,85,31,0.2);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .contact-type-btns { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 24px; }
+    .contact-type-btn {
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      background: var(--surface-2);
+      color: var(--text-2);
+      cursor: pointer;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .contact-type-btn:hover { border-color: var(--text-3); color: var(--text-1); }
+    .contact-type-btn.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
+    @media (max-width: 900px) {
+      .contact-layout { grid-template-columns: 1fr; gap: 48px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-mark">RY</div>
+      <div><div class="nav-logo-text">BŌRYKU</div><span class="nav-logo-sub">/ RYKU</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="builds.html" class="nav-link">Builds</a></li>
+      <li><a href="gear.html" class="nav-link">Gear</a></li>
+      <li><a href="installers.html" class="nav-link">Installers</a></li>
+      <li><a href="about.html" class="nav-link">About</a></li>
+      <li><a href="contact.html" class="nav-link">Contact</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="build-planner.html" class="btn btn-primary btn-sm">Start Build</a>
+      <button class="nav-mobile-toggle">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect y="3" width="18" height="2" rx="1" fill="currentColor"/><rect y="8" width="18" height="2" rx="1" fill="currentColor"/><rect y="13" width="18" height="2" rx="1" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+<div class="nav-mobile-menu">
+  <a href="index.html" class="nav-mobile-link">Home</a>
+  <a href="builds.html" class="nav-mobile-link">Builds</a>
+  <a href="gear.html" class="nav-mobile-link">Gear</a>
+  <a href="installers.html" class="nav-mobile-link">Installers</a>
+  <a href="about.html" class="nav-mobile-link">About</a>
+  <a href="contact.html" class="nav-mobile-link">Contact</a>
+  <a href="build-planner.html" class="btn btn-primary" style="margin-top:16px;">Start Build</a>
+</div>
+
+<!-- Hero -->
+<section class="page-hero" style="background:var(--bg-2);border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div style="max-width:560px;">
+      <div class="page-hero-tag"><span class="tag tag-accent">Contact</span></div>
+      <h1 class="display-md page-hero-title">Let's Talk.</h1>
+      <p class="page-hero-desc">Whether you're a builder, a brand, or a shop — we want to hear from you.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section-sm">
+  <div class="container">
+    <div class="contact-layout">
+      <!-- LEFT: Info -->
+      <div class="reveal">
+        <h2 style="font-size:1.375rem;font-weight:900;margin-bottom:8px;">Get in Touch</h2>
+        <p style="color:var(--text-2);line-height:1.65;margin-bottom:32px;">We typically respond within one business day. For urgent build questions, check our community forums first.</p>
+
+        <div class="contact-info-item">
+          <div class="contact-info-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm0 0l7 5 7-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div style="font-size:0.875rem;font-weight:700;margin-bottom:2px;">General Inquiries</div>
+            <div style="font-size:0.8125rem;color:var(--accent);">hello@boriku.com</div>
+            <div style="font-size:0.75rem;color:var(--text-3);margin-top:2px;">Mon–Fri, 9am–5pm PST</div>
+          </div>
+        </div>
+
+        <div class="contact-info-item">
+          <div class="contact-info-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M6 9h8M6 12h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div style="font-size:0.875rem;font-weight:700;margin-bottom:2px;">Brand Partnerships</div>
+            <div style="font-size:0.8125rem;color:var(--accent);">brands@boriku.com</div>
+            <div style="font-size:0.75rem;color:var(--text-3);margin-top:2px;">List your products on BŌRYKU</div>
+          </div>
+        </div>
+
+        <div class="contact-info-item">
+          <div class="contact-info-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 11a3 3 0 100-6 3 3 0 000 6zm-7 6c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div style="font-size:0.875rem;font-weight:700;margin-bottom:2px;">Installer Network</div>
+            <div style="font-size:0.8125rem;color:var(--accent);">installers@boriku.com</div>
+            <div style="font-size:0.75rem;color:var(--text-3);margin-top:2px;">Apply to join as a verified shop</div>
+          </div>
+        </div>
+
+        <div style="margin-top:32px;padding:24px;background:var(--bg-3);border:1px solid var(--border);border-radius:var(--r-xl);">
+          <h3 style="font-size:0.875rem;font-weight:800;margin-bottom:12px;">Follow the Build</h3>
+          <p style="font-size:0.8125rem;color:var(--text-3);margin-bottom:16px;">Stay connected with BŌRYKU on social media for build inspiration, gear drops, and platform updates.</p>
+          <div style="display:flex;gap:10px;">
+            <a href="#" class="btn btn-secondary btn-sm">Instagram</a>
+            <a href="#" class="btn btn-secondary btn-sm">YouTube</a>
+            <a href="#" class="btn btn-secondary btn-sm">TikTok</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Form -->
+      <div class="reveal delay-200">
+        <div class="card" style="padding:36px;">
+          <h3 style="font-size:1.125rem;font-weight:800;margin-bottom:6px;">Send a Message</h3>
+          <p style="font-size:0.8125rem;color:var(--text-3);margin-bottom:24px;">Fill out the form below and we'll get back to you.</p>
+
+          <div style="margin-bottom:20px;">
+            <div style="font-size:0.625rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px;">I'm reaching out as a:</div>
+            <div class="contact-type-btns">
+              <button class="contact-type-btn active" data-type="builder">🛻 Builder</button>
+              <button class="contact-type-btn" data-type="brand">🏷️ Brand</button>
+              <button class="contact-type-btn" data-type="installer">🔧 Installer</button>
+              <button class="contact-type-btn" data-type="media">📸 Media</button>
+            </div>
+          </div>
+
+          <form id="contact-form" style="display:flex;flex-direction:column;gap:16px;">
+            <div class="grid-2" style="gap:14px;">
+              <div class="form-group">
+                <label class="form-label">First Name</label>
+                <input type="text" class="form-input" placeholder="John" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Last Name</label>
+                <input type="text" class="form-input" placeholder="Doe" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input type="email" class="form-input" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Subject</label>
+              <select class="form-select">
+                <option>General Question</option>
+                <option>Build Help</option>
+                <option>Brand Partnership</option>
+                <option>Installer Application</option>
+                <option>Media / Press</option>
+                <option>Bug Report</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Message</label>
+              <textarea class="form-textarea" placeholder="Tell us what's on your mind..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">
+              Send Message
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </form>
+
+          <div id="form-success" style="display:none;text-align:center;padding:32px;">
+            <div style="font-size:2.5rem;margin-bottom:12px;">✓</div>
+            <h3 style="font-weight:800;margin-bottom:8px;">Message Sent!</h3>
+            <p style="color:var(--text-2);font-size:0.875rem;">Thanks for reaching out. We'll get back to you within one business day.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+      <div class="nav-logo">
+        <div class="nav-logo-mark">RY</div>
+        <div><div class="nav-logo-text">BŌRYKU</div><span class="nav-logo-sub">/ RYKU</span></div>
+      </div>
+      <p class="footer-copy">© 2024 <span style="color:var(--accent);">BŌRYKU / RYKU</span>. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  /* Contact type selector */
+  document.querySelectorAll('.contact-type-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.contact-type-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  /* Form submission */
+  document.getElementById('contact-form')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    this.style.display = 'none';
+    document.getElementById('form-success').style.display = 'block';
+    window.showToast('Message sent successfully!');
+  });
+</script>
+</body>
+</html>

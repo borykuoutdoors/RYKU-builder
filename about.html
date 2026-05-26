@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — BŌRYKU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    .about-hero {
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      padding: calc(var(--nav-h) + 64px) 0 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .about-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 50% 60% at 30% 50%, rgba(255,85,31,0.06) 0%, transparent 70%);
+    }
+    .team-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 28px;
+      text-align: center;
+      transition: all 0.25s var(--ease);
+    }
+    .team-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .team-avatar {
+      width: 80px; height: 80px;
+      border-radius: var(--r-full);
+      background: var(--bg-3);
+      border: 2px solid var(--border);
+      margin: 0 auto 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; font-weight: 900;
+      color: var(--accent);
+    }
+    .value-item {
+      border-left: 3px solid var(--accent);
+      padding-left: 24px;
+      margin-bottom: 32px;
+    }
+    .value-item:last-child { margin-bottom: 0; }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-mark">RY</div>
+      <div><div class="nav-logo-text">BŌRYKU</div><span class="nav-logo-sub">/ RYKU</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="builds.html" class="nav-link">Builds</a></li>
+      <li><a href="gear.html" class="nav-link">Gear</a></li>
+      <li><a href="installers.html" class="nav-link">Installers</a></li>
+      <li><a href="about.html" class="nav-link">About</a></li>
+      <li><a href="contact.html" class="nav-link">Contact</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="build-planner.html" class="btn btn-primary btn-sm">Start Build</a>
+      <button class="nav-mobile-toggle">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect y="3" width="18" height="2" rx="1" fill="currentColor"/><rect y="8" width="18" height="2" rx="1" fill="currentColor"/><rect y="13" width="18" height="2" rx="1" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+<div class="nav-mobile-menu">
+  <a href="index.html" class="nav-mobile-link">Home</a>
+  <a href="builds.html" class="nav-mobile-link">Builds</a>
+  <a href="gear.html" class="nav-mobile-link">Gear</a>
+  <a href="installers.html" class="nav-mobile-link">Installers</a>
+  <a href="about.html" class="nav-mobile-link">About</a>
+  <a href="contact.html" class="nav-mobile-link">Contact</a>
+  <a href="build-planner.html" class="btn btn-primary" style="margin-top:16px;">Start Build</a>
+</div>
+
+<!-- ABOUT HERO -->
+<section class="about-hero">
+  <div class="container">
+    <div style="max-width:760px;position:relative;z-index:1;">
+      <div class="section-eyebrow reveal" style="margin-bottom:20px;">Our Story</div>
+      <h1 class="display-lg reveal delay-100" style="margin-bottom:24px;">Built by Builders,<br>For Builders.</h1>
+      <p class="body-lg reveal delay-200" style="max-width:620px;margin-bottom:32px;">
+        BŌRYKU started from a simple frustration: finding the right gear for your specific truck was a mess. Too many brands, too many forums, too many guesses. We built the platform we always wanted.
+      </p>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;" class="reveal delay-300">
+        <a href="build-planner.html" class="btn btn-primary btn-lg">Start Building</a>
+        <a href="contact.html" class="btn btn-secondary btn-lg">Get in Touch</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div style="height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0.3;"></div>
+
+<!-- MISSION -->
+<section class="section">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;" class="grid-2">
+      <div class="reveal">
+        <div class="section-eyebrow" style="margin-bottom:16px;">Mission</div>
+        <h2 class="display-md" style="margin-bottom:24px;">Control The Chaos.</h2>
+        <p class="body-lg" style="margin-bottom:24px;">
+          Outfitting an overland rig should feel like building something you're proud of — not navigating a chaotic web of incompatible parts and scattered information.
+        </p>
+        <p style="color:var(--text-2);line-height:1.7;margin-bottom:24px;">
+          BŌRYKU brings together a curated ecosystem of premium brands, certified installers, and an intuitive build configurator so you can focus on what matters: building your machine exactly the way you want it.
+        </p>
+        <p style="color:var(--text-2);line-height:1.7;">
+          We don't auto-generate builds or push random recommendations. We give you the tools to make your own choices — with the right information to make smart ones.
+        </p>
+      </div>
+      <div class="reveal delay-200">
+        <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r-2xl);padding:40px;">
+          <div class="value-item">
+            <h3 style="font-size:1rem;font-weight:800;margin-bottom:6px;">Your Build. Your Choices.</h3>
+            <p style="font-size:0.875rem;color:var(--text-2);line-height:1.6;">No auto-selections. Every product is manually chosen by you. The platform provides information, compatibility, and pricing — you decide what goes on your rig.</p>
+          </div>
+          <div class="value-item">
+            <h3 style="font-size:1rem;font-weight:800;margin-bottom:6px;">Real Compatibility Data</h3>
+            <p style="font-size:0.875rem;color:var(--text-2);line-height:1.6;">Products are matched to your exact vehicle, year, and trim. No guessing. No "fits most trucks" ambiguity.</p>
+          </div>
+          <div class="value-item">
+            <h3 style="font-size:1rem;font-weight:800;margin-bottom:6px;">Premium Brands Only</h3>
+            <p style="font-size:0.875rem;color:var(--text-2);line-height:1.6;">We curate. Every brand on the platform is vetted for quality, reliability, and community reputation in the overland space.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-strip">
+  <div class="container">
+    <div class="stats-strip-inner">
+      <div class="stats-strip-item">
+        <div class="stats-strip-number"><em data-count="2022">0</em></div>
+        <div class="stats-strip-label">Founded</div>
+      </div>
+      <div class="stats-strip-item">
+        <div class="stats-strip-number"><em data-count="180" data-suffix="+">0+</em></div>
+        <div class="stats-strip-label">Partner Brands</div>
+      </div>
+      <div class="stats-strip-item">
+        <div class="stats-strip-number"><em data-count="4200" data-suffix="+">0+</em></div>
+        <div class="stats-strip-label">Community Builds</div>
+      </div>
+      <div class="stats-strip-item">
+        <div class="stats-strip-number"><em data-count="7">0</em></div>
+        <div class="stats-strip-label">Vehicle Platforms</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHAT WE'RE BUILDING -->
+<section class="section" style="background:var(--bg-2);border-top:1px solid var(--border);">
+  <div class="container">
+    <div class="section-header center reveal">
+      <div class="section-eyebrow">Roadmap</div>
+      <h2 class="display-md section-title">What We're Building Next</h2>
+      <p class="section-desc">BŌRYKU is actively growing. Here's what's coming to the platform.</p>
+    </div>
+    <div class="grid-3 reveal">
+      <div class="card card-body" style="padding:28px;">
+        <div style="font-size:1.5rem;margin-bottom:12px;">🗺️</div>
+        <h3 class="heading-2" style="margin-bottom:8px;">Real-Time Map</h3>
+        <p class="body-sm">Live installer map with real-time availability, booking, and calendar integration.</p>
+        <div class="tag tag-warning" style="margin-top:12px;">In Development</div>
+      </div>
+      <div class="card card-body" style="padding:28px;">
+        <div style="font-size:1.5rem;margin-bottom:12px;">📱</div>
+        <h3 class="heading-2" style="margin-bottom:8px;">Mobile App</h3>
+        <p class="body-sm">Native iOS and Android app for managing builds, finding installers, and browsing gear on the trail.</p>
+        <div class="tag tag-default" style="margin-top:12px;">Coming Soon</div>
+      </div>
+      <div class="card card-body" style="padding:28px;">
+        <div style="font-size:1.5rem;margin-bottom:12px;">🔄</div>
+        <h3 class="heading-2" style="margin-bottom:8px;">3D Vehicle Previews</h3>
+        <p class="body-sm">Full 3D real-time vehicle rendering for every supported platform with true-to-life accessory visualization.</p>
+        <div class="tag tag-default" style="margin-top:12px;">Planned</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="padding:80px 0;text-align:center;background:var(--bg);">
+  <div class="container">
+    <div class="reveal">
+      <h2 class="display-md" style="margin-bottom:16px;">Join the Community</h2>
+      <p style="color:var(--text-2);max-width:440px;margin:0 auto 32px;font-size:1.0625rem;line-height:1.65;">
+        Thousands of builders are already using BŌRYKU. Start your build today.
+      </p>
+      <a href="build-planner.html" class="btn btn-primary btn-xl">Start My Build</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+      <div class="nav-logo">
+        <div class="nav-logo-mark">RY</div>
+        <div><div class="nav-logo-text">BŌRYKU</div><span class="nav-logo-sub">/ RYKU</span></div>
+      </div>
+      <p class="footer-copy">© 2024 <span style="color:var(--accent);">BŌRYKU / RYKU</span>. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
