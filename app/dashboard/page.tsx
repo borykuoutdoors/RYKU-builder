@@ -81,29 +81,53 @@ export default function DashboardPage() {
         }}
       >
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <div
-            className="font-mono"
-            style={{
-              fontSize: '11px',
-              color: 'var(--orange)',
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              marginBottom: '8px',
-            }}
-          >
-            BŌRYKU — CONTROL PANEL
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+            <div>
+              <div
+                className="font-mono"
+                style={{
+                  fontSize: '11px',
+                  color: 'var(--orange)',
+                  letterSpacing: '0.15em',
+                  textTransform: 'uppercase',
+                  marginBottom: '8px',
+                }}
+              >
+                BŌRYKU — CONTROL PANEL
+              </div>
+              <h1
+                className="font-bebas"
+                style={{
+                  fontSize: 'clamp(40px, 6vw, 72px)',
+                  letterSpacing: '0.05em',
+                  color: '#fff',
+                  margin: 0,
+                }}
+              >
+                YOUR DASHBOARD
+              </h1>
+            </div>
+
+            {/* Login / Create Account CTA */}
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <Link
+                href="/login"
+                className="btn btn-ghost"
+                style={{ fontSize: '13px', padding: '10px 22px' }}
+                data-action="login"
+              >
+                LOG IN
+              </Link>
+              <Link
+                href="/login?mode=signup"
+                className="btn btn-primary"
+                style={{ fontSize: '13px', padding: '10px 22px' }}
+                data-action="create-account"
+              >
+                ⊕ CREATE ACCOUNT
+              </Link>
+            </div>
           </div>
-          <h1
-            className="font-bebas"
-            style={{
-              fontSize: 'clamp(40px, 6vw, 72px)',
-              letterSpacing: '0.05em',
-              color: '#fff',
-              margin: 0,
-            }}
-          >
-            YOUR DASHBOARD
-          </h1>
         </div>
       </div>
 
@@ -142,6 +166,42 @@ export default function DashboardPage() {
               </button>
             )
           })}
+        </div>
+
+        {/* ── Guest banner ─────────────────────────────────────────────────────── */}
+        <div
+          style={{
+            background: 'linear-gradient(135deg, rgba(255,85,31,0.08) 0%, rgba(255,85,31,0.03) 100%)',
+            border: '1px solid rgba(255,85,31,0.2)',
+            borderRadius: '6px',
+            padding: '16px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '12px',
+            marginBottom: '24px',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '20px' }}>🔒</span>
+            <div>
+              <div className="font-bebas" style={{ fontSize: '16px', color: '#fff', letterSpacing: '0.06em' }}>
+                SIGN IN TO SAVE YOUR BUILDS
+              </div>
+              <div className="font-rajdhani" style={{ fontSize: '13px', color: 'rgba(255,255,255,0.42)' }}>
+                Create a free account to save builds, sync gear, and connect with installers.
+              </div>
+            </div>
+          </div>
+          <Link
+            href="/login?mode=signup"
+            className="btn btn-primary"
+            style={{ fontSize: '12px', padding: '8px 18px', whiteSpace: 'nowrap' }}
+            data-action="signup-banner"
+          >
+            GET STARTED FREE
+          </Link>
         </div>
 
         {/* ── MY BUILDS TAB ────────────────────────────────────────────── */}

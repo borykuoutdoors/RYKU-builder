@@ -16,35 +16,44 @@ export default function Configurator() {
       style={{
         display: 'flex',
         height: '100%',
+        minHeight: 0,
         overflow: 'hidden',
       }}
     >
-      {/* Left: Category Sidebar */}
+      {/* Left: Category Sidebar — independently scrollable */}
       <CategorySidebar
         activeCategory={activeCategory}
         onCategoryChange={setActiveCategory}
       />
 
-      {/* Center: Vehicle Preview (top) + Product List (bottom, scrollable) */}
+      {/* Center: Vehicle Preview (fixed top) + Product List (scrollable) */}
       <div style={{
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        overflow: 'hidden',
+        minHeight: 0,          // ← KEY: allows flex child to shrink & scroll
         minWidth: 0,
+        overflow: 'hidden',
       }}>
-        {/* Top half: Vehicle preview */}
+        {/* Vehicle preview — fixed height, doesn't scroll */}
         <div style={{ flexShrink: 0 }}>
           <VehiclePreview />
         </div>
 
-        {/* Bottom half: scrollable product list */}
-        <div style={{ flex: 1, overflow: 'hidden', borderTop: '1px solid #1e1e1e' }}>
+        {/* Product list — takes remaining height and scrolls */}
+        <div style={{
+          flex: 1,
+          minHeight: 0,        // ← KEY: flex child needs this to scroll
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          borderTop: '1px solid #1e1e1e',
+        }}>
           <ProductList activeCategory={activeCategory} />
         </div>
       </div>
 
-      {/* Right: Build Summary (sticky) */}
+      {/* Right: Build Summary — independently scrollable */}
       <BuildSummary />
     </div>
   )

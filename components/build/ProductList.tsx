@@ -57,7 +57,7 @@ export default function ProductList({ activeCategory }: Props) {
   const currentBuildTotal = gearTotal() + laborTotal()
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
       {/* Sort toolbar */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
