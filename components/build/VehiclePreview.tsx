@@ -20,7 +20,7 @@ function buildSVGString(
   const orange = '#FF551F'
 
   let svg = ''
-  svg += '<svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">'
+  svg += '<svg viewBox="0 15 500 182" xmlns="http://www.w3.org/2000/svg">'
   svg += '<defs>'
   svg += '<linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2a2a2a"/><stop offset="100%" stop-color="#111"/></linearGradient>'
   svg += '<linearGradient id="glassGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a3a4a" stop-opacity="0.9"/><stop offset="100%" stop-color="#0a1a22" stop-opacity="0.7"/></linearGradient>'
@@ -212,18 +212,17 @@ export default function VehiclePreview() {
   ]
 
   return (
-    <div className="flex flex-col gap-3 w-full">
-      {/* SVG Preview */}
+    <div style={{ width: '100%', padding: '6px 12px 8px' }}>
+      {/* SVG Preview — compact */}
       <div
-        className="w-full rounded"
-        style={{ background: 'rgba(10,10,10,0.8)', border: '1px solid rgba(255,85,31,0.10)', padding: '12px' }}
+        style={{ background: 'rgba(10,10,10,0.8)', border: '1px solid rgba(255,85,31,0.10)', borderRadius: 4, padding: '4px 8px' }}
         dangerouslySetInnerHTML={{ __html: svgString }}
       />
 
-      {/* Layer tags */}
-      <div className="flex flex-wrap gap-2 justify-center">
+      {/* Active layer badges — only show items that are installed */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 5, justifyContent: 'center', minHeight: 0 }}>
         <AnimatePresence>
-          {layers.map(layer => (
+          {layers.filter(l => l.active).map(layer => (
             <motion.div
               key={layer.key}
               initial={{ opacity: 0, scale: 0.8 }}
@@ -232,16 +231,13 @@ export default function VehiclePreview() {
               transition={{ duration: 0.2 }}
               style={{
                 fontFamily: 'var(--font-mono), monospace',
-                fontSize: '0.5625rem',
-                letterSpacing: '0.15em',
-                padding: '3px 8px',
-                borderRadius: '2px',
-                border: layer.active
-                  ? '1px solid rgba(255,85,31,0.5)'
-                  : '1px solid rgba(255,255,255,0.06)',
-                color: layer.active ? '#FF551F' : '#3a3a3a',
-                background: layer.active ? 'rgba(255,85,31,0.08)' : 'transparent',
-                transition: 'all 0.3s cubic-bezier(0.16,1,0.3,1)',
+                fontSize: 8,
+                letterSpacing: '0.13em',
+                padding: '1px 6px',
+                borderRadius: 2,
+                border: '1px solid rgba(255,85,31,0.5)',
+                color: '#FF551F',
+                background: 'rgba(255,85,31,0.08)',
               }}
             >
               {layer.label}

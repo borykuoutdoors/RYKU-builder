@@ -60,7 +60,7 @@ export default function ProductCard({ product, isAdded, isOverBudget, onToggle }
       {/* ── Product image area ────────────────────────────── */}
       <div style={{
         position: 'relative',
-        height: 160,
+        height: 120,
         background: fallbackGradient,
         overflow: 'hidden',
         flexShrink: 0,
@@ -100,7 +100,7 @@ export default function ProductCard({ product, isAdded, isOverBudget, onToggle }
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-            <span style={{ fontSize: 48, filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.5))' }}>
+            <span style={{ fontSize: 36, filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.5))' }}>
               {emoji}
             </span>
           </div>
