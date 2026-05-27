@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useBuildStore } from '@/store/buildStore'
+import ShopModal from '@/components/modals/ShopModal'
 
 const NAV_LINKS = [
   { label: 'HOME',       href: '/' },
@@ -22,6 +23,7 @@ export default function Navbar() {
 
   const [scrolled,     setScrolled]     = useState(false)
   const [mobileOpen,   setMobileOpen]   = useState(false)
+  const [shopOpen,     setShopOpen]     = useState(false)
 
   // Track scroll position to toggle .scrolled class
   useEffect(() => {
@@ -88,24 +90,66 @@ export default function Navbar() {
             {NAV_LINKS.map(({ label, href }) => {
               const isActive = pathname === href || (href !== '/' && pathname.startsWith(href))
               return (
-                <Link
-                  key={href}
-                  href={href}
-                  style={{
-                    fontFamily: 'var(--font-rajdhani)',
-                    fontWeight: 700,
-                    fontSize: '0.75rem',
-                    letterSpacing: '0.18em',
-                    color: isActive ? 'var(--orange)' : 'var(--text-2)',
-                    padding: '6px 12px',
-                    transition: 'color 0.2s',
-                    borderBottom: isActive ? '1px solid var(--orange)' : '1px solid transparent',
-                  }}
-                  onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text)' }}
-                  onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-2)' }}
-                >
-                  {label}
-                </Link>
+                <span key={href}>
+                  <Link
+                    href={href}
+                    style={{
+                      fontFamily: 'var(--font-rajdhani)',
+                      fontWeight: 700,
+                      fontSize: '0.75rem',
+                      letterSpacing: '0.18em',
+                      color: isActive ? 'var(--orange)' : 'var(--text-2)',
+                      padding: '6px 12px',
+                      transition: 'color 0.2s',
+                      borderBottom: isActive ? '1px solid var(--orange)' : '1px solid transparent',
+                    }}
+                    onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text)' }}
+                    onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-2)' }}
+                  >
+                    {label}
+                  </Link>
+                  {/* SHOP button — inserted immediately after GEAR */}
+                  {label === 'GEAR' && (
+                    <button
+                      onClick={() => setShopOpen(true)}
+                      data-action="nav-shop"
+                      style={{
+                        fontFamily: 'var(--font-rajdhani)',
+                        fontWeight: 700,
+                        fontSize: '0.75rem',
+                        letterSpacing: '0.18em',
+                        color: 'var(--orange)',
+                        padding: '6px 10px',
+                        background: 'transparent',
+                        border: 'none',
+                        borderBottom: '1px solid transparent',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 5,
+                        transition: 'color 0.2s',
+                        verticalAlign: 'middle',
+                      }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = '#fff' }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--orange)' }}
+                    >
+                      SHOP
+                      <span style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: 7,
+                        letterSpacing: '0.1em',
+                        background: 'var(--orange)',
+                        color: '#000',
+                        padding: '1px 4px',
+                        borderRadius: 2,
+                        fontWeight: 700,
+                        lineHeight: 1.4,
+                      }}>
+                        SOON
+                      </span>
+                    </button>
+                  )}
+                </span>
               )
             })}
           </nav>
@@ -273,21 +317,61 @@ export default function Navbar() {
             {NAV_LINKS.map(({ label, href }) => {
               const isActive = pathname === href || (href !== '/' && pathname.startsWith(href))
               return (
-                <Link
-                  key={href}
-                  href={href}
-                  style={{
-                    fontFamily: 'var(--font-rajdhani)',
-                    fontWeight: 700,
-                    fontSize: '1.125rem',
-                    letterSpacing: '0.2em',
-                    color: isActive ? 'var(--orange)' : 'var(--text-2)',
-                    padding: '12px 0',
-                    borderBottom: '1px solid var(--border-subtle)',
-                  }}
-                >
-                  {label}
-                </Link>
+                <span key={href}>
+                  <Link
+                    href={href}
+                    style={{
+                      display: 'block',
+                      fontFamily: 'var(--font-rajdhani)',
+                      fontWeight: 700,
+                      fontSize: '1.125rem',
+                      letterSpacing: '0.2em',
+                      color: isActive ? 'var(--orange)' : 'var(--text-2)',
+                      padding: '12px 0',
+                      borderBottom: '1px solid var(--border-subtle)',
+                    }}
+                  >
+                    {label}
+                  </Link>
+                  {label === 'GEAR' && (
+                    <button
+                      onClick={() => { setShopOpen(true); setMobileOpen(false) }}
+                      data-action="mobile-shop"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        width: '100%',
+                        background: 'transparent',
+                        border: 'none',
+                        borderBottom: '1px solid var(--border-subtle)',
+                        fontFamily: 'var(--font-rajdhani)',
+                        fontWeight: 700,
+                        fontSize: '1.125rem',
+                        letterSpacing: '0.2em',
+                        color: 'var(--orange)',
+                        padding: '12px 0',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      SHOP
+                      <span style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: 8,
+                        letterSpacing: '0.1em',
+                        background: 'var(--orange)',
+                        color: '#000',
+                        padding: '1px 5px',
+                        borderRadius: 2,
+                        fontWeight: 700,
+                      }}>
+                        SOON
+                      </span>
+                    </button>
+                  )}
+                </span>
               )
             })}
 
@@ -335,6 +419,9 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* ── Shop coming-soon modal ─────────────────────────────────── */}
+      <ShopModal isOpen={shopOpen} onClose={() => setShopOpen(false)} />
 
       {/* ── Responsive styles injected as a style tag ─────────────── */}
       <style>{`
