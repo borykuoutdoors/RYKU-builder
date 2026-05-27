@@ -21,9 +21,14 @@ export default function Navbar() {
   const vehicle    = useBuildStore(s => s.vehicle)
   const buildName  = useBuildStore(s => s.buildName)
 
+  const isHomepage = pathname === '/'
+
   const [scrolled,     setScrolled]     = useState(false)
   const [mobileOpen,   setMobileOpen]   = useState(false)
   const [shopOpen,     setShopOpen]     = useState(false)
+  // Homepage: hidden until 70% of the cinematic scroll section
+  // Other pages: always visible immediately
+  const [navVisible,   setNavVisible]   = useState(!isHomepage)
 
   // Track scroll position to toggle .scrolled class
   useEffect(() => {
@@ -31,6 +36,26 @@ export default function Navbar() {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  // Cinematic reveal: hide navbar during homepage intro, reveal at 70% scroll
+  // CinematicHero is 420vh tall, viewport is 100vh → scroll range = 320vh = 3.2×vh
+  useEffect(() => {
+    if (!isHomepage) {
+      setNavVisible(true)
+      return
+    }
+
+    setNavVisible(false)
+
+    const onScroll = () => {
+      const progress = window.scrollY / (3.2 * window.innerHeight)
+      if (progress >= 0.70) setNavVisible(true)
+    }
+
+    onScroll() // evaluate immediately (handles page load mid-scroll)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [isHomepage])
 
   // Close mobile menu on route change
   useEffect(() => { setMobileOpen(false) }, [pathname])
@@ -40,9 +65,15 @@ export default function Navbar() {
       {/* ── Main nav bar ───────────────────────────────────────────── */}
       <motion.nav
         className={`nav${scrolled ? ' scrolled' : ''}`}
-        initial={{ y: -58, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+        // On homepage: driven by scroll reveal (initial=false → animate is the starting state)
+        // On other pages: classic slide-in from top on mount
+        initial={isHomepage ? false : { y: -58, opacity: 0 }}
+        animate={{
+          y:       navVisible ? 0 : -72,
+          opacity: navVisible ? 1 : 0,
+        }}
+        transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
+        style={{ pointerEvents: navVisible ? 'auto' : 'none' }}
         role="navigation"
         aria-label="Primary navigation"
       >
