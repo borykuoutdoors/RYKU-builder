@@ -1,0 +1,15 @@
+# Legacy vanilla HTML prototype — not part of the Next.js app
+index.html
+builds.html
+gear.html
+installers.html
+about.html
+contact.html
+build-planner.html
+login.html
+account.html
+contest.html
+submit-build.html
+css/
+js/
+assets/

@@ -3,9 +3,6 @@ const nextConfig = {
   images: {
     remotePatterns: [],
   },
-  experimental: {
-    serverComponentsExternalPackages: [],
-  },
 }
 
 export default nextConfig
