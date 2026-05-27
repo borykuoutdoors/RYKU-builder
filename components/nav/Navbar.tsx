@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useBuildStore } from '@/store/buildStore'
+import ShopModal from '@/components/modals/ShopModal'
 
 const NAV_LINKS = [
   { label: 'HOME',       href: '/' },
@@ -22,6 +23,7 @@ export default function Navbar() {
 
   const [scrolled,     setScrolled]     = useState(false)
   const [mobileOpen,   setMobileOpen]   = useState(false)
+  const [shopOpen,     setShopOpen]     = useState(false)
 
   // Track scroll position to toggle .scrolled class
   useEffect(() => {
@@ -55,24 +57,51 @@ export default function Navbar() {
         }}>
 
           {/* ── Logo ─────────────────────────────────────────────── */}
-          <Link href="/" aria-label="BŌRYKU home" style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
-            <span style={{
-              fontFamily: 'var(--font-bebas)',
-              fontSize: '1.75rem',
-              letterSpacing: '0.08em',
-              color: 'var(--text)',
-            }}>
-              B<span style={{ color: 'var(--orange)' }}>Ō</span>RYKU
-            </span>
-            <span style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.5rem',
-              letterSpacing: '0.3em',
-              color: 'var(--text-3)',
-              marginTop: '-2px',
-            }}>
-              RYKU
-            </span>
+          <Link href="/" aria-label="BŌRYKU home" style={{ display: 'flex', alignItems: 'center', gap: 10, lineHeight: 1, textDecoration: 'none' }}>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
+              style={{ display: 'flex', alignItems: 'center', gap: 10 }}
+            >
+              {/* Flame icon — mix-blend-mode:screen removes dark bg against dark navbar */}
+              <div style={{ filter: 'drop-shadow(0 0 10px rgba(255,85,31,0.55))', flexShrink: 0 }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/ryku-logo.jpeg"
+                  alt=""
+                  aria-hidden="true"
+                  style={{
+                    display: 'block',
+                    width: 36,
+                    height: 36,
+                    objectFit: 'cover',
+                    borderRadius: 4,
+                    mixBlendMode: 'screen',
+                  }}
+                />
+              </div>
+              {/* Text */}
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{
+                  fontFamily: 'var(--font-bebas)',
+                  fontSize: '1.75rem',
+                  letterSpacing: '0.08em',
+                  color: '#fff',
+                  lineHeight: 1,
+                }}>
+                  B<span style={{ color: 'var(--orange)', textShadow: '0 0 20px rgba(255,85,31,0.55)' }}>Ō</span>RYKU
+                </span>
+                <span style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.5rem',
+                  letterSpacing: '0.3em',
+                  color: 'var(--text-3)',
+                  marginTop: '-2px',
+                }}>
+                  RYKU
+                </span>
+              </div>
+            </motion.div>
           </Link>
 
           {/* ── Desktop nav links ─────────────────────────────────── */}
@@ -88,30 +117,72 @@ export default function Navbar() {
             {NAV_LINKS.map(({ label, href }) => {
               const isActive = pathname === href || (href !== '/' && pathname.startsWith(href))
               return (
-                <Link
-                  key={href}
-                  href={href}
-                  style={{
-                    fontFamily: 'var(--font-rajdhani)',
-                    fontWeight: 700,
-                    fontSize: '0.75rem',
-                    letterSpacing: '0.18em',
-                    color: isActive ? 'var(--orange)' : 'var(--text-2)',
-                    padding: '6px 12px',
-                    transition: 'color 0.2s',
-                    borderBottom: isActive ? '1px solid var(--orange)' : '1px solid transparent',
-                  }}
-                  onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text)' }}
-                  onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-2)' }}
-                >
-                  {label}
-                </Link>
+                <span key={href}>
+                  <Link
+                    href={href}
+                    style={{
+                      fontFamily: 'var(--font-rajdhani)',
+                      fontWeight: 700,
+                      fontSize: '0.75rem',
+                      letterSpacing: '0.18em',
+                      color: isActive ? 'var(--orange)' : 'var(--text-2)',
+                      padding: '6px 12px',
+                      transition: 'color 0.2s',
+                      borderBottom: isActive ? '1px solid var(--orange)' : '1px solid transparent',
+                    }}
+                    onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text)' }}
+                    onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-2)' }}
+                  >
+                    {label}
+                  </Link>
+                  {/* SHOP button — inserted immediately after GEAR */}
+                  {label === 'GEAR' && (
+                    <button
+                      onClick={() => setShopOpen(true)}
+                      data-action="nav-shop"
+                      style={{
+                        fontFamily: 'var(--font-rajdhani)',
+                        fontWeight: 700,
+                        fontSize: '0.75rem',
+                        letterSpacing: '0.18em',
+                        color: 'var(--orange)',
+                        padding: '6px 10px',
+                        background: 'transparent',
+                        border: 'none',
+                        borderBottom: '1px solid transparent',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 5,
+                        transition: 'color 0.2s',
+                        verticalAlign: 'middle',
+                      }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = '#fff' }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--orange)' }}
+                    >
+                      SHOP
+                      <span style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: 7,
+                        letterSpacing: '0.1em',
+                        background: 'var(--orange)',
+                        color: '#000',
+                        padding: '1px 4px',
+                        borderRadius: 2,
+                        fontWeight: 700,
+                        lineHeight: 1.4,
+                      }}>
+                        SOON
+                      </span>
+                    </button>
+                  )}
+                </span>
               )
             })}
           </nav>
 
           {/* ── Right-side controls ───────────────────────────────── */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
 
             {/* Build badge — shown only when a vehicle is selected */}
             {vehicle && (
@@ -119,6 +190,7 @@ export default function Navbar() {
                 initial={{ opacity: 0, scale: 0.85 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.85 }}
+                className="nav-build-badge"
                 style={{
                   fontFamily: 'var(--font-mono)',
                   fontSize: '0.5625rem',
@@ -135,11 +207,67 @@ export default function Navbar() {
               </motion.div>
             )}
 
+            {/* Auth buttons — always visible */}
+            <motion.div
+              className="nav-auth-btns"
+              style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+            >
+              <Link href="/login" aria-label="Log in to your account" data-action="nav-login">
+                <motion.button
+                  whileHover={{ color: '#fff', borderColor: 'rgba(255,255,255,0.25)' }}
+                  transition={{ duration: 0.15 }}
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    color: 'rgba(255,255,255,0.55)',
+                    fontFamily: 'var(--font-rajdhani)',
+                    fontWeight: 700,
+                    fontSize: '0.72rem',
+                    letterSpacing: '0.16em',
+                    padding: '7px 14px',
+                    cursor: 'pointer',
+                    textTransform: 'uppercase',
+                    borderRadius: 2,
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  LOG IN
+                </motion.button>
+              </Link>
+
+              <Link href="/login?mode=signup" aria-label="Create a free account" data-action="nav-signup">
+                <motion.button
+                  whileHover={{ background: 'rgba(255,85,31,0.18)', borderColor: 'rgba(255,85,31,0.6)', color: '#fff' }}
+                  transition={{ duration: 0.15 }}
+                  style={{
+                    background: 'rgba(255,85,31,0.08)',
+                    border: '1px solid rgba(255,85,31,0.35)',
+                    color: 'var(--orange)',
+                    fontFamily: 'var(--font-rajdhani)',
+                    fontWeight: 700,
+                    fontSize: '0.72rem',
+                    letterSpacing: '0.16em',
+                    padding: '7px 14px',
+                    cursor: 'pointer',
+                    textTransform: 'uppercase',
+                    borderRadius: 2,
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  SIGN UP
+                </motion.button>
+              </Link>
+            </motion.div>
+
             {/* START BUILD button */}
-            <Link href="/build" aria-label="Start your build">
+            <Link href="/build" aria-label="Start your build" className="nav-start-build">
               <button
                 className="btn btn-primary"
-                style={{ fontSize: '0.75rem', padding: '9px 20px' }}
+                style={{ fontSize: '0.72rem', padding: '9px 18px' }}
                 data-action="start-build"
               >
                 START BUILD
@@ -216,24 +344,97 @@ export default function Navbar() {
             {NAV_LINKS.map(({ label, href }) => {
               const isActive = pathname === href || (href !== '/' && pathname.startsWith(href))
               return (
-                <Link
-                  key={href}
-                  href={href}
-                  style={{
-                    fontFamily: 'var(--font-rajdhani)',
-                    fontWeight: 700,
-                    fontSize: '1.125rem',
-                    letterSpacing: '0.2em',
-                    color: isActive ? 'var(--orange)' : 'var(--text-2)',
-                    padding: '12px 0',
-                    borderBottom: '1px solid var(--border-subtle)',
-                  }}
-                >
-                  {label}
-                </Link>
+                <span key={href}>
+                  <Link
+                    href={href}
+                    style={{
+                      display: 'block',
+                      fontFamily: 'var(--font-rajdhani)',
+                      fontWeight: 700,
+                      fontSize: '1.125rem',
+                      letterSpacing: '0.2em',
+                      color: isActive ? 'var(--orange)' : 'var(--text-2)',
+                      padding: '12px 0',
+                      borderBottom: '1px solid var(--border-subtle)',
+                    }}
+                  >
+                    {label}
+                  </Link>
+                  {label === 'GEAR' && (
+                    <button
+                      onClick={() => { setShopOpen(true); setMobileOpen(false) }}
+                      data-action="mobile-shop"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        width: '100%',
+                        background: 'transparent',
+                        border: 'none',
+                        borderBottom: '1px solid var(--border-subtle)',
+                        fontFamily: 'var(--font-rajdhani)',
+                        fontWeight: 700,
+                        fontSize: '1.125rem',
+                        letterSpacing: '0.2em',
+                        color: 'var(--orange)',
+                        padding: '12px 0',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      SHOP
+                      <span style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: 8,
+                        letterSpacing: '0.1em',
+                        background: 'var(--orange)',
+                        color: '#000',
+                        padding: '1px 5px',
+                        borderRadius: 2,
+                        fontWeight: 700,
+                      }}>
+                        SOON
+                      </span>
+                    </button>
+                  )}
+                </span>
               )
             })}
-            <Link href="/build" style={{ marginTop: '16px' }}>
+
+            {/* Auth row */}
+            <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
+              <Link href="/login" style={{ flex: 1 }} data-action="mobile-login">
+                <button
+                  style={{
+                    width: '100%', background: 'transparent',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                    color: 'rgba(255,255,255,0.6)',
+                    fontFamily: 'var(--font-rajdhani)', fontWeight: 700,
+                    fontSize: '0.875rem', letterSpacing: '0.16em',
+                    padding: '11px 0', cursor: 'pointer', textTransform: 'uppercase', borderRadius: 2,
+                  }}
+                >
+                  LOG IN
+                </button>
+              </Link>
+              <Link href="/login?mode=signup" style={{ flex: 1 }} data-action="mobile-signup">
+                <button
+                  style={{
+                    width: '100%', background: 'rgba(255,85,31,0.08)',
+                    border: '1px solid rgba(255,85,31,0.4)',
+                    color: 'var(--orange)',
+                    fontFamily: 'var(--font-rajdhani)', fontWeight: 700,
+                    fontSize: '0.875rem', letterSpacing: '0.16em',
+                    padding: '11px 0', cursor: 'pointer', textTransform: 'uppercase', borderRadius: 2,
+                  }}
+                >
+                  SIGN UP
+                </button>
+              </Link>
+            </div>
+
+            <Link href="/build" style={{ marginTop: '8px' }}>
               <button
                 className="btn btn-primary"
                 style={{ width: '100%', justifyContent: 'center' }}
@@ -246,6 +447,9 @@ export default function Navbar() {
         )}
       </AnimatePresence>
 
+      {/* ── Shop coming-soon modal ─────────────────────────────────── */}
+      <ShopModal isOpen={shopOpen} onClose={() => setShopOpen(false)} />
+
       {/* ── Responsive styles injected as a style tag ─────────────── */}
       <style>{`
         @media (max-width: 860px) {
@@ -254,6 +458,15 @@ export default function Navbar() {
         }
         @media (min-width: 861px) {
           .mobile-menu { display: none !important; }
+        }
+        /* Hide START BUILD text label on medium screens to give auth buttons room */
+        @media (max-width: 1020px) and (min-width: 861px) {
+          .nav-start-build .btn-primary { padding: 9px 14px !important; font-size: 0.68rem !important; }
+          .nav-auth-btns button { padding: 7px 10px !important; font-size: 0.68rem !important; }
+        }
+        /* Hide build badge on very tight screens */
+        @media (max-width: 920px) and (min-width: 861px) {
+          .nav-build-badge { display: none !important; }
         }
       `}</style>
     </>
