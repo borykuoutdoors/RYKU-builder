@@ -38,7 +38,7 @@ export default function Navbar() {
   }, [])
 
   // Cinematic reveal: hide navbar during homepage intro, reveal at 70% scroll
-  // CinematicHero is 420vh tall, viewport is 100vh → scroll range = 320vh = 3.2×vh
+  // CinematicHero is 450vh tall, viewport is 100vh → scroll range = 350vh = 3.5×vh
   useEffect(() => {
     if (!isHomepage) {
       setNavVisible(true)
@@ -48,7 +48,7 @@ export default function Navbar() {
     setNavVisible(false)
 
     const onScroll = () => {
-      const progress = window.scrollY / (3.2 * window.innerHeight)
+      const progress = window.scrollY / (3.5 * window.innerHeight)
       if (progress >= 0.70) setNavVisible(true)
     }
 
