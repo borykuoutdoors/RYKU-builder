@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import HeroSection from '@/components/hero/HeroSection'
+import CinematicHero from '@/components/hero/CinematicHero'
 import { MISSIONS } from '@/data/missions'
 import { CATEGORIES } from '@/data/products'
 
@@ -462,7 +462,7 @@ function ContactSection() {
 export default function HomePage() {
   return (
     <>
-      <HeroSection />
+      <CinematicHero />
       <FeaturesStrip />
       <MissionsSection />
       <GearSection />
