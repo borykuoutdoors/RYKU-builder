@@ -1,151 +1,382 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import SectionEyebrow from '@/components/ui/SectionEyebrow'
+
+// ─── Subject options ─────────────────────────────────────────────────────────
 
 const SUBJECTS = [
   'General Inquiry',
   'Build Consultation',
   'Installer Partnership',
-  'Brand / Gear Partnership',
+  'Brand Partnership',
   'PRO Membership',
-]
+] as const
+
+type SubjectType = typeof SUBJECTS[number]
+
+// ─── Contact info cards ───────────────────────────────────────────────────────
 
 const CONTACT_CARDS = [
-  { emoji: '📡', label: 'General', email: 'hello@boryku.com', desc: 'Questions, feedback, anything' },
-  { emoji: '🔧', label: 'Build Consultation', email: 'builds@boryku.com', desc: 'Expert build configuration help' },
-  { emoji: '🔩', label: 'Installer Partnership', email: 'installers@boryku.com', desc: 'Join the RYKU installer network' },
-  { emoji: '📦', label: 'Brand Partnership', email: 'brands@boryku.com', desc: 'List your products on the platform' },
+  {
+    icon: '📬',
+    label: 'General',
+    email: 'hello@boryku.com',
+    desc: 'Questions, feedback, and general inquiries.',
+  },
+  {
+    icon: '🔩',
+    label: 'Build Consultation',
+    email: 'builds@boryku.com',
+    desc: 'Get expert help planning your overland build.',
+  },
+  {
+    icon: '🏪',
+    label: 'Installer Partnership',
+    email: 'installers@boryku.com',
+    desc: 'Join the RYKU certified installer network.',
+  },
+  {
+    icon: '🤝',
+    label: 'Brand Partnership',
+    email: 'brands@boryku.com',
+    desc: 'List your gear or explore co-marketing.',
+  },
 ]
 
-export default function ContactPage() {
-  const [submitted, setSubmitted] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [form, setForm] = useState({ name: '', email: '', subject: SUBJECTS[0], message: '' })
+// ─── Form state ───────────────────────────────────────────────────────────────
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    await new Promise(r => setTimeout(r, 900))
-    setLoading(false)
-    setSubmitted(true)
+interface FormState {
+  name: string
+  email: string
+  subject: SubjectType
+  message: string
+}
+
+const DEFAULT_FORM: FormState = {
+  name: '',
+  email: '',
+  subject: 'General Inquiry',
+  message: '',
+}
+
+// ─── Shared styles ────────────────────────────────────────────────────────────
+
+const inputStyle: React.CSSProperties = {
+  width: '100%',
+  background: '#0f0f0f',
+  border: '1px solid rgba(255,85,31,0.25)',
+  borderRadius: '4px',
+  color: '#fff',
+  fontFamily: 'var(--font-rajdhani)',
+  fontSize: '15px',
+  padding: '11px 14px',
+  outline: 'none',
+  boxSizing: 'border-box',
+  transition: 'border-color 0.18s',
+}
+
+const labelStyle: React.CSSProperties = {
+  display: 'block',
+  fontFamily: 'var(--font-mono)',
+  fontSize: '11px',
+  color: 'rgba(255,255,255,0.42)',
+  letterSpacing: '0.1em',
+  textTransform: 'uppercase',
+  marginBottom: '6px',
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+export default function ContactPage() {
+  const [form, setForm] = useState<FormState>(DEFAULT_FORM)
+  const [isLoading, setIsLoading] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const formRef = useRef<HTMLFormElement>(null)
+
+  // Wire up submit via addEventListener — no inline onSubmit handler
+  useEffect(() => {
+    const formEl = formRef.current
+    if (!formEl) return
+
+    const handleSubmit = (e: Event) => {
+      e.preventDefault()
+      if (isLoading) return
+      setIsLoading(true)
+      // Simulate async submission
+      setTimeout(() => {
+        setIsLoading(false)
+        setSubmitted(true)
+        setForm(DEFAULT_FORM)
+      }, 1200)
+    }
+
+    formEl.addEventListener('submit', handleSubmit)
+    return () => formEl.removeEventListener('submit', handleSubmit)
+  }, [isLoading])
+
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) {
+    const { name, value } = e.target
+    setForm((prev) => ({ ...prev, [name]: value }))
   }
 
   return (
-    <div style={{ background: 'var(--dark)', minHeight: '100vh' }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: 'var(--dark)',
+        backgroundImage: 'var(--bg-grid)',
+        backgroundSize: 'var(--bg-grid-size)',
+      }}
+    >
+      {/* ── Header ───────────────────────────────────────────────────────── */}
+      <div
+        style={{
+          borderBottom: '1px solid rgba(255,85,31,0.12)',
+          padding: '48px 24px 40px',
+          textAlign: 'center',
+        }}
+      >
+        <SectionEyebrow>CONTACT</SectionEyebrow>
+        <h1
+          className="font-bebas"
+          style={{
+            fontSize: 'clamp(40px, 6vw, 72px)',
+            letterSpacing: '0.05em',
+            color: '#fff',
+            margin: '8px 0',
+          }}
+        >
+          GET IN TOUCH
+        </h1>
+        <p
+          className="font-rajdhani"
+          style={{ color: 'rgba(255,255,255,0.48)', fontSize: '16px', margin: 0 }}
+        >
+          We respond within 24 hours on business days
+        </p>
+      </div>
 
-      {/* Header */}
-      <section style={{ padding: '80px 24px 60px', borderBottom: '1px solid var(--border)', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,85,31,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,85,31,.022) 1px,transparent 1px)', backgroundSize: '40px 40px' }} />
-        <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-          <SectionEyebrow>CONTACT</SectionEyebrow>
-          <h1 style={{ fontFamily: 'var(--font-bebas)', fontSize: 'clamp(2.5rem,5vw,4rem)', letterSpacing: '0.04em', lineHeight: 0.9, marginTop: 12 }}>
-            GET IN<br /><span style={{ color: 'var(--orange)' }}>TOUCH</span>
-          </h1>
-        </div>
-      </section>
-
-      {/* Main */}
-      <section style={{ maxWidth: 1200, margin: '0 auto', padding: '64px 24px', display: 'grid', gridTemplateColumns: '1fr 380px', gap: 48, alignItems: 'start' }}>
-
-        {/* Form */}
-        <div style={{ background: 'var(--carbon)', border: '1px solid var(--border)', borderRadius: 4, padding: 40 }}>
+      {/* ── Two-column body ───────────────────────────────────────────────── */}
+      <div
+        style={{
+          maxWidth: '1100px',
+          margin: '0 auto',
+          padding: '48px 24px',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gap: '40px',
+          alignItems: 'start',
+        }}
+      >
+        {/* ── LEFT: Contact form ──────────────────────────────────────────── */}
+        <div>
           {submitted ? (
-            <div style={{ textAlign: 'center', padding: '40px 0' }}>
-              <div style={{ fontSize: 48, marginBottom: 20 }}>✓</div>
-              <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: '2rem', letterSpacing: '0.06em', color: '#4ade80', marginBottom: 12 }}>MESSAGE SENT</h2>
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-2)' }}>We&apos;ll respond within 24–48 hours.</p>
+            /* Success state */
+            <div
+              style={{
+                background: 'var(--carbon)',
+                border: '1px solid rgba(255,85,31,0.35)',
+                borderRadius: '6px',
+                padding: '40px 28px',
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '14px',
+              }}
+            >
+              <div style={{ fontSize: '48px' }}>✅</div>
+              <div
+                className="font-bebas"
+                style={{ fontSize: '28px', color: '#fff', letterSpacing: '0.06em' }}
+              >
+                MESSAGE SENT
+              </div>
+              <div
+                className="font-rajdhani"
+                style={{ fontSize: '15px', color: 'rgba(255,255,255,0.52)', maxWidth: '320px' }}
+              >
+                Thanks for reaching out. We&apos;ll get back to you within 24 hours.
+              </div>
+              <button
+                className="btn btn-ghost"
+                style={{ marginTop: '8px' }}
+                onClick={() => setSubmitted(false)}
+                data-action="send-another"
+              >
+                SEND ANOTHER MESSAGE
+              </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit}>
-              <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.5rem', letterSpacing: '0.08em', marginBottom: 28 }}>SEND A MESSAGE</h2>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-                <div>
-                  <label className="form-label">Full Name</label>
-                  <input
-                    data-field="name"
-                    type="text"
-                    required
-                    className="form-input"
-                    placeholder="John Doe"
-                    value={form.name}
-                    onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <label className="form-label">Email Address</label>
-                  <input
-                    data-field="email"
-                    type="email"
-                    required
-                    className="form-input"
-                    placeholder="you@example.com"
-                    value={form.email}
-                    onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                  />
-                </div>
-              </div>
-
-              <div style={{ marginBottom: 16 }}>
-                <label className="form-label">Subject</label>
-                <select
-                  data-field="subject"
-                  className="form-input form-select"
-                  value={form.subject}
-                  onChange={e => setForm(f => ({ ...f, subject: e.target.value }))}
-                >
-                  {SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </div>
-
-              <div style={{ marginBottom: 28 }}>
-                <label className="form-label">Message</label>
-                <textarea
-                  data-field="message"
-                  required
-                  className="form-input"
-                  placeholder="Tell us what you need..."
-                  rows={6}
-                  value={form.message}
-                  onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
-                  style={{ resize: 'vertical', minHeight: 120 }}
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="btn btn-primary"
-                style={{ width: '100%', justifyContent: 'center' }}
-                disabled={loading}
+            <form ref={formRef} noValidate data-form="contact">
+              <div
+                style={{
+                  background: 'var(--carbon)',
+                  border: '1px solid rgba(255,85,31,0.14)',
+                  borderRadius: '6px',
+                  padding: '28px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '18px',
+                }}
               >
-                {loading ? 'Sending...' : 'Send Message'}
-              </button>
+                <div
+                  className="font-bebas"
+                  style={{ fontSize: '22px', color: '#fff', letterSpacing: '0.06em', marginBottom: '4px' }}
+                >
+                  SEND A MESSAGE
+                </div>
+
+                {/* Name */}
+                <div>
+                  <label htmlFor="contact-name" style={labelStyle}>NAME</label>
+                  <input
+                    id="contact-name"
+                    name="name"
+                    type="text"
+                    value={form.name}
+                    onChange={handleChange}
+                    placeholder="Your name"
+                    required
+                    data-input="name"
+                    style={inputStyle}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--orange)' }}
+                    onBlur={(e)  => { e.currentTarget.style.borderColor = 'rgba(255,85,31,0.25)' }}
+                  />
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label htmlFor="contact-email" style={labelStyle}>EMAIL</label>
+                  <input
+                    id="contact-email"
+                    name="email"
+                    type="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="you@example.com"
+                    required
+                    data-input="email"
+                    style={inputStyle}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--orange)' }}
+                    onBlur={(e)  => { e.currentTarget.style.borderColor = 'rgba(255,85,31,0.25)' }}
+                  />
+                </div>
+
+                {/* Subject */}
+                <div>
+                  <label htmlFor="contact-subject" style={labelStyle}>SUBJECT</label>
+                  <select
+                    id="contact-subject"
+                    name="subject"
+                    value={form.subject}
+                    onChange={handleChange}
+                    required
+                    data-input="subject"
+                    style={{ ...inputStyle, cursor: 'pointer' }}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--orange)' }}
+                    onBlur={(e)  => { e.currentTarget.style.borderColor = 'rgba(255,85,31,0.25)' }}
+                  >
+                    {SUBJECTS.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Message */}
+                <div>
+                  <label htmlFor="contact-message" style={labelStyle}>MESSAGE</label>
+                  <textarea
+                    id="contact-message"
+                    name="message"
+                    value={form.message}
+                    onChange={handleChange}
+                    placeholder="Tell us what&apos;s on your mind..."
+                    required
+                    rows={5}
+                    data-input="message"
+                    style={{ ...inputStyle, resize: 'vertical', minHeight: '120px' }}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--orange)' }}
+                    onBlur={(e)  => { e.currentTarget.style.borderColor = 'rgba(255,85,31,0.25)' }}
+                  />
+                </div>
+
+                {/* Submit */}
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  style={{ width: '100%', padding: '13px', fontSize: '15px' }}
+                  disabled={isLoading}
+                  data-action="submit-contact"
+                >
+                  {isLoading ? 'SENDING...' : 'SEND MESSAGE'}
+                </button>
+              </div>
             </form>
           )}
         </div>
 
-        {/* Contact cards */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {CONTACT_CARDS.map(c => (
-            <div key={c.label} style={{ background: 'var(--carbon)', border: '1px solid var(--border)', borderRadius: 4, padding: 20 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-                <span style={{ fontSize: 24 }}>{c.emoji}</span>
-                <div style={{ fontFamily: 'var(--font-bebas)', fontSize: '1rem', letterSpacing: '0.08em' }}>{c.label}</div>
+        {/* ── RIGHT: Contact info cards ───────────────────────────────────── */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {CONTACT_CARDS.map((card) => (
+            <div
+              key={card.label}
+              style={{
+                background: 'var(--carbon)',
+                border: '1px solid rgba(255,85,31,0.12)',
+                borderRadius: '6px',
+                padding: '18px 20px',
+                display: 'flex',
+                gap: '14px',
+                alignItems: 'flex-start',
+                transition: 'border-color 0.18s',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,85,31,0.35)'
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,85,31,0.12)'
+              }}
+            >
+              <span style={{ fontSize: '28px', lineHeight: 1, flexShrink: 0 }}>{card.icon}</span>
+              <div>
+                <div
+                  className="font-bebas"
+                  style={{ fontSize: '17px', color: '#fff', letterSpacing: '0.06em', marginBottom: '3px' }}
+                >
+                  {card.label}
+                </div>
+                <a
+                  href={`mailto:${card.email}`}
+                  className="font-mono"
+                  style={{
+                    fontSize: '12px',
+                    color: 'var(--orange)',
+                    textDecoration: 'none',
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  {card.email}
+                </a>
+                <div
+                  className="font-rajdhani"
+                  style={{
+                    fontSize: '13px',
+                    color: 'rgba(255,255,255,0.4)',
+                    marginTop: '4px',
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {card.desc}
+                </div>
               </div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--orange)', marginBottom: 4 }}>{c.email}</div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-3)' }}>{c.desc}</div>
             </div>
           ))}
-
-          <div style={{ background: 'var(--carbon)', border: '1px solid var(--border)', borderRadius: 4, padding: 20, marginTop: 8 }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', color: 'var(--text-3)', textTransform: 'uppercase', marginBottom: 10 }}>RESPONSE TIME</div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-2)' }}>General: 24–48 hours</div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-2)' }}>Partnerships: 2–5 business days</div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-2)' }}>Build consultation: 1–2 business days</div>
-          </div>
         </div>
-      </section>
+      </div>
     </div>
   )
 }
