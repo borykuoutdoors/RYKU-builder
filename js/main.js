@@ -56,23 +56,7 @@
     });
   });
 
-  /* ---- INTERSECTION OBSERVER (Reveal animations) ---- */
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-        revealObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-  document.querySelectorAll('.reveal').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(24px)';
-    el.style.transition = 'opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1)';
-    revealObserver.observe(el);
-  });
+  /* ---- REVEAL ANIMATIONS (handled by js/animations.js via Framer Motion) ---- */
 
   /* ---- TOAST NOTIFICATIONS ---- */
   window.showToast = function (message, type = 'success', duration = 3500) {
@@ -137,13 +121,6 @@
     });
   });
 
-  /* ---- HERO PARALLAX ---- */
-  const heroBg = document.querySelector('.hero-bg-gradient');
-  if (heroBg) {
-    window.addEventListener('scroll', () => {
-      const scrolled = window.scrollY;
-      heroBg.style.transform = `translateY(${scrolled * 0.3}px)`;
-    }, { passive: true });
-  }
+  /* ---- HERO PARALLAX (handled by js/animations.js via Framer Motion scroll()) ---- */
 
 })();
