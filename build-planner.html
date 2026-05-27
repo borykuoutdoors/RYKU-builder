@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/account.css">
   <style>
     body { overflow: hidden; }
     @media (max-width: 900px) { body { overflow: auto; } }
@@ -155,6 +156,7 @@
   </div>
 
   <div class="planner-top-actions">
+    <div class="nav-auth-area"></div>
     <button class="btn btn-ghost btn-sm" id="btn-clear-build" title="Clear Build">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       Clear
@@ -163,6 +165,16 @@
     <button class="btn btn-secondary btn-sm" id="btn-export-quote">Export Quote</button>
     <button class="btn btn-primary btn-sm" id="btn-save-build">Save Build</button>
   </div>
+</div>
+<div class="nav-mobile-menu">
+  <a href="index.html" class="nav-mobile-link">Home</a>
+  <a href="builds.html" class="nav-mobile-link">Builds</a>
+  <a href="gear.html" class="nav-mobile-link">Gear</a>
+  <a href="installers.html" class="nav-mobile-link">Installers</a>
+  <a href="about.html" class="nav-mobile-link">About</a>
+  <a href="contact.html" class="nav-mobile-link">Contact</a>
+  <a href="contest.html" class="nav-mobile-link">Contest</a>
+  <div class="mobile-auth-section"></div>
 </div>
 
 <!-- ===== PLANNER LAYOUT ===== -->
@@ -640,6 +652,7 @@
 
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
+<script src="js/auth.js"></script>
 <script>
   /* Initialize vehicle config selects with data */
   (function() {

@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/account.css">
   <style>
     /* PAGE-SPECIFIC OVERRIDES */
     .featured-builds-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
@@ -79,9 +80,11 @@
       <li><a href="installers.html" class="nav-link">Installers</a></li>
       <li><a href="about.html" class="nav-link">About</a></li>
       <li><a href="contact.html" class="nav-link">Contact</a></li>
+      <li><a href="contest.html" class="nav-link">Contest</a></li>
     </ul>
 
     <div class="nav-cta">
+      <div class="nav-auth-area"></div>
       <a href="build-planner.html" class="btn btn-primary btn-sm">Start Build</a>
       <button class="nav-mobile-toggle" aria-label="Menu">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect y="3" width="18" height="2" rx="1" fill="currentColor"/><rect y="8" width="18" height="2" rx="1" fill="currentColor"/><rect y="13" width="18" height="2" rx="1" fill="currentColor"/></svg>
@@ -98,7 +101,9 @@
   <a href="installers.html" class="nav-mobile-link">Installers</a>
   <a href="about.html" class="nav-mobile-link">About</a>
   <a href="contact.html" class="nav-mobile-link">Contact</a>
+  <a href="contest.html" class="nav-mobile-link">Contest</a>
   <a href="build-planner.html" class="btn btn-primary" style="margin-top:16px;">Start Build</a>
+  <div class="mobile-auth-section"></div>
 </div>
 
 <!-- ===== HERO ===== -->
@@ -397,6 +402,7 @@
 
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
+<script src="js/auth.js"></script>
 <script>
   /* Render featured builds */
   (function () {

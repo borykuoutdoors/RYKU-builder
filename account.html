@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account — BŌRYKU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/account.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-mark">RY</div>
+      <div><div class="nav-logo-text">BŌRYKU</div><span class="nav-logo-sub">/ RYKU</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="builds.html" class="nav-link">Builds</a></li>
+      <li><a href="gear.html" class="nav-link">Gear</a></li>
+      <li><a href="installers.html" class="nav-link">Installers</a></li>
+      <li><a href="contest.html" class="nav-link">Contest</a></li>
+    </ul>
+    <div class="nav-cta">
+      <div class="nav-auth-area"></div>
+      <a href="build-planner.html" class="btn btn-primary btn-sm">Start Build</a>
+      <button class="nav-mobile-toggle">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect y="3" width="18" height="2" rx="1" fill="currentColor"/><rect y="8" width="18" height="2" rx="1" fill="currentColor"/><rect y="13" width="18" height="2" rx="1" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+<div class="nav-mobile-menu">
+  <a href="index.html" class="nav-mobile-link">Home</a>
+  <a href="builds.html" class="nav-mobile-link">Builds</a>
+  <a href="gear.html" class="nav-mobile-link">Gear</a>
+  <a href="installers.html" class="nav-mobile-link">Installers</a>
+  <div class="mobile-auth-section"></div>
+</div>
+
+<!-- ACCOUNT LAYOUT -->
+<div class="account-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="account-sidebar">
+    <!-- User identity -->
+    <div style="padding:0 8px 24px;border-bottom:1px solid var(--border);margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="profile-avatar-lg" id="sidebar-avatar" style="width:52px;height:52px;font-size:1.25rem;">?</div>
+        <div>
+          <div style="font-size:0.9375rem;font-weight:800;" id="sidebar-name">Loading…</div>
+          <div style="font-size:0.75rem;color:var(--text-3);" id="sidebar-email"></div>
+          <span class="tag tag-default" style="font-size:0.5625rem;margin-top:4px;" id="sidebar-plan">FREE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav items -->
+    <nav>
+      <button class="account-nav-item active" data-section="profile" onclick="switchSection('profile')">
+        <span class="account-nav-icon">👤</span> My Profile
+      </button>
+      <button class="account-nav-item" data-section="my-builds" onclick="switchSection('my-builds')">
+        <span class="account-nav-icon">🔧</span> My Builds
+      </button>
+      <button class="account-nav-item" data-section="saved" onclick="switchSection('saved')">
+        <span class="account-nav-icon">♥</span> Saved Builds
+      </button>
+      <button class="account-nav-item" data-section="contest" onclick="switchSection('contest')">
+        <span class="account-nav-icon">🏆</span> Monthly Contest
+      </button>
+      <button class="account-nav-item" data-section="subscription" onclick="switchSection('subscription')">
+        <span class="account-nav-icon">⭐</span> Subscription
+      </button>
+      <button class="account-nav-item" data-section="settings" onclick="switchSection('settings')">
+        <span class="account-nav-icon">⚙️</span> Settings
+      </button>
+    </nav>
+
+    <div style="margin-top:auto;padding-top:24px;border-top:1px solid var(--border);margin-top:32px;">
+      <button class="account-nav-item" style="color:var(--danger);" onclick="BORIKU_AUTH.signOut()">
+        <span class="account-nav-icon">↩</span> Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="account-main">
+
+    <!-- ===== MY PROFILE ===== -->
+    <div class="account-section active" id="section-profile">
+      <div class="account-section-header">
+        <h1 class="account-section-title">My Profile</h1>
+        <p class="account-section-desc">Manage your BŌRYKU identity and vehicle information.</p>
+      </div>
+
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar-lg" id="profile-avatar-display">?</div>
+        <div>
+          <div style="font-size:0.875rem;font-weight:700;margin-bottom:4px;" id="profile-name-display">—</div>
+          <div style="font-size:0.8125rem;color:var(--text-3);margin-bottom:10px;" id="profile-email-display">—</div>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('Photo upload requires Supabase Storage setup.','info')">
+            Upload Photo
+          </button>
+        </div>
+      </div>
+
+      <form id="profile-form" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:680px;" onsubmit="saveProfile(event)">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" id="p-fullname" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-input" id="p-username" placeholder="@handle">
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label class="form-label">Bio</label>
+          <textarea class="form-textarea" id="p-bio" style="min-height:80px;" placeholder="Tell the community about your build style…"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Instagram / Social Handle</label>
+          <input type="text" class="form-input" id="p-social" placeholder="@yourhandle">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Location</label>
+          <input type="text" class="form-input" id="p-location" placeholder="City, State">
+        </div>
+
+        <div style="grid-column:1/-1;">
+          <div class="divider" style="margin:8px 0 20px;"></div>
+          <div class="label" style="margin-bottom:12px;">Primary Vehicle</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Make & Model</label>
+          <input type="text" class="form-input" id="p-vehicle" placeholder="e.g. Toyota Tacoma">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Year & Trim</label>
+          <input type="text" class="form-input" id="p-vehicle-year" placeholder="e.g. 2021 TRD Pro">
+        </div>
+        <div style="grid-column:1/-1;">
+          <button type="submit" class="btn btn-primary">Save Profile</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ===== MY BUILDS ===== -->
+    <div class="account-section" id="section-my-builds">
+      <div class="account-section-header">
+        <h1 class="account-section-title">My Builds</h1>
+        <p class="account-section-desc">Builds you've configured and saved in the Build Planner.</p>
+      </div>
+      <div style="margin-bottom:20px;">
+        <a href="build-planner.html" class="btn btn-primary">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          New Build
+        </a>
+      </div>
+      <div id="my-builds-list">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- ===== SAVED BUILDS ===== -->
+    <div class="account-section" id="section-saved">
+      <div class="account-section-header">
+        <h1 class="account-section-title">Saved Builds</h1>
+        <p class="account-section-desc">Community builds you've saved for inspiration.</p>
+      </div>
+      <div id="saved-builds-list">
+        <!-- Rendered by JS -->
+      </div>
+      <a href="builds.html" class="btn btn-secondary" style="margin-top:16px;">Browse Community Builds →</a>
+    </div>
+
+    <!-- ===== MONTHLY CONTEST ===== -->
+    <div class="account-section" id="section-contest">
+      <div class="account-section-header">
+        <h1 class="account-section-title">Monthly Contest</h1>
+        <p class="account-section-desc">Submit your real build for the monthly Build of the Month contest.</p>
+      </div>
+
+      <div class="card" style="padding:28px;margin-bottom:24px;background:linear-gradient(135deg,rgba(255,85,31,0.05),var(--surface));">
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <div style="font-size:2.5rem;">🏆</div>
+          <div style="flex:1;">
+            <div style="font-size:0.625rem;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:4px;">Active Now</div>
+            <div style="font-size:1.125rem;font-weight:900;margin-bottom:4px;">BUILD OF THE MONTH</div>
+            <div style="font-size:0.8125rem;color:var(--text-3);">Submit your real completed build. Top 3 win premium gear.</div>
+          </div>
+          <a href="submit-build.html" class="btn btn-primary">Submit Your Build</a>
+        </div>
+      </div>
+
+      <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:12px;">Your Entries</div>
+      <div id="contest-entries-list">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div style="margin-top:28px;">
+        <a href="contest.html" class="btn btn-secondary">View Full Contest Gallery →</a>
+      </div>
+    </div>
+
+    <!-- ===== SUBSCRIPTION ===== -->
+    <div class="account-section" id="section-subscription">
+      <div class="account-section-header">
+        <h1 class="account-section-title">Subscription</h1>
+        <p class="account-section-desc">Manage your BŌRYKU plan and access PRO features.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:680px;margin-bottom:36px;">
+        <!-- Free Plan -->
+        <div class="plan-card current" id="free-plan-card">
+          <div class="plan-badge free">Current Plan</div>
+          <div style="font-size:1.125rem;font-weight:900;margin-bottom:4px;">Free</div>
+          <div class="plan-price">$0<span style="font-size:0.875rem;font-weight:400;color:var(--text-3);">/mo</span></div>
+          <div class="plan-features">
+            <div class="plan-feature"><span class="plan-feature-check">✓</span> Build Planner access</div>
+            <div class="plan-feature"><span class="plan-feature-check">✓</span> Browse gear & brands</div>
+            <div class="plan-feature"><span class="plan-feature-check">✓</span> Find installers</div>
+            <div class="plan-feature"><span class="plan-feature-check">✓</span> 3 saved builds</div>
+            <div class="plan-feature"><span class="plan-feature-check">✓</span> Contest participation</div>
+            <div class="plan-feature"><span class="plan-feature-lock">🔒</span> <span style="color:var(--text-4);">Unlimited saved builds</span></div>
+            <div class="plan-feature"><span class="plan-feature-lock">🔒</span> <span style="color:var(--text-4);">PRO compatibility tools</span></div>
+            <div class="plan-feature"><span class="plan-feature-lock">🔒</span> <span style="color:var(--text-4);">Priority installer quotes</span></div>
+          </div>
+        </div>
+
+        <!-- Pro Plan -->
+        <div class="plan-card pro">
+          <div class="plan-badge pro">⭐ PRO</div>
+          <div style="font-size:1.125rem;font-weight:900;margin-bottom:4px;">BŌRYKU Pro</div>
+          <div class="plan-price" style="color:var(--warning);">$9<span style="font-size:0.875rem;font-weight:400;color:var(--text-3);">/mo</span></div>
+          <div class="plan-features">
+            <div class="plan-feature"><span class="plan-feature-check">✓</span> Everything in Free</div>
+            <div class="plan-feature"><span class="plan-feature-check">✓</span> Unlimited saved builds</div>
+            <div class="plan-feature"><span class="plan-feature-check">✓</span> Advanced compatibility</div>
+            <div class="plan-feature"><span class="plan-feature-check">✓</span> Priority installer quotes</div>
+            <div class="plan-feature"><span class="plan-feature-check">✓</span> Build export (PDF)</div>
+            <div class="plan-feature"><span class="plan-feature-check">✓</span> Early access to features</div>
+            <div class="plan-feature"><span class="plan-feature-check">✓</span> PRO badge on profile</div>
+            <div class="plan-feature"><span class="plan-feature-check">✓</span> Bonus contest entries</div>
+          </div>
+          <button class="btn btn-primary" style="width:100%;margin-top:20px;" onclick="showToast('Payment coming soon — Stripe integration planned.','info')">
+            Upgrade to PRO
+          </button>
+        </div>
+      </div>
+
+      <div style="padding:20px;background:var(--bg-3);border:1px solid var(--border);border-radius:var(--r-lg);max-width:680px;">
+        <div style="font-size:0.8125rem;color:var(--text-3);line-height:1.65;">
+          💳 <strong style="color:var(--text-2);">Payments coming soon.</strong> Stripe integration is in development. Subscribe to the newsletter to be notified when PRO launches.
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SETTINGS ===== -->
+    <div class="account-section" id="section-settings">
+      <div class="account-section-header">
+        <h1 class="account-section-title">Settings</h1>
+        <p class="account-section-desc">Notifications, privacy, and account management.</p>
+      </div>
+
+      <div style="max-width:580px;display:flex;flex-direction:column;gap:28px;">
+        <!-- Notifications -->
+        <div>
+          <div style="font-size:0.875rem;font-weight:800;margin-bottom:16px;">Notifications</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-size:0.875rem;font-weight:600;">Contest updates</div>
+                <div style="font-size:0.75rem;color:var(--text-3);">Monthly results, winners, new contests</div>
+              </div>
+              <label style="cursor:pointer;position:relative;width:44px;height:24px;">
+                <input type="checkbox" checked style="opacity:0;width:0;height:0;position:absolute;" id="notif-contest">
+                <span class="toggle-track" style="position:absolute;inset:0;background:var(--accent);border-radius:12px;transition:0.2s;"></span>
+                <span class="toggle-thumb" style="position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:0.2s;transform:translateX(20px);"></span>
+              </label>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-size:0.875rem;font-weight:600;">New gear & brands</div>
+                <div style="font-size:0.75rem;color:var(--text-3);">When new brands join the platform</div>
+              </div>
+              <label style="cursor:pointer;position:relative;width:44px;height:24px;">
+                <input type="checkbox" style="opacity:0;width:0;height:0;position:absolute;">
+                <span style="position:absolute;inset:0;background:var(--surface-3);border-radius:12px;transition:0.2s;"></span>
+                <span style="position:absolute;top:2px;left:2px;width:20px;height:20px;background:var(--text-3);border-radius:50%;transition:0.2s;"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Privacy -->
+        <div>
+          <div style="font-size:0.875rem;font-weight:800;margin-bottom:16px;">Privacy</div>
+          <div class="form-group" style="margin-bottom:12px;">
+            <label class="form-label">Profile Visibility</label>
+            <select class="form-select">
+              <option>Public — anyone can see my profile</option>
+              <option>Community — only logged-in users</option>
+              <option>Private — only me</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Danger zone -->
+        <div>
+          <div style="font-size:0.875rem;font-weight:800;margin-bottom:16px;color:var(--danger);">Danger Zone</div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button class="btn btn-secondary btn-sm" onclick="showToast('Password reset email sent.','success')">Change Password</button>
+            <button class="btn btn-sm" style="border:1px solid var(--danger);color:var(--danger);background:none;"
+                    onclick="if(confirm('Delete your account? This cannot be undone.')) showToast('Account deletion requires confirmation email — coming soon.','warning')">
+              Delete Account
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/contest.js"></script>
+<script>
+(function() {
+  /* Guard: must be logged in */
+  if (!BORIKU_AUTH.isLoggedIn()) {
+    window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+    return;
+  }
+
+  const user = BORIKU_AUTH.currentUser;
+
+  /* Welcome toast */
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('welcome')) window.showToast('Welcome to BŌRYKU, ' + user.fullName.split(' ')[0] + '! 🔧');
+
+  /* Populate sidebar */
+  document.getElementById('sidebar-avatar').textContent = user.avatar;
+  document.getElementById('sidebar-name').textContent = user.fullName || user.email;
+  document.getElementById('sidebar-email').textContent = user.email;
+  document.getElementById('sidebar-plan').textContent = user.plan === 'pro' ? '⭐ PRO' : 'FREE';
+
+  /* Populate profile form */
+  document.getElementById('profile-avatar-display').textContent = user.avatar;
+  document.getElementById('profile-name-display').textContent = user.fullName;
+  document.getElementById('profile-email-display').textContent = user.email;
+  document.getElementById('p-fullname').value  = user.fullName || '';
+  document.getElementById('p-username').value  = user.username || '';
+  document.getElementById('p-bio').value       = user.bio || '';
+  document.getElementById('p-social').value    = user.socialHandle || '';
+  document.getElementById('p-location').value  = user.location || '';
+  document.getElementById('p-vehicle').value   = user.vehicleMake ? user.vehicleMake + ' ' + user.vehicleModel : '';
+  document.getElementById('p-vehicle-year').value = user.vehicleYear ? user.vehicleYear + ' ' + (user.vehicleTrim || '') : '';
+
+  /* Section routing from hash */
+  function switchSection(id) {
+    document.querySelectorAll('.account-section').forEach(s => s.classList.toggle('active', s.id === 'section-' + id));
+    document.querySelectorAll('.account-nav-item').forEach(b => b.classList.toggle('active', b.dataset.section === id));
+    window.location.hash = id;
+  }
+  window.switchSection = switchSection;
+
+  const hash = window.location.hash.replace('#','') || 'profile';
+  switchSection(hash);
+
+  /* Save profile */
+  window.saveProfile = function(e) {
+    e.preventDefault();
+    BORIKU_AUTH.updateProfile({
+      fullName:      document.getElementById('p-fullname').value,
+      username:      document.getElementById('p-username').value,
+      bio:           document.getElementById('p-bio').value,
+      socialHandle:  document.getElementById('p-social').value,
+      location:      document.getElementById('p-location').value
+    });
+    document.getElementById('profile-avatar-display').textContent = BORIKU_AUTH.currentUser.avatar;
+    document.getElementById('sidebar-avatar').textContent = BORIKU_AUTH.currentUser.avatar;
+    document.getElementById('sidebar-name').textContent = BORIKU_AUTH.currentUser.fullName;
+    window.showToast('Profile saved!');
+  };
+
+  /* My Builds */
+  function renderMyBuilds() {
+    const list = document.getElementById('my-builds-list');
+    const builds = BORIKU_AUTH.getSavedBuilds();
+    if (builds.length === 0) {
+      list.innerHTML = `<div style="text-align:center;padding:48px;color:var(--text-3);border:1px dashed var(--border);border-radius:var(--r-xl);">
+        <div style="font-size:2rem;margin-bottom:12px;">🔧</div>
+        <div style="font-weight:700;margin-bottom:6px;">No saved builds yet</div>
+        <div style="font-size:0.8125rem;margin-bottom:20px;">Configure your vehicle and save a build from the Build Planner.</div>
+        <a href="build-planner.html" class="btn btn-primary btn-sm">Open Build Planner</a>
+      </div>`;
+      return;
+    }
+    list.innerHTML = builds.map(b => `
+      <div class="saved-build-item">
+        <div class="saved-build-thumb">🛻</div>
+        <div class="saved-build-info">
+          <div class="saved-build-name">${b.buildName || 'Untitled Build'}</div>
+          <div class="saved-build-meta">
+            ${b.vehicle ? b.vehicle.name + ' ' + b.year : 'Vehicle not set'} &nbsp;·&nbsp;
+            ${Object.keys(b.selectedProducts || {}).length} parts &nbsp;·&nbsp;
+            $${((b.totalCost || 0)).toLocaleString()}
+          </div>
+          <div style="font-size:0.6875rem;color:var(--text-4);margin-top:3px;">${new Date(b.savedAt).toLocaleDateString()}</div>
+        </div>
+        <div class="saved-build-actions">
+          <a href="build-planner.html" class="btn btn-secondary btn-sm">Edit</a>
+          <button class="btn btn-ghost btn-sm" style="color:var(--danger);" onclick="deleteBuild('${b.id}')">✕</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  renderMyBuilds();
+
+  window.deleteBuild = function(id) {
+    if (!confirm('Remove this build?')) return;
+    BORIKU_AUTH.deleteSavedBuild(id);
+    renderMyBuilds();
+    window.showToast('Build removed.', 'info');
+  };
+
+  /* Saved community builds (mock) */
+  function renderSavedBuilds() {
+    const list = document.getElementById('saved-builds-list');
+    const saved = JSON.parse(localStorage.getItem('boriku_community_saves_' + user.id) || '[]');
+    if (saved.length === 0) {
+      list.innerHTML = `<div style="text-align:center;padding:48px;color:var(--text-3);border:1px dashed var(--border);border-radius:var(--r-xl);">
+        <div style="font-size:2rem;margin-bottom:12px;">♥</div>
+        <div style="font-weight:700;margin-bottom:6px;">No saved builds yet</div>
+        <div style="font-size:0.8125rem;margin-bottom:20px;">Browse the community builds gallery and save builds for inspiration.</div>
+        <a href="builds.html" class="btn btn-secondary btn-sm">Browse Builds</a>
+      </div>`;
+      return;
+    }
+    list.innerHTML = saved.map(b => `
+      <div class="saved-build-item">
+        <div class="saved-build-thumb">🚙</div>
+        <div class="saved-build-info">
+          <div class="saved-build-name">${b.name}</div>
+          <div class="saved-build-meta">${b.vehicle}</div>
+        </div>
+        <a href="builds.html" class="btn btn-ghost btn-sm">View →</a>
+      </div>
+    `).join('');
+  }
+  renderSavedBuilds();
+
+  /* Contest entries */
+  function renderContestEntries() {
+    const list = document.getElementById('contest-entries-list');
+    const entries = BORIKU_CONTEST.getUserSubmissions().filter(e => e.userId === user.id || !e.userId);
+    if (entries.length === 0) {
+      list.innerHTML = `<div style="padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);text-align:center;color:var(--text-3);">
+        <div style="font-size:0.875rem;font-weight:700;margin-bottom:6px;">No contest entries yet</div>
+        <div style="font-size:0.8125rem;margin-bottom:16px;">Submit your real completed build for a chance to win premium gear.</div>
+        <a href="submit-build.html" class="btn btn-primary btn-sm">Submit Your Build</a>
+      </div>`;
+      return;
+    }
+    list.innerHTML = entries.map(e => `
+      <div class="saved-build-item">
+        <div class="saved-build-thumb" style="background:var(--accent-glow);">🏆</div>
+        <div class="saved-build-info">
+          <div class="saved-build-name">${e.buildName}</div>
+          <div class="saved-build-meta">${e.vehicle || (e.vehicleMake + ' ' + e.vehicleModel)} &nbsp;·&nbsp; ${e.votes || 0} votes</div>
+          <div style="margin-top:4px;">
+            <span class="tag ${e.status === 'pending' ? 'tag-warning' : e.status === 'approved' ? 'tag-success' : 'tag-accent'}">${e.status}</span>
+          </div>
+        </div>
+        <a href="contest.html" class="btn btn-ghost btn-sm">View →</a>
+      </div>
+    `).join('');
+  }
+  renderContestEntries();
+})();
+</script>
+</body>
+</html>
