@@ -28,6 +28,12 @@ const FOG = [
   { id: 3, top: 51, dur: 18, dly: 3,  dir: -1 },
 ]
 
+// ─── Alignment constants — tune these to nail the truck-door position ───────
+const FINAL_LOGO_X        =  220   // px rightward from viewport center → truck door
+const FINAL_LOGO_Y        =  -12   // px up from viewport center
+const FINAL_LOGO_SCALE    =  0.090 // 700 × 0.090 ≈ 63px — matches door-badge size
+const FINAL_LOGO_ROTATION =  0     // degrees clockwise at final position
+
 // ─── Component ──────────────────────────────────────────────────────────────
 export default function CinematicHero() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -45,9 +51,12 @@ export default function CinematicHero() {
   //  700×700px base element. Shrinks to 0.090 ≈ 63px (truck door).
   //  Moves slightly left + down to land on the truck door logo.
   // ═══════════════════════════════════════════════════════════════
-  const logoScale  = useTransform(cam,             [0, 0.62], [1,    0.090])
-  const logoX      = useTransform(cam,             [0, 0.62], [0,    -38])   // left toward door
-  const logoY      = useTransform(cam,             [0, 0.62], [0,     44])   // down toward door
+  const logoScale  = useTransform(cam,             [0, 0.62], [1,    FINAL_LOGO_SCALE])
+  const logoX      = useTransform(cam,             [0, 0.62], [0,    FINAL_LOGO_X])
+  const logoY      = useTransform(cam,             [0, 0.62], [0,    FINAL_LOGO_Y])
+  const logoRotate = useTransform(cam,             [0, 0.62], [0,    FINAL_LOGO_ROTATION])
+  // Comes into sharp focus as it lands on the door badge
+  const logoBlur   = useTransform(scrollYProgress, [0, 0.55], ['blur(6px)', 'blur(0px)'])
   // Fade logo out at end — truck's real door logo "takes over"
   const logoOp     = useTransform(scrollYProgress, [0.58, 0.76], [1, 0])
   // Glow behind logo reduces as logo shrinks
@@ -249,14 +258,16 @@ export default function CinematicHero() {
           transform: 'translate(-50%, -50%)',
           zIndex: 20, pointerEvents: 'none',
         }}>
-          {/* Animated wrapper — x/y/scale/opacity */}
+          {/* Animated wrapper — x/y/scale/opacity/rotate/blur */}
           <motion.div style={{
             x: logoX,
             y: logoY,
             scale: logoScale,
+            rotate: logoRotate,
             opacity: logoOp,
+            filter: logoBlur,
             transformOrigin: 'center center',
-            willChange: 'transform, opacity',
+            willChange: 'transform, opacity, filter',
           }}>
             {/* Outer bloom — large diffuse glow, fades with logo */}
             <motion.div style={{
@@ -279,17 +290,16 @@ export default function CinematicHero() {
               }}
             />
 
-            {/* Logo image — screen blend removes the dark charcoal background */}
+            {/* Logo image — transparent PNG, no blend mode needed */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/ryku-logo-icon.jpg"
+              src="/ryku-logo-icon.png"
               alt="BŌRYKU"
               style={{
                 display: 'block',
                 width: 700,
                 height: 700,
                 objectFit: 'contain',
-                mixBlendMode: 'screen',
               }}
             />
           </motion.div>
