@@ -111,7 +111,7 @@ export default function Navbar() {
           </nav>
 
           {/* ── Right-side controls ───────────────────────────────── */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
 
             {/* Build badge — shown only when a vehicle is selected */}
             {vehicle && (
@@ -119,6 +119,7 @@ export default function Navbar() {
                 initial={{ opacity: 0, scale: 0.85 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.85 }}
+                className="nav-build-badge"
                 style={{
                   fontFamily: 'var(--font-mono)',
                   fontSize: '0.5625rem',
@@ -135,11 +136,67 @@ export default function Navbar() {
               </motion.div>
             )}
 
+            {/* Auth buttons — always visible */}
+            <motion.div
+              className="nav-auth-btns"
+              style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+            >
+              <Link href="/login" aria-label="Log in to your account" data-action="nav-login">
+                <motion.button
+                  whileHover={{ color: '#fff', borderColor: 'rgba(255,255,255,0.25)' }}
+                  transition={{ duration: 0.15 }}
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    color: 'rgba(255,255,255,0.55)',
+                    fontFamily: 'var(--font-rajdhani)',
+                    fontWeight: 700,
+                    fontSize: '0.72rem',
+                    letterSpacing: '0.16em',
+                    padding: '7px 14px',
+                    cursor: 'pointer',
+                    textTransform: 'uppercase',
+                    borderRadius: 2,
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  LOG IN
+                </motion.button>
+              </Link>
+
+              <Link href="/login?mode=signup" aria-label="Create a free account" data-action="nav-signup">
+                <motion.button
+                  whileHover={{ background: 'rgba(255,85,31,0.18)', borderColor: 'rgba(255,85,31,0.6)', color: '#fff' }}
+                  transition={{ duration: 0.15 }}
+                  style={{
+                    background: 'rgba(255,85,31,0.08)',
+                    border: '1px solid rgba(255,85,31,0.35)',
+                    color: 'var(--orange)',
+                    fontFamily: 'var(--font-rajdhani)',
+                    fontWeight: 700,
+                    fontSize: '0.72rem',
+                    letterSpacing: '0.16em',
+                    padding: '7px 14px',
+                    cursor: 'pointer',
+                    textTransform: 'uppercase',
+                    borderRadius: 2,
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  SIGN UP
+                </motion.button>
+              </Link>
+            </motion.div>
+
             {/* START BUILD button */}
-            <Link href="/build" aria-label="Start your build">
+            <Link href="/build" aria-label="Start your build" className="nav-start-build">
               <button
                 className="btn btn-primary"
-                style={{ fontSize: '0.75rem', padding: '9px 20px' }}
+                style={{ fontSize: '0.72rem', padding: '9px 18px' }}
                 data-action="start-build"
               >
                 START BUILD
@@ -233,7 +290,40 @@ export default function Navbar() {
                 </Link>
               )
             })}
-            <Link href="/build" style={{ marginTop: '16px' }}>
+
+            {/* Auth row */}
+            <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
+              <Link href="/login" style={{ flex: 1 }} data-action="mobile-login">
+                <button
+                  style={{
+                    width: '100%', background: 'transparent',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                    color: 'rgba(255,255,255,0.6)',
+                    fontFamily: 'var(--font-rajdhani)', fontWeight: 700,
+                    fontSize: '0.875rem', letterSpacing: '0.16em',
+                    padding: '11px 0', cursor: 'pointer', textTransform: 'uppercase', borderRadius: 2,
+                  }}
+                >
+                  LOG IN
+                </button>
+              </Link>
+              <Link href="/login?mode=signup" style={{ flex: 1 }} data-action="mobile-signup">
+                <button
+                  style={{
+                    width: '100%', background: 'rgba(255,85,31,0.08)',
+                    border: '1px solid rgba(255,85,31,0.4)',
+                    color: 'var(--orange)',
+                    fontFamily: 'var(--font-rajdhani)', fontWeight: 700,
+                    fontSize: '0.875rem', letterSpacing: '0.16em',
+                    padding: '11px 0', cursor: 'pointer', textTransform: 'uppercase', borderRadius: 2,
+                  }}
+                >
+                  SIGN UP
+                </button>
+              </Link>
+            </div>
+
+            <Link href="/build" style={{ marginTop: '8px' }}>
               <button
                 className="btn btn-primary"
                 style={{ width: '100%', justifyContent: 'center' }}
@@ -254,6 +344,15 @@ export default function Navbar() {
         }
         @media (min-width: 861px) {
           .mobile-menu { display: none !important; }
+        }
+        /* Hide START BUILD text label on medium screens to give auth buttons room */
+        @media (max-width: 1020px) and (min-width: 861px) {
+          .nav-start-build .btn-primary { padding: 9px 14px !important; font-size: 0.68rem !important; }
+          .nav-auth-btns button { padding: 7px 10px !important; font-size: 0.68rem !important; }
+        }
+        /* Hide build badge on very tight screens */
+        @media (max-width: 920px) and (min-width: 861px) {
+          .nav-build-badge { display: none !important; }
         }
       `}</style>
     </>

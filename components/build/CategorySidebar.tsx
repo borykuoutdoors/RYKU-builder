@@ -41,20 +41,53 @@ export default function CategorySidebar({ activeCategory, onCategoryChange }: Pr
   }, [onCategoryChange])
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        width: 200,
-        minWidth: 200,
-        background: '#0a0a0a',
-        borderRight: '1px solid #1e1e1e',
-        overflowY: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2,
-        padding: '8px 6px',
-      }}
-    >
+    <>
+      <style>{`
+        @media (max-width: 767px) {
+          .cat-sidebar {
+            width: 100% !important;
+            min-width: 0 !important;
+            flex-direction: row !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            border-right: none !important;
+            border-bottom: 1px solid #1e1e1e;
+            padding: 6px 8px !important;
+            gap: 4px !important;
+          }
+          .cat-sidebar button {
+            flex-direction: column !important;
+            width: auto !important;
+            min-width: 64px !important;
+            padding: 8px 10px !important;
+            border-left: none !important;
+            border-bottom: 3px solid transparent;
+            flex-shrink: 0 !important;
+            align-items: center !important;
+            gap: 4px !important;
+          }
+          .cat-sidebar button[data-active="true"] {
+            border-bottom-color: #f97316 !important;
+          }
+          .cat-sidebar .cat-label { display: none !important; }
+          .cat-sidebar .cat-count { display: none !important; }
+        }
+      `}</style>
+      <div
+        ref={containerRef}
+        className="cat-sidebar"
+        style={{
+          width: 200,
+          minWidth: 200,
+          background: '#0a0a0a',
+          borderRight: '1px solid #1e1e1e',
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+          padding: '8px 6px',
+        }}
+      >
       {CATEGORIES.map(cat => {
         const isActive = cat.id === activeCategory
         const count = compatCounts[cat.id] ?? 0
@@ -63,6 +96,7 @@ export default function CategorySidebar({ activeCategory, onCategoryChange }: Pr
           <button
             key={cat.id}
             data-cat={cat.id}
+            data-active={isActive ? 'true' : 'false'}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -70,7 +104,7 @@ export default function CategorySidebar({ activeCategory, onCategoryChange }: Pr
               padding: '9px 10px',
               background: isActive ? '#1a1200' : 'transparent',
               border: 'none',
-              borderLeft: `3px solid ${isActive ? '#f97316' : 'transparent'}`,
+              borderLeft: isActive ? '3px solid #f97316' : '3px solid transparent',
               borderRadius: 4,
               cursor: 'pointer',
               textAlign: 'left',
@@ -79,7 +113,7 @@ export default function CategorySidebar({ activeCategory, onCategoryChange }: Pr
             }}
           >
             <span style={{ fontSize: 16 }}>{cat.emoji}</span>
-            <span style={{
+            <span className="cat-label" style={{
               flex: 1,
               fontSize: 12,
               fontWeight: 600,
@@ -89,7 +123,7 @@ export default function CategorySidebar({ activeCategory, onCategoryChange }: Pr
             }}>
               {cat.label}
             </span>
-            <span style={{
+            <span className="cat-count" style={{
               fontSize: 10,
               fontWeight: 700,
               color: isActive ? '#f97316' : '#444',
@@ -104,6 +138,7 @@ export default function CategorySidebar({ activeCategory, onCategoryChange }: Pr
           </button>
         )
       })}
-    </div>
+      </div>
+    </>
   )
 }

@@ -57,7 +57,7 @@ export default function BuildSummary() {
 
   return (
     <>
-      <div style={{
+      <div className="build-summary-panel" style={{
         width: 280,
         minWidth: 280,
         background: '#0a0a0a',
@@ -68,6 +68,22 @@ export default function BuildSummary() {
         overflow: 'hidden',
         position: 'relative',
       }}>
+        <style>{`
+          @media (max-width: 767px) {
+            .build-summary-panel {
+              width: 100% !important;
+              min-width: 0 !important;
+              height: auto !important;
+              overflow: visible !important;
+              border-left: none !important;
+              border-top: 1px solid #1e1e1e;
+            }
+            .build-summary-panel > div[style*="flex: 1"] {
+              overflow-y: visible !important;
+              max-height: none !important;
+            }
+          }
+        `}</style>
         {/* Header: build name input */}
         <div style={{ padding: '14px 16px', borderBottom: '1px solid #1e1e1e', flexShrink: 0 }}>
           <input

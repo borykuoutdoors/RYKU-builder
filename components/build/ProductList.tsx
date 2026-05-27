@@ -57,7 +57,21 @@ export default function ProductList({ activeCategory }: Props) {
   const currentBuildTotal = gearTotal() + laborTotal()
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+    <div className="product-list-root" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+      <style>{`
+        @media (max-width: 767px) {
+          .product-list-root {
+            overflow: visible !important;
+            flex: none !important;
+            height: auto !important;
+          }
+          .product-list-root .product-scroll-area {
+            overflow: visible !important;
+            height: auto !important;
+            flex: none !important;
+          }
+        }
+      `}</style>
       {/* Sort toolbar */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -89,7 +103,7 @@ export default function ProductList({ activeCategory }: Props) {
       </div>
 
       {/* Product grid */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: 16 }}>
+      <div className="product-scroll-area" style={{ flex: 1, overflowY: 'auto', padding: 16 }}>
         {sorted.length === 0 ? (
           <div style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
