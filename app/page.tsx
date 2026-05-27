@@ -1,473 +1,747 @@
 'use client'
 
+import { useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
-import HeroSection from '@/components/hero/HeroSection'
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useInView,
+  useMotionValue,
+  useSpring,
+  AnimatePresence,
+} from 'framer-motion'
+import { VEHICLES } from '@/data/vehicles'
 import { MISSIONS } from '@/data/missions'
 import { CATEGORIES } from '@/data/products'
 
-/* ─── Animation helpers ─────────────────────────────────────────────────── */
+/* ─── Constants ─────────────────────────────────────────────────────────── */
+
+const STATS = [
+  { value: 55, suffix: '+', label: 'Verified Products' },
+  { value: 10, suffix: '',  label: 'Vehicle Platforms' },
+  { value: 4200, suffix: '+', label: 'Builds Configured' },
+  { value: 6, suffix: '',   label: 'Installer Partners' },
+]
+
+const FEATURES = [
+  { icon: '⚙️', title: 'COMPATIBILITY ENGINE', desc: 'Every product verified against your exact vehicle, trim, and drivetrain.' },
+  { icon: '🎯', title: 'MISSION MATCHING',     desc: 'Overland. Tactical. Expedition. Get gear matched to how you actually drive.' },
+  { icon: '🔩', title: 'INSTALLER NETWORK',    desc: 'Connect with RYKU-certified shops. Get a real quote, not a forum guess.' },
+  { icon: '📊', title: 'BUILD INTELLIGENCE',   desc: 'Smart warnings, budget tracking, and conflict detection in real time.' },
+  { icon: '📄', title: 'INSTANT QUOTE',        desc: 'Export a PDF build sheet to share with any installer or keep as reference.' },
+  { icon: '🛡️', title: 'NO GUESSWORK',         desc: 'We killed the spreadsheet. One platform. Every decision, handled.' },
+]
+
+/* ─── Animation variants ────────────────────────────────────────────────── */
+
 const fadeUp = {
-  hidden:  { opacity: 0, y: 24 },
-  visible: (delay = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1], delay },
+  hidden:  { opacity: 0, y: 48 },
+  visible: (i = 0) => ({
+    opacity: 1, y: 0,
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: i * 0.08 },
   }),
 }
 
-/* ─── Section wrapper ───────────────────────────────────────────────────── */
-function Section({
-  id,
-  className = '',
-  children,
-}: {
-  id?: string
-  className?: string
-  children: React.ReactNode
-}) {
-  return (
-    <section
-      id={id}
-      className={`relative py-20 px-6 ${className}`}
-    >
-      <div className="max-w-[1200px] mx-auto">{children}</div>
-    </section>
-  )
+const fadeIn = {
+  hidden:  { opacity: 0 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    transition: { duration: 0.9, ease: 'easeOut', delay: i * 0.06 },
+  }),
 }
 
-/* ─── Eyebrow + Section title ───────────────────────────────────────────── */
-function SectionHeader({
-  eyebrow,
-  title,
-  center = false,
-}: {
-  eyebrow: string
-  title: string
-  center?: boolean
-}) {
+const scaleIn = {
+  hidden:  { opacity: 0, scale: 0.92 },
+  visible: (i = 0) => ({
+    opacity: 1, scale: 1,
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: i * 0.07 },
+  }),
+}
+
+/* ─── Animated counter ──────────────────────────────────────────────────── */
+
+function AnimCounter({ to, suffix }: { to: number; suffix: string }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-20% 0px' })
+  const raw = useMotionValue(0)
+  const spring = useSpring(raw, { stiffness: 60, damping: 18 })
+
+  useEffect(() => {
+    if (inView) raw.set(to)
+  }, [inView, raw, to])
+
+  useEffect(() => {
+    return spring.on('change', (v) => {
+      if (ref.current) ref.current.textContent = Math.round(v).toLocaleString() + suffix
+    })
+  }, [spring, suffix])
+
+  return <span ref={ref}>0{suffix}</span>
+}
+
+/* ─── Parallax section ──────────────────────────────────────────────────── */
+
+function ParallaxSection({ children, speed = 0.3 }: { children: React.ReactNode; speed?: number }) {
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
+  const y = useTransform(scrollYProgress, [0, 1], [`${-speed * 60}px`, `${speed * 60}px`])
   return (
-    <div className={`mb-12 ${center ? 'text-center' : ''}`}>
-      <p className="eyebrow mb-3">{eyebrow}</p>
-      <h2
-        className="font-bebas text-[clamp(2.2rem,4vw,3.5rem)] text-[var(--text)] leading-none tracking-wide"
-      >
-        {title}
-      </h2>
+    <div ref={ref} style={{ overflow: 'hidden' }}>
+      <motion.div style={{ y }}>{children}</motion.div>
     </div>
   )
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
-   2 — Features strip
-   ══════════════════════════════════════════════════════════════════════════ */
-const FEATURES = [
-  {
-    icon: '🗂️',
-    title: 'BUILD PLANNER',
-    desc:  'Configure your rig step by step with live compatibility checks.',
-  },
-  {
-    icon: '🖥️',
-    title: 'LIVE PREVIEW',
-    desc:  'SVG vehicle visualization updates in real time as you add gear.',
-  },
-  {
-    icon: '⚙️',
-    title: 'GEAR SYSTEMS',
-    desc:  '55+ compatibility-verified products across every overland category.',
-  },
-  {
-    icon: '🔧',
-    title: 'INSTALLER NETWORK',
-    desc:  'Connect directly with certified shops in the RYKU partner network.',
-  },
-  {
-    icon: '☁️',
-    title: 'SAVED LOADOUTS',
-    desc:  'Cloud-synced builds accessible anywhere. PRO members only.',
-    pro: true,
-  },
-  {
-    icon: '📦',
-    title: 'SUPPLY DROPS',
-    desc:  'Monthly PRO member giveaways featuring premium overland gear.',
-    pro: true,
-  },
-]
+/* ─── Scanline overlay ──────────────────────────────────────────────────── */
 
-function FeaturesStrip() {
+function Scanlines() {
   return (
-    <Section id="features" className="border-t border-[var(--border)]">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {FEATURES.map((f, i) => (
-          <motion.div
-            key={f.title}
-            className="card card-interactive p-6 flex flex-col gap-3"
-            variants={fadeUp}
-            custom={i * 0.07}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-40px' }}
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-2xl" role="img" aria-label={f.title}>{f.icon}</span>
-              {f.pro && (
-                <span className="badge badge-cyan">PRO</span>
-              )}
-            </div>
-            <h3 className="font-bebas text-[1.3rem] tracking-wider text-[var(--text)]">
-              {f.title}
-            </h3>
-            <p className="font-rajdhani text-[0.875rem] text-[var(--text-2)] leading-snug">
-              {f.desc}
-            </p>
-          </motion.div>
-        ))}
-      </div>
-    </Section>
+    <div style={{
+      position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1,
+      backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px)',
+    }} />
   )
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
-   3 — Missions section
-   ══════════════════════════════════════════════════════════════════════════ */
-function MissionsSection() {
-  return (
-    <Section
-      id="missions"
-      className="border-t border-[var(--border)] bg-[var(--carbon)] bg-opacity-40"
-    >
-      <SectionHeader eyebrow="MISSION PROFILES" title="CHOOSE YOUR MISSION" center />
+/* ─── Grid background ───────────────────────────────────────────────────── */
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {MISSIONS.map((m, i) => (
-          <motion.div
-            key={m.id}
-            className="mission-card"
-            data-mission={m.id}
-            variants={fadeUp}
-            custom={i * 0.06}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-40px' }}
-          >
-            <div className="text-3xl mb-3" role="img" aria-label={m.name}>
-              {m.icon}
-            </div>
-            <h3 className="font-bebas text-[1.1rem] tracking-wider text-[var(--text)] mb-1">
-              {m.name}
-            </h3>
-            <p className="font-rajdhani text-[0.8rem] text-[var(--text-3)] leading-snug">
-              {m.description}
-            </p>
-          </motion.div>
-        ))}
-      </div>
-    </Section>
+function GridBg({ opacity = 0.022 }: { opacity?: number }) {
+  return (
+    <div style={{
+      position: 'absolute', inset: 0, pointerEvents: 'none',
+      backgroundImage: `linear-gradient(rgba(255,85,31,${opacity}) 1px, transparent 1px), linear-gradient(90deg, rgba(255,85,31,${opacity}) 1px, transparent 1px)`,
+      backgroundSize: '40px 40px',
+    }} />
   )
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
-   4 — Gear section
-   ══════════════════════════════════════════════════════════════════════════ */
-const BRANDS = [
-  'ARB', 'FRONT RUNNER', 'WARN', 'iKAMPER', 'FOX', 'ICON',
-  'BAJA DESIGNS', 'RIGID INDUSTRIES', 'MAXTRAX', 'METHOD', 'FALKEN',
-  'BF GOODRICH', 'ROOFNEST', 'DECKED', 'GOAL ZERO', 'GARMIN',
-]
+/* ─── Orange glow ───────────────────────────────────────────────────────── */
 
-// Only show the 6 gear-focused categories from CATEGORIES
-const GEAR_CATS = ['Suspension', 'Roof Racks', 'Rooftop Tents', 'Lighting', 'Recovery', 'Wheels & Tires']
+function OrangeGlow({ x = '0%', y = '80%', size = 600, opacity = 0.07 }: {
+  x?: string; y?: string; size?: number; opacity?: number
+}) {
+  return (
+    <div style={{
+      position: 'absolute', left: x, top: y,
+      width: size, height: size,
+      background: `radial-gradient(circle, rgba(255,85,31,${opacity}) 0%, transparent 70%)`,
+      transform: 'translate(-50%, -50%)',
+      pointerEvents: 'none',
+    }} />
+  )
+}
 
-function GearSection() {
-  const gearCategories = CATEGORIES.filter(c => GEAR_CATS.includes(c.id))
-  // duplicate for seamless marquee
-  const marqueeItems = [...BRANDS, ...BRANDS]
+/* ─── Page ──────────────────────────────────────────────────────────────── */
+
+export default function HomePage() {
+  const heroRef = useRef(null)
+  const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const heroY     = useTransform(heroScroll, [0, 1], ['0%', '28%'])
+  const heroOpacity = useTransform(heroScroll, [0, 0.6], [1, 0])
 
   return (
-    <Section id="gear" className="border-t border-[var(--border)]">
-      <SectionHeader eyebrow="GEAR SYSTEMS" title="PREMIUM OVERLAND GEAR" />
+    <div style={{ background: '#0A0A0A', color: '#E8E8E8', overflowX: 'hidden' }}>
 
-      {/* Brand marquee */}
-      <div
-        className="overflow-hidden mb-12 py-4 border-y border-[var(--border-subtle)]"
-        aria-label="Partner brands"
+      {/* ════════════════════════════════════════════════════════════════
+          SECTION 1 — HERO  (100vh fullscreen)
+      ════════════════════════════════════════════════════════════════ */}
+      <section
+        ref={heroRef}
+        style={{
+          position: 'relative',
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+          textAlign: 'center',
+        }}
       >
-        <div className="marquee-track gap-0">
-          {marqueeItems.map((brand, i) => (
-            <span
-              key={`${brand}-${i}`}
-              className="font-mono text-[0.6875rem] tracking-[0.22em] text-[var(--text-3)] uppercase px-8 shrink-0 border-r border-[var(--border-subtle)] last:border-r-0"
-            >
-              {brand}
-            </span>
-          ))}
-        </div>
-      </div>
+        <GridBg opacity={0.028} />
+        <Scanlines />
 
-      {/* Gear category cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        {gearCategories.map((cat, i) => (
+        {/* Radial ambient glows */}
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 80% 50% at 50% 60%, rgba(255,85,31,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 40% 40% at 20% 80%, rgba(255,85,31,0.04) 0%, transparent 70%)', pointerEvents: 'none' }} />
+
+        {/* Parallax content wrapper */}
+        <motion.div
+          style={{ y: heroY, opacity: heroOpacity, position: 'relative', zIndex: 2, padding: '0 24px', maxWidth: '1000px' }}
+        >
+          {/* Eyebrow */}
           <motion.div
-            key={cat.id}
-            variants={fadeUp}
-            custom={i * 0.07}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-40px' }}
+            variants={fadeIn} initial="hidden" animate="visible" custom={0}
+            style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '0.22em', color: 'var(--orange)', textTransform: 'uppercase', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}
           >
-            <Link
-              href="/gear"
-              className="card card-interactive p-6 flex flex-col gap-2 group block"
-              data-category={cat.id}
-            >
-              <span className="text-2xl" role="img" aria-label={cat.label}>{cat.emoji}</span>
-              <h3 className="font-bebas text-[1.2rem] tracking-wider text-[var(--text)] group-hover:text-[var(--orange)] transition-colors">
-                {cat.label}
-              </h3>
-              <span
-                className="font-mono text-[0.625rem] tracking-[0.14em] uppercase"
-                style={{ color: 'var(--text-3)' }}
-              >
-                VIEW PRODUCTS →
-              </span>
-            </Link>
+            <span style={{ display: 'inline-block', width: 28, height: 1, background: 'var(--orange)', opacity: 0.5 }} />
+            RYKU BUILD PLATFORM v1.0
+            <span style={{ display: 'inline-block', width: 28, height: 1, background: 'var(--orange)', opacity: 0.5 }} />
           </motion.div>
-        ))}
-      </div>
-    </Section>
-  )
-}
 
-/* ══════════════════════════════════════════════════════════════════════════
-   5 — About / CTA / Plans section
-   ══════════════════════════════════════════════════════════════════════════ */
-const PLANS = [
-  {
-    tier: 'FREE',
-    price: '$0',
-    period: 'forever',
-    color: 'var(--text-2)',
-    borderColor: 'rgba(255,255,255,0.08)',
-    features: [
-      'Build planner (1 active build)',
-      '55+ compatible products',
-      'Vehicle platform selector',
-      'Mission profile selection',
-      'Installer network directory',
-    ],
-  },
-  {
-    tier: 'PRO',
-    price: '$9',
-    period: '/ month',
-    color: 'var(--orange)',
-    borderColor: 'rgba(255,85,31,0.35)',
-    highlight: true,
-    features: [
-      'Unlimited saved loadouts',
-      'Cloud sync across devices',
-      'Priority installer quotes',
-      'Monthly supply drops',
-      'Early access to new gear',
-      'Build cost analytics',
-    ],
-  },
-]
+          {/* Main headline — split for cinematic stagger */}
+          <div style={{ overflow: 'hidden' }}>
+            <motion.h1
+              variants={fadeUp} initial="hidden" animate="visible" custom={1}
+              style={{
+                fontFamily: 'var(--font-bebas)',
+                fontSize: 'clamp(72px, 13vw, 160px)',
+                lineHeight: 0.88,
+                letterSpacing: '0.03em',
+                color: '#fff',
+                margin: 0,
+              }}
+            >
+              CONTROL
+            </motion.h1>
+          </div>
+          <div style={{ overflow: 'hidden' }}>
+            <motion.h1
+              variants={fadeUp} initial="hidden" animate="visible" custom={1.8}
+              style={{
+                fontFamily: 'var(--font-bebas)',
+                fontSize: 'clamp(72px, 13vw, 160px)',
+                lineHeight: 0.88,
+                letterSpacing: '0.03em',
+                color: 'var(--orange)',
+                margin: 0,
+              }}
+            >
+              THE CHAOS
+            </motion.h1>
+          </div>
 
-function AboutSection() {
-  return (
-    <Section
-      id="about"
-      className="border-t border-[var(--border)] bg-[var(--carbon)] bg-opacity-30"
-    >
-      <div className="text-center mb-16">
-        <p className="eyebrow mb-3">JOIN THE NETWORK</p>
-        <h2 className="font-bebas text-[clamp(2.4rem,5vw,4rem)] text-[var(--text)] leading-none tracking-wide mb-6">
-          JOIN THE RYKU NETWORK
-        </h2>
-        <p className="font-rajdhani text-[var(--text-2)] text-[1.0625rem] max-w-[540px] mx-auto">
-          The BŌRYKU platform connects builders, installers, and brands into
-          one intelligent overland ecosystem. Pick your tier, start your build.
-        </p>
-      </div>
-
-      {/* Plan cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-[760px] mx-auto mb-12">
-        {PLANS.map((plan) => (
-          <div
-            key={plan.tier}
-            className="relative rounded-sm p-7 flex flex-col gap-5"
+          {/* Subtitle */}
+          <motion.p
+            variants={fadeUp} initial="hidden" animate="visible" custom={3}
             style={{
-              background:   plan.highlight ? 'rgba(255,85,31,0.04)' : 'var(--carbon)',
-              border:       `1px solid ${plan.borderColor}`,
+              fontFamily: 'var(--font-rajdhani)',
+              fontSize: 'clamp(16px, 2.2vw, 22px)',
+              color: 'rgba(255,255,255,0.45)',
+              maxWidth: '560px',
+              margin: '28px auto 40px',
+              lineHeight: 1.55,
             }}
           >
-            {plan.highlight && (
-              <span
-                className="badge badge-med absolute top-4 right-4"
-                style={{ fontSize: '0.6rem' }}
-              >
-                RECOMMENDED
-              </span>
-            )}
+            The precision overland build platform. Select your vehicle. Choose your mission.
+            Configure your rig with compatibility-verified gear and real installer connections.
+          </motion.p>
 
-            {/* Tier */}
-            <div>
-              <p
-                className="font-mono text-[0.625rem] tracking-[0.2em] uppercase mb-1"
-                style={{ color: plan.color }}
-              >
-                {plan.tier}
-              </p>
-              <div className="flex items-baseline gap-1">
-                <span
-                  className="font-bebas text-[2.8rem] leading-none"
-                  style={{ color: plan.highlight ? 'var(--orange)' : 'var(--text)' }}
-                >
-                  {plan.price}
-                </span>
-                <span className="font-mono text-[0.7rem] text-[var(--text-3)]">
-                  {plan.period}
-                </span>
-              </div>
-            </div>
-
-            {/* Feature list */}
-            <ul className="flex flex-col gap-2">
-              {plan.features.map((feat) => (
-                <li
-                  key={feat}
-                  className="font-rajdhani text-[0.9rem] text-[var(--text-2)] flex items-start gap-2"
-                >
-                  <span style={{ color: plan.color }} aria-hidden="true">▸</span>
-                  {feat}
-                </li>
-              ))}
-            </ul>
-
-            {/* CTA */}
-            <div className="mt-auto pt-2">
-              {plan.highlight ? (
-                <Link
-                  href="/build"
-                  className="btn btn-primary w-full justify-center"
-                  data-plan="pro"
-                >
-                  START BUILD
-                </Link>
-              ) : (
-                <Link
-                  href="/build"
-                  className="btn btn-ghost w-full justify-center"
-                  data-plan="free"
-                >
-                  START FREE
-                </Link>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Bottom CTA */}
-      <div className="text-center">
-        <Link href="/build" className="btn btn-primary btn-lg" data-cta="hero-bottom">
-          START BUILD
-        </Link>
-      </div>
-    </Section>
-  )
-}
-
-/* ══════════════════════════════════════════════════════════════════════════
-   6 — Contact preview section
-   ══════════════════════════════════════════════════════════════════════════ */
-const CONTACT_CARDS = [
-  {
-    type:  'General',
-    icon:  '✉️',
-    info:  'hello@boryku.com',
-    desc:  'Platform questions, feedback, and general inquiries.',
-  },
-  {
-    type:  'Build Consultation',
-    icon:  '🗂️',
-    info:  'builds@boryku.com',
-    desc:  'Get expert guidance on your overland build configuration.',
-  },
-  {
-    type:  'Installer Partnership',
-    icon:  '🔧',
-    info:  'installers@boryku.com',
-    desc:  'Join the RYKU certified installer network.',
-  },
-  {
-    type:  'Brand Partnership',
-    icon:  '🤝',
-    info:  'brands@boryku.com',
-    desc:  'List your products on the BŌRYKU platform.',
-  },
-]
-
-function ContactSection() {
-  return (
-    <Section id="contact" className="border-t border-[var(--border)]">
-      <SectionHeader eyebrow="CONTACT" title="GET IN TOUCH" />
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-        {CONTACT_CARDS.map((c, i) => (
+          {/* CTAs */}
           <motion.div
-            key={c.type}
-            className="card p-5 flex flex-col gap-3"
-            variants={fadeUp}
-            custom={i * 0.08}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-40px' }}
+            variants={fadeUp} initial="hidden" animate="visible" custom={3.8}
+            style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap' }}
           >
-            <span className="text-xl" role="img" aria-label={c.type}>{c.icon}</span>
-            <div>
-              <h3 className="font-bebas text-[1rem] tracking-wider text-[var(--text)] mb-0.5">
-                {c.type}
-              </h3>
-              <p className="font-mono text-[0.7rem] tracking-wide text-[var(--orange)] mb-2">
-                {c.info}
-              </p>
-              <p className="font-rajdhani text-[0.8rem] text-[var(--text-3)] leading-snug">
-                {c.desc}
-              </p>
-            </div>
+            <Link href="/build" className="btn btn-primary btn-lg" data-action="hero-cta-primary">
+              START YOUR BUILD
+            </Link>
+            <Link href="/builds" className="btn btn-ghost btn-lg" data-action="hero-cta-secondary">
+              EXPLORE BUILDS
+            </Link>
           </motion.div>
-        ))}
-      </div>
+        </motion.div>
 
-      <div className="text-center">
-        <Link
-          href="/contact"
-          className="btn btn-outline"
-          data-cta="contact-section"
+        {/* Scroll indicator */}
+        <motion.div
+          variants={fadeIn} initial="hidden" animate="visible" custom={5}
+          style={{ position: 'absolute', bottom: '36px', left: '50%', transform: 'translateX(-50%)', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}
         >
-          OPEN CONTACT FORM
-        </Link>
-      </div>
-    </Section>
-  )
-}
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
+            style={{ width: 20, height: 32, border: '1.5px solid rgba(255,85,31,0.35)', borderRadius: 10, display: 'flex', justifyContent: 'center', paddingTop: 6 }}
+          >
+            <div style={{ width: 3, height: 6, background: 'var(--orange)', borderRadius: 2, opacity: 0.7 }} />
+          </motion.div>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '0.2em', color: 'rgba(255,255,255,0.2)', textTransform: 'uppercase' }}>SCROLL</span>
+        </motion.div>
 
-/* ══════════════════════════════════════════════════════════════════════════
-   Page
-   ══════════════════════════════════════════════════════════════════════════ */
-export default function HomePage() {
-  return (
-    <>
-      <HeroSection />
-      <FeaturesStrip />
-      <MissionsSection />
-      <GearSection />
-      <AboutSection />
-      <ContactSection />
-    </>
+        {/* Bottom fade */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '140px', background: 'linear-gradient(to bottom, transparent, #0A0A0A)', pointerEvents: 'none' }} />
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════
+          SECTION 2 — STATEMENT  (Apple-style large copy reveal)
+      ════════════════════════════════════════════════════════════════ */}
+      <section style={{ padding: 'clamp(80px, 12vw, 140px) 24px', position: 'relative', overflow: 'hidden' }}>
+        <OrangeGlow x="100%" y="50%" size={700} opacity={0.06} />
+
+        <div style={{ maxWidth: '900px', margin: '0 auto', position: 'relative' }}>
+          {/* Overland/tactical statement — word-by-word reveal */}
+          {[
+            { text: 'Overland builds are', color: 'rgba(255,255,255,0.35)' },
+            { text: 'complicated.', color: 'rgba(255,255,255,0.65)' },
+            { text: 'BŌRYKU', color: 'var(--orange)' },
+            { text: 'is not.', color: '#fff' },
+          ].map((chunk, i) => (
+            <motion.span
+              key={i}
+              variants={fadeUp} initial="hidden"
+              whileInView="visible" viewport={{ once: true, margin: '-10%' }}
+              custom={i}
+              style={{
+                display: 'inline',
+                fontFamily: 'var(--font-bebas)',
+                fontSize: 'clamp(44px, 7vw, 96px)',
+                letterSpacing: '0.04em',
+                lineHeight: 1.0,
+                color: chunk.color,
+                marginRight: '0.28em',
+              }}
+            >
+              {chunk.text}
+            </motion.span>
+          ))}
+
+          <motion.p
+            variants={fadeUp} initial="hidden"
+            whileInView="visible" viewport={{ once: true, margin: '-10%' }}
+            custom={4}
+            style={{ color: 'rgba(255,255,255,0.4)', fontSize: 'clamp(15px, 1.8vw, 19px)', lineHeight: 1.7, maxWidth: '600px', marginTop: '36px', fontFamily: 'var(--font-rajdhani)' }}
+          >
+            We call it <span style={{ color: 'rgba(102,255,255,0.8)', fontFamily: 'var(--font-mono)', fontSize: '0.9em' }}>Build Intelligence</span> — not AI, not automation.
+            A precision system that filters 55+ products down to exactly what fits
+            your rig, your mission, and your budget. Built by overlanders, for overlanders.
+          </motion.p>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════
+          SECTION 3 — STATS  (large counter reveal)
+      ════════════════════════════════════════════════════════════════ */}
+      <section style={{ padding: 'clamp(60px, 8vw, 100px) 24px', borderTop: '1px solid rgba(255,85,31,0.08)', borderBottom: '1px solid rgba(255,85,31,0.08)', position: 'relative' }}>
+        <GridBg opacity={0.015} />
+        <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '40px', position: 'relative' }}>
+          {STATS.map((stat, i) => (
+            <motion.div
+              key={stat.label}
+              variants={fadeUp} initial="hidden"
+              whileInView="visible" viewport={{ once: true, margin: '-5%' }}
+              custom={i}
+              style={{ textAlign: 'center' }}
+            >
+              <div style={{ fontFamily: 'var(--font-bebas)', fontSize: 'clamp(52px, 7vw, 88px)', color: 'var(--orange)', lineHeight: 1, letterSpacing: '0.02em' }}>
+                <AnimCounter to={stat.value} suffix={stat.suffix} />
+              </div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', marginTop: '8px' }}>
+                {stat.label}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════
+          SECTION 4 — VEHICLES  (horizontal scroll marquee)
+      ════════════════════════════════════════════════════════════════ */}
+      <section style={{ padding: 'clamp(80px, 10vw, 120px) 0', overflow: 'hidden', position: 'relative' }}>
+        <OrangeGlow x="10%" y="50%" size={500} opacity={0.05} />
+
+        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px', marginBottom: '48px' }}>
+          <motion.div
+            variants={fadeUp} initial="hidden"
+            whileInView="visible" viewport={{ once: true }}
+            style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '0.22em', color: 'var(--orange)', textTransform: 'uppercase', marginBottom: '16px' }}
+          >
+            — 10 PLATFORMS SUPPORTED
+          </motion.div>
+          <motion.h2
+            variants={fadeUp} initial="hidden"
+            whileInView="visible" viewport={{ once: true }}
+            custom={1}
+            style={{ fontFamily: 'var(--font-bebas)', fontSize: 'clamp(40px, 6vw, 72px)', letterSpacing: '0.04em', lineHeight: 0.95, margin: 0 }}
+          >
+            SELECT YOUR<br />
+            <span style={{ color: 'var(--orange)' }}>VEHICLE</span>
+          </motion.h2>
+        </div>
+
+        {/* Infinite marquee of vehicle cards */}
+        <div style={{ position: 'relative' }}>
+          {/* Left/right fade */}
+          <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 120, background: 'linear-gradient(to right, #0A0A0A, transparent)', zIndex: 2, pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 120, background: 'linear-gradient(to left, #0A0A0A, transparent)', zIndex: 2, pointerEvents: 'none' }} />
+
+          <motion.div
+            animate={{ x: ['0%', '-50%'] }}
+            transition={{ duration: 28, ease: 'linear', repeat: Infinity }}
+            style={{ display: 'flex', gap: '16px', width: 'max-content', padding: '8px 0' }}
+          >
+            {[...VEHICLES, ...VEHICLES].map((v, i) => (
+              <Link
+                key={i}
+                href="/build"
+                data-vid={v.id}
+                style={{ textDecoration: 'none' }}
+              >
+                <motion.div
+                  whileHover={{ scale: 1.04, borderColor: 'rgba(255,85,31,0.5)' }}
+                  transition={{ duration: 0.2 }}
+                  style={{
+                    width: 200,
+                    background: '#111',
+                    border: '1px solid rgba(255,85,31,0.1)',
+                    borderRadius: 8,
+                    padding: '20px 18px',
+                    cursor: 'pointer',
+                    flexShrink: 0,
+                  }}
+                >
+                  <div style={{ fontSize: '36px', marginBottom: '12px' }}>{v.emoji}</div>
+                  <div style={{ fontFamily: 'var(--font-bebas)', fontSize: '18px', color: '#fff', letterSpacing: '0.06em', lineHeight: 1.1, marginBottom: '4px' }}>{v.name}</div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'rgba(255,255,255,0.32)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{v.sub}</div>
+                </motion.div>
+              </Link>
+            ))}
+          </motion.div>
+        </div>
+
+        <div style={{ maxWidth: '1100px', margin: '40px auto 0', padding: '0 24px' }}>
+          <motion.div
+            variants={fadeUp} initial="hidden"
+            whileInView="visible" viewport={{ once: true }}
+          >
+            <Link href="/build" className="btn btn-ghost" data-action="vehicles-see-all">
+              VIEW ALL VEHICLES →
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════
+          SECTION 5 — BUILD FLOW  (Tesla-style split panels)
+      ════════════════════════════════════════════════════════════════ */}
+      <section style={{ padding: 'clamp(80px, 10vw, 140px) 24px', borderTop: '1px solid rgba(255,85,31,0.08)', position: 'relative', overflow: 'hidden' }}>
+        <GridBg opacity={0.018} />
+        <OrangeGlow x="90%" y="50%" size={600} opacity={0.06} />
+
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <motion.div
+            variants={fadeUp} initial="hidden"
+            whileInView="visible" viewport={{ once: true }}
+            style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '0.22em', color: 'var(--orange)', textTransform: 'uppercase', marginBottom: '60px', textAlign: 'center' }}
+          >
+            — HOW IT WORKS
+          </motion.div>
+
+          {/* 4-step build flow */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '2px', position: 'relative' }}>
+            {[
+              { step: '01', title: 'SELECT VEHICLE', desc: '10 platforms. Pick your year, trim, and drivetrain to filter gear that actually fits.', icon: '🚙' },
+              { step: '02', title: 'CHOOSE MISSION', desc: 'Overland. Tactical. Expedition. Your mission shapes every gear recommendation.', icon: '🎯' },
+              { step: '03', title: 'SET BUDGET',     desc: 'Hard cap or unlimited. The platform tracks every dollar in real time as you build.', icon: '💰' },
+              { step: '04', title: 'CONFIGURE',      desc: '55+ verified products. Add gear, get warnings, generate a quote, contact an installer.', icon: '⚙️' },
+            ].map((s, i) => (
+              <motion.div
+                key={s.step}
+                variants={scaleIn} initial="hidden"
+                whileInView="visible" viewport={{ once: true, margin: '-5%' }}
+                custom={i}
+                style={{
+                  background: '#0f0f0f',
+                  border: '1px solid rgba(255,85,31,0.1)',
+                  padding: 'clamp(24px, 3vw, 36px)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}
+              >
+                {/* Step number watermark */}
+                <div style={{
+                  position: 'absolute', top: '-12px', right: '16px',
+                  fontFamily: 'var(--font-bebas)', fontSize: '88px',
+                  color: 'rgba(255,85,31,0.06)', lineHeight: 1, userSelect: 'none',
+                }}>
+                  {s.step}
+                </div>
+                <div style={{ fontSize: '28px', marginBottom: '16px' }}>{s.icon}</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '0.15em', color: 'var(--orange)', marginBottom: '10px', textTransform: 'uppercase' }}>STEP {s.step}</div>
+                <div style={{ fontFamily: 'var(--font-bebas)', fontSize: '22px', letterSpacing: '0.06em', color: '#fff', marginBottom: '10px' }}>{s.title}</div>
+                <div style={{ fontFamily: 'var(--font-rajdhani)', fontSize: '14px', color: 'rgba(255,255,255,0.4)', lineHeight: 1.6 }}>{s.desc}</div>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            variants={fadeUp} initial="hidden"
+            whileInView="visible" viewport={{ once: true }}
+            style={{ textAlign: 'center', marginTop: '48px' }}
+          >
+            <Link href="/build" className="btn btn-primary btn-lg" data-action="how-it-works-cta">
+              BEGIN CONFIGURATION →
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════
+          SECTION 6 — MISSIONS  (full-width dark grid)
+      ════════════════════════════════════════════════════════════════ */}
+      <section style={{ padding: 'clamp(80px, 10vw, 120px) 24px', position: 'relative', overflow: 'hidden' }}>
+        <OrangeGlow x="50%" y="0%" size={800} opacity={0.05} />
+
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '20px', marginBottom: '48px' }}>
+            <div>
+              <motion.div
+                variants={fadeUp} initial="hidden"
+                whileInView="visible" viewport={{ once: true }}
+                style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '0.22em', color: 'var(--orange)', textTransform: 'uppercase', marginBottom: '14px' }}
+              >
+                — 8 MISSION PROFILES
+              </motion.div>
+              <motion.h2
+                variants={fadeUp} initial="hidden"
+                whileInView="visible" viewport={{ once: true }} custom={1}
+                style={{ fontFamily: 'var(--font-bebas)', fontSize: 'clamp(40px, 6vw, 72px)', letterSpacing: '0.04em', lineHeight: 0.95, margin: 0 }}
+              >
+                WHAT IS YOUR<br />
+                <span style={{ color: 'var(--orange)' }}>MISSION?</span>
+              </motion.h2>
+            </div>
+            <motion.div
+              variants={fadeUp} initial="hidden"
+              whileInView="visible" viewport={{ once: true }}
+            >
+              <Link href="/build" className="btn btn-ghost" data-action="missions-cta">BUILD FOR YOUR MISSION →</Link>
+            </motion.div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px' }}>
+            {MISSIONS.map((m, i) => (
+              <motion.div
+                key={m.id}
+                variants={scaleIn} initial="hidden"
+                whileInView="visible" viewport={{ once: true, margin: '-5%' }}
+                custom={i}
+                whileHover={{ scale: 1.03, borderColor: 'rgba(255,85,31,0.4)' }}
+                transition={{ duration: 0.22 }}
+                style={{
+                  background: '#0f0f0f',
+                  border: '1px solid rgba(255,85,31,0.1)',
+                  borderRadius: 6,
+                  padding: '24px',
+                  cursor: 'default',
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}
+              >
+                <div style={{ fontSize: '28px', marginBottom: '12px' }}>{m.icon}</div>
+                <div style={{ fontFamily: 'var(--font-bebas)', fontSize: '20px', letterSpacing: '0.06em', color: '#fff', marginBottom: '6px' }}>{m.name.toUpperCase()}</div>
+                <div style={{ fontFamily: 'var(--font-rajdhani)', fontSize: '13px', color: 'rgba(255,255,255,0.38)', lineHeight: 1.5 }}>{m.description}</div>
+                {/* Subtle orange corner accent */}
+                <div style={{ position: 'absolute', top: 0, right: 0, width: 3, height: '100%', background: 'rgba(255,85,31,0)', transition: 'background 0.2s' }} />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════
+          SECTION 7 — GEAR CATEGORIES  (staggered cards)
+      ════════════════════════════════════════════════════════════════ */}
+      <section style={{ padding: 'clamp(80px, 10vw, 120px) 24px', borderTop: '1px solid rgba(255,85,31,0.08)', position: 'relative', background: '#0d0d0d' }}>
+        <GridBg opacity={0.015} />
+
+        <div style={{ maxWidth: '1100px', margin: '0 auto', position: 'relative' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '20px', marginBottom: '48px' }}>
+            <div>
+              <motion.div
+                variants={fadeUp} initial="hidden"
+                whileInView="visible" viewport={{ once: true }}
+                style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '0.22em', color: 'var(--orange)', textTransform: 'uppercase', marginBottom: '14px' }}
+              >
+                — 55+ VERIFIED PRODUCTS
+              </motion.div>
+              <motion.h2
+                variants={fadeUp} initial="hidden"
+                whileInView="visible" viewport={{ once: true }} custom={1}
+                style={{ fontFamily: 'var(--font-bebas)', fontSize: 'clamp(40px, 6vw, 72px)', letterSpacing: '0.04em', lineHeight: 0.95, margin: 0 }}
+              >
+                GEAR THAT<br />
+                <span style={{ color: 'var(--orange)' }}>ACTUALLY FITS</span>
+              </motion.h2>
+            </div>
+            <motion.div
+              variants={fadeUp} initial="hidden"
+              whileInView="visible" viewport={{ once: true }}
+            >
+              <Link href="/gear" className="btn btn-ghost" data-action="gear-browse">BROWSE GEAR →</Link>
+            </motion.div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '10px' }}>
+            {CATEGORIES.map((cat, i) => (
+              <motion.div
+                key={cat.id}
+                variants={scaleIn} initial="hidden"
+                whileInView="visible" viewport={{ once: true, margin: '-5%' }}
+                custom={i}
+                whileHover={{ scale: 1.04, borderColor: 'rgba(255,85,31,0.45)' }}
+                transition={{ duration: 0.22 }}
+                style={{
+                  background: '#111',
+                  border: '1px solid rgba(255,85,31,0.1)',
+                  borderRadius: 6,
+                  padding: '20px',
+                  cursor: 'default',
+                  position: 'relative',
+                }}
+              >
+                <div style={{ fontSize: '26px', marginBottom: '10px' }}>{cat.emoji}</div>
+                <div style={{ fontFamily: 'var(--font-bebas)', fontSize: '17px', letterSpacing: '0.06em', color: '#fff' }}>{cat.label}</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'rgba(255,85,31,0.5)', marginTop: '5px', letterSpacing: '0.1em' }}>
+                  VIEW PRODUCTS →
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════
+          SECTION 8 — FEATURES  (6-card grid)
+      ════════════════════════════════════════════════════════════════ */}
+      <section style={{ padding: 'clamp(80px, 10vw, 140px) 24px', position: 'relative', overflow: 'hidden' }}>
+        <OrangeGlow x="50%" y="100%" size={700} opacity={0.07} />
+
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '64px' }}>
+            <motion.div
+              variants={fadeUp} initial="hidden"
+              whileInView="visible" viewport={{ once: true }}
+              style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '0.22em', color: 'var(--orange)', textTransform: 'uppercase', marginBottom: '14px' }}
+            >
+              — PLATFORM CAPABILITIES
+            </motion.div>
+            <motion.h2
+              variants={fadeUp} initial="hidden"
+              whileInView="visible" viewport={{ once: true }} custom={1}
+              style={{ fontFamily: 'var(--font-bebas)', fontSize: 'clamp(40px, 6vw, 72px)', letterSpacing: '0.04em', lineHeight: 0.95 }}
+            >
+              BUILT FOR<br />
+              <span style={{ color: 'var(--orange)' }}>SERIOUS BUILDERS</span>
+            </motion.h2>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1px', background: 'rgba(255,85,31,0.08)' }}>
+            {FEATURES.map((f, i) => (
+              <motion.div
+                key={f.title}
+                variants={fadeIn} initial="hidden"
+                whileInView="visible" viewport={{ once: true, margin: '-5%' }}
+                custom={i}
+                style={{
+                  background: '#0A0A0A',
+                  padding: 'clamp(28px, 3vw, 40px)',
+                }}
+              >
+                <div style={{ fontSize: '28px', marginBottom: '16px' }}>{f.icon}</div>
+                <div style={{ fontFamily: 'var(--font-bebas)', fontSize: '18px', letterSpacing: '0.1em', color: '#fff', marginBottom: '10px' }}>{f.title}</div>
+                <div style={{ fontFamily: 'var(--font-rajdhani)', fontSize: '14px', color: 'rgba(255,255,255,0.4)', lineHeight: 1.65 }}>{f.desc}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════
+          SECTION 9 — FINAL CTA  (Tesla-style fullscreen)
+      ════════════════════════════════════════════════════════════════ */}
+      <section style={{
+        position: 'relative',
+        minHeight: '90vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        textAlign: 'center',
+        padding: '80px 24px',
+      }}>
+        {/* Ambient glow */}
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(255,85,31,0.1) 0%, transparent 65%)', pointerEvents: 'none' }} />
+        <GridBg opacity={0.025} />
+        <Scanlines />
+
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '820px' }}>
+          <motion.div
+            variants={fadeIn} initial="hidden"
+            whileInView="visible" viewport={{ once: true }}
+            style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '0.22em', color: 'var(--orange)', textTransform: 'uppercase', marginBottom: '24px' }}
+          >
+            — READY TO BUILD
+          </motion.div>
+
+          <motion.h2
+            variants={fadeUp} initial="hidden"
+            whileInView="visible" viewport={{ once: true }}
+            style={{
+              fontFamily: 'var(--font-bebas)',
+              fontSize: 'clamp(64px, 11vw, 140px)',
+              lineHeight: 0.9,
+              letterSpacing: '0.03em',
+              color: '#fff',
+              marginBottom: '0',
+            }}
+          >
+            CONFIGURE YOUR
+          </motion.h2>
+          <motion.h2
+            variants={fadeUp} initial="hidden"
+            whileInView="visible" viewport={{ once: true }} custom={1}
+            style={{
+              fontFamily: 'var(--font-bebas)',
+              fontSize: 'clamp(64px, 11vw, 140px)',
+              lineHeight: 0.9,
+              letterSpacing: '0.03em',
+              color: 'var(--orange)',
+              marginBottom: '0',
+            }}
+          >
+            ULTIMATE RIG
+          </motion.h2>
+
+          <motion.p
+            variants={fadeUp} initial="hidden"
+            whileInView="visible" viewport={{ once: true }} custom={2}
+            style={{ fontFamily: 'var(--font-rajdhani)', fontSize: 'clamp(16px, 2vw, 20px)', color: 'rgba(255,255,255,0.4)', margin: '32px auto', maxWidth: '500px', lineHeight: 1.55 }}
+          >
+            10 vehicles. 55+ products. 8 missions. Real installers. Zero guesswork.
+          </motion.p>
+
+          <motion.div
+            variants={fadeUp} initial="hidden"
+            whileInView="visible" viewport={{ once: true }} custom={3}
+            style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap' }}
+          >
+            <Link href="/build" className="btn btn-primary btn-lg" data-action="final-cta">
+              START BUILD — IT&apos;S FREE
+            </Link>
+            <Link href="/about" className="btn btn-ghost btn-lg" data-action="final-about">
+              LEARN MORE
+            </Link>
+          </motion.div>
+
+          {/* Stat strip */}
+          <motion.div
+            variants={fadeIn} initial="hidden"
+            whileInView="visible" viewport={{ once: true }} custom={4}
+            style={{
+              display: 'flex', justifyContent: 'center', gap: '40px', flexWrap: 'wrap',
+              marginTop: '60px', paddingTop: '40px',
+              borderTop: '1px solid rgba(255,85,31,0.15)',
+            }}
+          >
+            {['FREE TO USE', 'NO ACCOUNT REQUIRED', 'INSTANT QUOTE EXPORT'].map((label) => (
+              <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--orange)' }} />
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>{label}</span>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+    </div>
   )
 }
