@@ -1,0 +1,15 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/builds/route": "app/api/builds/route.js",
+  "/api/quote/route": "app/api/quote/route.js",
+  "/build/page": "app/build/page.js",
+  "/api/recommendations/route": "app/api/recommendations/route.js",
+  "/builds/page": "app/builds/page.js",
+  "/contact/page": "app/contact/page.js",
+  "/api/installers/route": "app/api/installers/route.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/gear/page": "app/gear/page.js",
+  "/page": "app/page.js",
+  "/installers/page": "app/installers/page.js",
+  "/about/page": "app/about/page.js"
+}
