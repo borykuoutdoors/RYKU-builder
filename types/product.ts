@@ -24,5 +24,6 @@ export interface Product {
   compat: string[]        // Vehicle IDs
   mission: string[]       // Mission IDs
   note: string
+  img?: string          // Product image URL — replace with real manufacturer photo
   pop?: boolean
 }

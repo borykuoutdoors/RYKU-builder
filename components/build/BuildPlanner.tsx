@@ -18,7 +18,7 @@ export default function BuildPlanner() {
   const step = useBuildStore(s => s.step)
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'hidden' }}>
       <StepBar />
 
       <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
@@ -73,7 +73,7 @@ export default function BuildPlanner() {
               animate="animate"
               exit="exit"
               transition={{ duration: 0.25, ease: 'easeInOut' }}
-              style={{ height: '100%', overflow: 'hidden' }}
+              style={{ height: '100%', minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
             >
               <Configurator />
             </motion.div>
