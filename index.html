@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BŌRYKU — CONTROL THE CHAOS | Overland & Tactical Vehicle Platform</title>
+  <meta name="description" content="BŌRYKU is the premium overland and tactical vehicle ecosystem. Build your rig, find gear, discover installers.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/account.css">
+  <style>
+    /* PAGE-SPECIFIC OVERRIDES */
+    .featured-builds-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .platform-visual {
+      position: relative;
+      height: 480px;
+      background: var(--bg-3);
+      border: 1px solid var(--border);
+      border-radius: var(--r-2xl);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .platform-visual-grid {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(var(--border-subtle) 1px, transparent 1px), linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.5;
+    }
+    .platform-visual-glow {
+      position: absolute;
+      width: 500px;
+      height: 300px;
+      background: radial-gradient(ellipse, rgba(255,85,31,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .cta-section {
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      padding: 96px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(255,85,31,0.07) 0%, transparent 70%);
+    }
+    @media (max-width: 900px) {
+      .featured-builds-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .featured-builds-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAVIGATION ===== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-mark">RY</div>
+      <div>
+        <div class="nav-logo-text">BŌRYKU</div>
+        <span class="nav-logo-sub">/ RYKU</span>
+      </div>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="builds.html" class="nav-link">Builds</a></li>
+      <li><a href="gear.html" class="nav-link">Gear</a></li>
+      <li><a href="installers.html" class="nav-link">Installers</a></li>
+      <li><a href="about.html" class="nav-link">About</a></li>
+      <li><a href="contact.html" class="nav-link">Contact</a></li>
+      <li><a href="contest.html" class="nav-link">Contest</a></li>
+    </ul>
+
+    <div class="nav-cta">
+      <div class="nav-auth-area"></div>
+      <a href="build-planner.html" class="btn btn-primary btn-sm">Start Build</a>
+      <button class="nav-mobile-toggle" aria-label="Menu">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect y="3" width="18" height="2" rx="1" fill="currentColor"/><rect y="8" width="18" height="2" rx="1" fill="currentColor"/><rect y="13" width="18" height="2" rx="1" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="nav-mobile-menu">
+  <a href="index.html" class="nav-mobile-link">Home</a>
+  <a href="builds.html" class="nav-mobile-link">Builds</a>
+  <a href="gear.html" class="nav-mobile-link">Gear</a>
+  <a href="installers.html" class="nav-mobile-link">Installers</a>
+  <a href="about.html" class="nav-mobile-link">About</a>
+  <a href="contact.html" class="nav-mobile-link">Contact</a>
+  <a href="contest.html" class="nav-mobile-link">Contest</a>
+  <a href="build-planner.html" class="btn btn-primary" style="margin-top:16px;">Start Build</a>
+  <div class="mobile-auth-section"></div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-bg-gradient"></div>
+    <div class="hero-grid"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow animate-fade-up">
+      <span class="hero-eyebrow-dot"></span>
+      Premium Overland & Tactical Vehicle Ecosystem
+    </div>
+
+    <h1 class="hero-title animate-fade-up delay-100">
+      <span class="line-1">CONTROL</span>
+      <span class="line-2" style="color:var(--text-2);">THE</span>
+      <span class="line-3">CHAOS</span>
+    </h1>
+
+    <p class="hero-subtitle animate-fade-up delay-200">
+      Build your rig exactly how you want it. Browse premium gear from top brands, find certified installers near you, and configure your ultimate overland machine.
+    </p>
+
+    <div class="hero-actions animate-fade-up delay-300">
+      <a href="build-planner.html" class="btn btn-primary btn-xl">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v6H2M8 1l4 4M8 1L4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="1" y="9" width="14" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+        Start Build
+      </a>
+      <a href="builds.html" class="btn btn-secondary btn-xl">
+        Explore Builds
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
+    <div class="hero-stats animate-fade-up delay-400">
+      <div class="hero-stat">
+        <div class="hero-stat-number"><span data-count="4200" data-suffix="+">0+</span></div>
+        <div class="hero-stat-label">Community Builds</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-number"><span data-count="180" data-suffix="+">0+</span></div>
+        <div class="hero-stat-label">Premium Brands</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-number"><span data-count="340" data-suffix="+">0+</span></div>
+        <div class="hero-stat-label">Certified Installers</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-number"><span data-count="7" data-suffix=" Platforms">0</span></div>
+        <div class="hero-stat-label">Vehicle Platforms</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="section" style="padding-top:80px;">
+  <div class="container">
+    <div class="section-header center reveal">
+      <div class="section-eyebrow">Platform</div>
+      <h2 class="display-md section-title">Everything You Need to Build Right</h2>
+      <p class="section-desc">BŌRYKU brings together premium brands, expert installers, and a powerful build configurator in one cinematic platform.</p>
+    </div>
+
+    <div class="feature-grid reveal">
+      <div class="feature-item">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="feature-title">Build Configurator</h3>
+        <p class="feature-desc">Manually select every part of your build with real-time visual preview. No auto-selections — this is YOUR rig.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="feature-title">Multi-Brand Gear</h3>
+        <p class="feature-desc">Browse hundreds of products from 180+ premium brands. Every category, every vehicle platform.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="1.5"/></svg>
+        </div>
+        <h3 class="feature-title">Find Installers</h3>
+        <p class="feature-desc">Discover certified shops near you. Compare services, check reviews, and request install quotes directly.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="feature-title">Real Compatibility</h3>
+        <p class="feature-desc">Products are filtered by your exact vehicle, year, and trim. Only see what actually fits your rig.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 20V10M6 20V4M18 20v-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="feature-title">Budget Tracker</h3>
+        <p class="feature-desc">Set your budget and track spending in real time. Includes part costs, install estimates, and remaining balance.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="feature-title">Export & Share</h3>
+        <p class="feature-desc">Save builds, export detailed quotes, and share your configuration with your installer or community.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURED BUILDS ===== -->
+<section class="section" style="background:var(--bg-2); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">Community</div>
+      <h2 class="display-md section-title">Featured Builds</h2>
+      <p class="section-desc">Real builds from the BŌRYKU community. Browse for inspiration or start your own.</p>
+    </div>
+
+    <div class="featured-builds-grid" id="featured-builds-grid">
+      <!-- Rendered by JS -->
+    </div>
+
+    <div style="text-align:center; margin-top:48px;" class="reveal">
+      <a href="builds.html" class="btn btn-secondary btn-lg">
+        View All Builds
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STATS ===== -->
+<div class="stats-strip reveal">
+  <div class="container">
+    <div class="stats-strip-inner">
+      <div class="stats-strip-item">
+        <div class="stats-strip-number"><em data-count="180" data-suffix="+">0+</em></div>
+        <div class="stats-strip-label">Premium Brands</div>
+      </div>
+      <div class="stats-strip-item">
+        <div class="stats-strip-number"><em data-count="1200" data-suffix="+">0+</em></div>
+        <div class="stats-strip-label">Products Cataloged</div>
+      </div>
+      <div class="stats-strip-item">
+        <div class="stats-strip-number"><em data-count="340" data-suffix="+">0+</em></div>
+        <div class="stats-strip-label">Verified Installers</div>
+      </div>
+      <div class="stats-strip-item">
+        <div class="stats-strip-number"><em data-count="98" data-suffix="%">0%</em></div>
+        <div class="stats-strip-label">Customer Satisfaction</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GEAR PREVIEW ===== -->
+<section class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">Gear</div>
+      <h2 class="display-md section-title">Shop Premium Brands</h2>
+      <p class="section-desc">Every major overland, off-road, and tactical brand — all in one place. Filtered for your vehicle.</p>
+    </div>
+
+    <div class="grid-4" id="brands-preview-grid">
+      <!-- Rendered by JS -->
+    </div>
+
+    <div style="text-align:center; margin-top:40px;" class="reveal">
+      <a href="gear.html" class="btn btn-accent-outline btn-lg">
+        Browse All Gear
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== INSTALLER PREVIEW ===== -->
+<section class="section" style="background:var(--bg-2); border-top:1px solid var(--border);">
+  <div class="container">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center;" class="reveal">
+      <div>
+        <div class="section-eyebrow">Installers</div>
+        <h2 class="display-md" style="margin-bottom:20px;">Find Certified Shops Near You</h2>
+        <p class="body-lg" style="margin-bottom:32px;">We've vetted hundreds of overland and off-road installers across the country. Find the right shop for your build — whether it's a simple rack install or a full ground-up build.</p>
+        <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:36px;">
+          <div style="display:flex;align-items:center;gap:12px;font-size:0.9375rem;color:var(--text-2);">
+            <span style="color:var(--accent);font-size:1.25rem;">✓</span> ARB, ICON, Fox, and brand-certified shops
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;font-size:0.9375rem;color:var(--text-2);">
+            <span style="color:var(--accent);font-size:1.25rem;">✓</span> Real reviews from real builders
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;font-size:0.9375rem;color:var(--text-2);">
+            <span style="color:var(--accent);font-size:1.25rem;">✓</span> Request quotes directly from your build
+          </div>
+        </div>
+        <a href="installers.html" class="btn btn-primary btn-lg">Find Installers Near Me</a>
+      </div>
+      <div class="map-placeholder">
+        <div class="map-grid"></div>
+        <div class="map-pin" style="top:35%;left:42%;"></div>
+        <div class="map-pin" style="top:55%;left:58%;animation-delay:0.4s;"></div>
+        <div class="map-pin" style="top:28%;left:65%;animation-delay:0.8s;"></div>
+        <div class="map-pin" style="top:70%;left:35%;animation-delay:1.2s;"></div>
+        <div class="map-pin" style="top:45%;left:25%;animation-delay:0.2s;"></div>
+        <div style="position:relative;z-index:1;text-align:center;color:var(--text-3);">
+          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;">340+ Installers Nationwide</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="cta-section">
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="reveal">
+      <div class="section-eyebrow" style="justify-content:center;">Ready?</div>
+      <h2 class="display-lg" style="margin-bottom:20px;">Build Your Rig.<br>Your Way.</h2>
+      <p style="font-size:1.0625rem;color:var(--text-2);max-width:480px;margin:0 auto 40px;line-height:1.65;">
+        Configure your exact vehicle, filter compatible gear from premium brands, and export a complete build quote.
+      </p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+        <a href="build-planner.html" class="btn btn-primary btn-xl">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v6H2M8 1l4 4M8 1L4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="1" y="9" width="14" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+          Start My Build
+        </a>
+        <a href="contact.html" class="btn btn-secondary btn-xl">Talk to an Expert</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="nav-logo" style="margin-bottom:14px;">
+          <div class="nav-logo-mark">RY</div>
+          <div>
+            <div class="nav-logo-text">BŌRYKU</div>
+            <span class="nav-logo-sub">/ RYKU</span>
+          </div>
+        </div>
+        <p class="footer-brand-desc">The premium overland and tactical vehicle ecosystem. Control the chaos.</p>
+        <div style="margin-top:20px;display:flex;gap:10px;">
+          <a href="#" class="btn btn-icon btn-secondary" title="Instagram" style="width:36px;height:36px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+          </a>
+          <a href="#" class="btn btn-icon btn-secondary" title="YouTube" style="width:36px;height:36px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="4" stroke="currentColor" stroke-width="1.5"/><path d="M10 9l5 3-5 3V9z" fill="currentColor"/></svg>
+          </a>
+          <a href="#" class="btn btn-icon btn-secondary" title="TikTok" style="width:36px;height:36px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 12a4 4 0 104 4V4a6 6 0 006 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-heading">Platform</h4>
+        <ul class="footer-links">
+          <li><a href="builds.html" class="footer-link">Community Builds</a></li>
+          <li><a href="gear.html" class="footer-link">Gear Marketplace</a></li>
+          <li><a href="installers.html" class="footer-link">Find Installers</a></li>
+          <li><a href="build-planner.html" class="footer-link">Build Planner</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-heading">Company</h4>
+        <ul class="footer-links">
+          <li><a href="about.html" class="footer-link">About BŌRYKU</a></li>
+          <li><a href="contact.html" class="footer-link">Contact</a></li>
+          <li><a href="#" class="footer-link">For Brands</a></li>
+          <li><a href="#" class="footer-link">For Installers</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-heading">Legal</h4>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">Privacy Policy</a></li>
+          <li><a href="#" class="footer-link">Terms of Service</a></li>
+          <li><a href="#" class="footer-link">Cookie Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2024 <span>BŌRYKU / RYKU</span>. All rights reserved.</p>
+      <p class="footer-copy" style="font-size:0.75rem;letter-spacing:0.08em;text-transform:uppercase;">CONTROL THE CHAOS</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  /* Render featured builds */
+  (function () {
+    const grid = document.getElementById('featured-builds-grid');
+    if (!grid) return;
+
+    grid.innerHTML = BORIKU_DATA.featuredBuilds.slice(0, 6).map(build => `
+      <div class="build-card reveal">
+        <div class="build-card-image">
+          <div class="build-card-image-bg">
+            ${getBuildSVG(build.vehicleId)}
+          </div>
+          <div class="build-card-overlay"></div>
+          <div class="build-card-tags">
+            <span class="tag tag-accent">${build.mission}</span>
+          </div>
+        </div>
+        <div class="build-card-body">
+          <div class="build-card-meta">
+            <span style="font-size:0.75rem;color:var(--text-3);">${build.owner} · ${build.location}</span>
+            <span style="display:flex;align-items:center;gap:4px;font-size:0.8125rem;font-weight:700;color:var(--warning);">
+              ★ ${build.rating}
+            </span>
+          </div>
+          <div class="build-card-name">${build.name}</div>
+          <div class="build-card-vehicle">${build.vehicle}</div>
+          <div class="build-card-parts">
+            ${build.tags.map(t => `<span class="tag tag-default">${t}</span>`).join('')}
+          </div>
+          <div class="build-card-footer">
+            <div>
+              <div class="build-card-price-label">Build Cost</div>
+              <div class="build-card-price">$${build.totalCost.toLocaleString()}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span style="font-size:0.75rem;color:var(--text-3);">♥ ${build.saves.toLocaleString()}</span>
+              <a href="builds.html" class="btn btn-ghost btn-sm" style="padding:6px 14px;">View →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  })();
+
+  /* Render brands preview */
+  (function () {
+    const grid = document.getElementById('brands-preview-grid');
+    if (!grid) return;
+    grid.innerHTML = BORIKU_DATA.brands.slice(0, 8).map(b => `
+      <a href="gear.html" class="brand-card reveal">
+        <div class="brand-logo" style="${b.premium ? 'border-color:var(--accent-dim);background:var(--accent-glow);' : ''}">${b.initials}</div>
+        <div class="brand-name">${b.name}</div>
+        <div class="brand-category">${b.category}</div>
+        <div class="brand-product-count">${b.productCount} Products</div>
+      </a>
+    `).join('');
+  })();
+
+  function getBuildSVG(vehicleId) {
+    const colors = { 'tacoma-3g': '#1A1A1A', '4runner-5g': '#222', 'wrangler-jl': '#1E1E1E', 'f150-14g': '#202020', default: '#1A1A1A' };
+    const c = colors[vehicleId] || colors.default;
+    return `
+      <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;opacity:0.6;">
+        <defs>
+          <linearGradient id="grad-${vehicleId}" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:rgba(255,85,31,0.0)"/>
+            <stop offset="50%" style="stop-color:rgba(255,85,31,0.08)"/>
+            <stop offset="100%" style="stop-color:rgba(255,85,31,0.0)"/>
+          </linearGradient>
+        </defs>
+        <rect width="400" height="200" fill="url(#grad-${vehicleId})"/>
+        <rect x="40" y="85" width="100" height="50" fill="${c}" stroke="#333" stroke-width="1"/>
+        <path d="M140 135 L140 90 L180 80 L200 65 L195 55 L150 54 L140 65 L140 135 Z" fill="#1C1C1C" stroke="#333" stroke-width="1"/>
+        <path d="M200 135 L200 90 L180 80 L225 80 L240 90 L240 135 Z" fill="#1C1C1C" stroke="#333" stroke-width="1"/>
+        <rect x="240" y="100" width="14" height="35" fill="#161616" stroke="#2A2A2A" stroke-width="1"/>
+        <rect x="30" y="110" width="15" height="28" fill="#1A1A1A" stroke="#2A2A2A" stroke-width="1"/>
+        <circle cx="80" cy="155" r="24" fill="#0E0E0E" stroke="#333" stroke-width="1.5"/>
+        <circle cx="80" cy="155" r="14" fill="#181818" stroke="#3A3A3A" stroke-width="1"/>
+        <circle cx="200" cy="155" r="24" fill="#0E0E0E" stroke="#333" stroke-width="1.5"/>
+        <circle cx="200" cy="155" r="14" fill="#181818" stroke="#3A3A3A" stroke-width="1"/>
+        <rect x="40" y="133" width="215" height="6" rx="2" fill="#161616"/>
+      </svg>`;
+  }
+</script>
+<script type="module" src="js/animations.js"></script>
+</body>
+</html>

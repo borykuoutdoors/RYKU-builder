@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Build of the Month — BŌRYKU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/account.css">
+  <style>
+    .contest-tabs { display:flex; gap:4px; border-bottom:1px solid var(--border); margin-bottom:36px; }
+    .contest-tab {
+      padding:12px 20px; font-size:0.8125rem; font-weight:700; letter-spacing:0.06em;
+      text-transform:uppercase; cursor:pointer; border:none; background:none;
+      color:var(--text-3); transition:all 0.2s; font-family:var(--font);
+      border-bottom:2px solid transparent; margin-bottom:-1px;
+    }
+    .contest-tab:hover { color:var(--text-1); }
+    .contest-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+    .contest-panel { display:none; }
+    .contest-panel.active { display:block; }
+    .leaderboard-row {
+      display:flex; align-items:center; gap:16px; padding:14px 16px;
+      background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
+      margin-bottom:8px; transition:all 0.2s;
+    }
+    .leaderboard-row:hover { border-color:var(--text-3); }
+    .leaderboard-rank { width:32px; height:32px; border-radius:var(--r-full); background:var(--surface-3); display:flex; align-items:center; justify-content:center; font-size:0.875rem; font-weight:900; flex-shrink:0; }
+    .leaderboard-rank.top1 { background:rgba(245,158,11,0.15); color:#F59E0B; }
+    .leaderboard-rank.top2 { background:rgba(156,163,175,0.15); color:#9CA3AF; }
+    .leaderboard-rank.top3 { background:rgba(180,83,9,0.15); color:#B45309; }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-mark">RY</div>
+      <div><div class="nav-logo-text">BŌRYKU</div><span class="nav-logo-sub">/ RYKU</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="builds.html" class="nav-link">Builds</a></li>
+      <li><a href="gear.html" class="nav-link">Gear</a></li>
+      <li><a href="installers.html" class="nav-link">Installers</a></li>
+      <li><a href="contest.html" class="nav-link active">Contest</a></li>
+    </ul>
+    <div class="nav-cta">
+      <div class="nav-auth-area"></div>
+      <a href="build-planner.html" class="btn btn-primary btn-sm">Start Build</a>
+      <button class="nav-mobile-toggle">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect y="3" width="18" height="2" rx="1" fill="currentColor"/><rect y="8" width="18" height="2" rx="1" fill="currentColor"/><rect y="13" width="18" height="2" rx="1" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+<div class="nav-mobile-menu">
+  <a href="index.html" class="nav-mobile-link">Home</a>
+  <a href="builds.html" class="nav-mobile-link">Builds</a>
+  <a href="gear.html" class="nav-mobile-link">Gear</a>
+  <a href="installers.html" class="nav-mobile-link">Installers</a>
+  <a href="contest.html" class="nav-mobile-link">Contest</a>
+  <div class="mobile-auth-section"></div>
+</div>
+
+<!-- ===== CONTEST HERO ===== -->
+<section class="contest-hero">
+  <div class="container" style="position:relative;z-index:1;">
+    <div style="max-width:760px;">
+      <div class="contest-countdown reveal">
+        <span class="contest-countdown-dot"></span>
+        Voting closes in &nbsp;<span class="contest-countdown-time" id="contest-countdown">—</span>
+      </div>
+      <div class="section-eyebrow reveal delay-100" style="margin-bottom:14px;">Community</div>
+      <h1 class="display-lg reveal delay-200" style="margin-bottom:16px;">BUILD OF THE MONTH</h1>
+      <p class="body-lg reveal delay-300" style="max-width:560px;margin-bottom:32px;" id="contest-month-label">
+        Submit your real completed rig. The community votes. Top 3 win premium gear.
+      </p>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;" class="reveal delay-400">
+        <a href="submit-build.html" class="btn btn-primary btn-lg">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M4 6l4-4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Submit Your Build
+        </a>
+        <a href="#gallery" class="btn btn-secondary btn-lg">View Gallery ↓</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRIZE SECTION ===== -->
+<section style="padding:56px 0;border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="section-eyebrow reveal" style="margin-bottom:16px;">Prizes</div>
+    <h2 class="heading-1 reveal" style="margin-bottom:28px;">This Month's Prize Pool</h2>
+    <div class="prize-cards reveal">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===== GALLERY + TABS ===== -->
+<section class="section-sm" id="gallery">
+  <div class="container">
+    <div class="contest-tabs">
+      <button class="contest-tab active" onclick="switchContestTab('gallery')">Gallery</button>
+      <button class="contest-tab" onclick="switchContestTab('leaderboard')">Leaderboard</button>
+      <button class="contest-tab" onclick="switchContestTab('winners')">Past Winners</button>
+    </div>
+
+    <!-- GALLERY TAB -->
+    <div class="contest-panel active" id="tab-gallery">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+        <div>
+          <span style="font-size:0.8125rem;color:var(--text-3);">
+            <strong style="color:var(--text-1);" id="entry-count">0</strong> builds submitted this month
+          </span>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="filter-btn active" data-sort="votes" onclick="sortGallery('votes',this)">Top Voted</button>
+          <button class="filter-btn" data-sort="newest" onclick="sortGallery('newest',this)">Newest</button>
+        </div>
+      </div>
+      <div class="contest-grid" id="contest-gallery-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- LEADERBOARD TAB -->
+    <div class="contest-panel" id="tab-leaderboard">
+      <div id="leaderboard-list"><!-- Rendered by JS --></div>
+    </div>
+
+    <!-- PAST WINNERS TAB -->
+    <div class="contest-panel" id="tab-winners">
+      <div id="winners-content"><!-- Rendered by JS --></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SUBMIT CTA ===== -->
+<section style="background:var(--bg-2);border-top:1px solid var(--border);padding:80px 0;text-align:center;">
+  <div class="container">
+    <div class="reveal">
+      <div style="font-size:3rem;margin-bottom:16px;">🏆</div>
+      <h2 class="display-md" style="margin-bottom:16px;">Your Build Could Be Next.</h2>
+      <p style="font-size:1.0625rem;color:var(--text-2);max-width:480px;margin:0 auto 32px;line-height:1.65;">
+        Submit your real completed overland or off-road build. The community votes and top 3 win premium gear every month.
+      </p>
+      <a href="submit-build.html" class="btn btn-primary btn-xl">Submit Your Build Now</a>
+      <p style="font-size:0.8125rem;color:var(--text-3);margin-top:16px;">Free to enter · One entry per user per month</p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+      <div class="nav-logo">
+        <div class="nav-logo-mark">RY</div>
+        <div><div class="nav-logo-text">BŌRYKU</div><span class="nav-logo-sub">/ RYKU</span></div>
+      </div>
+      <p class="footer-copy">© 2024 <span style="color:var(--accent);">BŌRYKU / RYKU</span>. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/contest.js"></script>
+<script>
+(function() {
+  /* Countdown */
+  BORIKU_CONTEST.startCountdownTimer('contest-countdown');
+  document.getElementById('contest-month-label').textContent =
+    BORIKU_CONTEST.MONTH_LABEL + ' — Submit your real completed rig. Community votes. Top 3 win premium gear.';
+
+  /* Prizes */
+  document.querySelector('.prize-cards').innerHTML = BORIKU_CONTEST.PRIZES.map(p => `
+    <div class="prize-card ${p.tier===1?'gold':p.tier===2?'silver':'bronze'}">
+      <div class="prize-icon">${p.icon}</div>
+      <div class="prize-tier-label">${p.label}</div>
+      <div class="prize-name">${p.prize}</div>
+      <div class="prize-value">${p.value} value</div>
+    </div>
+  `).join('');
+
+  /* Gallery */
+  function renderGallery(sortBy) {
+    const entries = BORIKU_CONTEST.getEntries(sortBy);
+    const grid = document.getElementById('contest-gallery-grid');
+    const countEl = document.getElementById('entry-count');
+    if (countEl) countEl.textContent = entries.length;
+    if (!grid) return;
+
+    const topIds = BORIKU_CONTEST.getTopThree().map(e => e.id);
+
+    grid.innerHTML = entries.map((entry, i) => {
+      const rank = topIds.indexOf(entry.id);
+      const rankBadge = rank === 0 ? '🥇' : rank === 1 ? '🥈' : rank === 2 ? '🥉' : null;
+      const hasVoted = BORIKU_AUTH.hasVoted(entry.id);
+
+      return `
+        <div class="contest-entry-card ${entry.status === 'featured' ? 'featured' : ''}">
+          <div class="contest-entry-image">
+            ${getEntrySVG(entry)}
+            ${rankBadge ? `<div class="contest-entry-rank">${rankBadge}</div>` : ''}
+            ${entry.status === 'featured' ? '<div style="position:absolute;top:12px;right:12px;"><span class="tag tag-accent">Featured</span></div>' : ''}
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,8,0.7) 0%,transparent 50%);"></div>
+            <div style="position:absolute;bottom:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-end;">
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.7);">$${entry.totalCost.toLocaleString()}</div>
+            </div>
+          </div>
+          <div class="contest-entry-body">
+            <div class="contest-entry-owner">
+              <div class="contest-entry-owner-avatar">${entry.ownerAvatar}</div>
+              <div>
+                <div style="font-size:0.8125rem;font-weight:700;">${entry.ownerName}</div>
+                ${entry.socialHandle ? `<div style="font-size:0.6875rem;color:var(--accent);">${entry.socialHandle}</div>` : ''}
+              </div>
+            </div>
+            <div class="contest-entry-name">${entry.buildName}</div>
+            <div class="contest-entry-vehicle">${entry.vehicle || entry.vehicleMake + ' ' + entry.vehicleModel + ' ' + entry.vehicleYear}</div>
+            <p style="font-size:0.8125rem;color:var(--text-3);line-height:1.5;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+              ${entry.description}
+            </p>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px;">
+              ${(entry.modifications||[]).slice(0,3).map(m => `<span class="tag tag-default" style="font-size:0.5625rem;">${m}</span>`).join('')}
+            </div>
+            <div class="contest-entry-footer">
+              <button class="vote-btn ${hasVoted ? 'voted' : ''}" id="vote-btn-${entry.id}"
+                      onclick="castVote('${entry.id}', this)">
+                <span id="vote-count-${entry.id}">${entry.votes.toLocaleString()}</span>
+              </button>
+              <span style="font-size:0.75rem;color:var(--text-3);">
+                ${new Date(entry.createdAt).toLocaleDateString('en-US', {month:'short', day:'numeric'})}
+              </span>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  window.castVote = function(entryId, btn) {
+    const result = BORIKU_CONTEST.toggleVote(entryId);
+    if (result === undefined) return;
+    btn.classList.toggle('voted', result.voted);
+    const countEl = document.getElementById('vote-count-' + entryId);
+    if (countEl) countEl.textContent = result.count.toLocaleString();
+    window.showToast(result.voted ? '♥ Vote cast!' : 'Vote removed.', result.voted ? 'success' : 'info');
+    renderLeaderboard();
+  };
+
+  window.sortGallery = function(sortBy, btn) {
+    document.querySelectorAll('[data-sort]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderGallery(sortBy);
+  };
+
+  /* Leaderboard */
+  function renderLeaderboard() {
+    const list = document.getElementById('leaderboard-list');
+    if (!list) return;
+    const entries = BORIKU_CONTEST.getEntries('votes');
+    const prizes = BORIKU_CONTEST.PRIZES;
+
+    list.innerHTML = entries.map((e, i) => {
+      const rankClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+      const prize = prizes[i];
+      return `
+        <div class="leaderboard-row">
+          <div class="leaderboard-rank ${rankClass}">${i < 3 ? ['🥇','🥈','🥉'][i] : i+1}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:0.9375rem;font-weight:700;">${e.buildName}</div>
+            <div style="font-size:0.75rem;color:var(--text-3);">${e.ownerName} &nbsp;·&nbsp; ${e.vehicle || e.vehicleMake+' '+e.vehicleModel}</div>
+            ${prize ? `<div style="font-size:0.6875rem;color:var(--accent);margin-top:3px;font-weight:700;">Prize: ${prize.prize}</div>` : ''}
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-size:1.125rem;font-weight:900;">${e.votes.toLocaleString()}</div>
+            <div style="font-size:0.6875rem;color:var(--text-3);">votes</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  /* Past Winners (mock previous months) */
+  function renderWinners() {
+    const container = document.getElementById('winners-content');
+    if (!container) return;
+    const pastMonths = [
+      { month: 'April 2024', winners: [
+        { place: 1, name: 'DESERT STORM', owner: 'K. Harrison', vehicle: '2020 Tacoma TRD Pro', prize: 'ARB Summit Bumper' },
+        { place: 2, name: 'BLACK WOLF', owner: 'D. Chen', vehicle: '2019 4Runner TRD', prize: 'Baja Designs LP9 Pods' },
+        { place: 3, name: 'TRAIL KING', owner: 'A. Brooks', vehicle: '2021 Wrangler Rubicon', prize: 'MAXTRAX Recovery Boards' }
+      ]},
+      { month: 'March 2024', winners: [
+        { place: 1, name: 'APEX RUNNER', owner: 'S. Morales', vehicle: '2022 Bronco Badlands', prize: 'Front Runner Slimline II' },
+        { place: 2, name: 'IRON RIDGE', owner: 'T. Park', vehicle: '2021 Tundra TRD Pro', prize: 'Rigid Industries E-Series' },
+        { place: 3, name: 'COLD STEEL', owner: 'M. Rivera', vehicle: '2020 Gladiator Rubicon', prize: 'Factor 55 ProLink Kit' }
+      ]}
+    ];
+
+    container.innerHTML = pastMonths.map(month => `
+      <div style="margin-bottom:40px;">
+        <div style="font-size:0.6875rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-3);margin-bottom:16px;">${month.month}</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+          ${month.winners.map(w => `
+            <div class="podium-card ${w.place===1?'first':w.place===2?'second':'third'}">
+              <div style="font-size:2rem;margin-bottom:10px;">${w.place===1?'🥇':w.place===2?'🥈':'🥉'}</div>
+              <div style="font-size:0.625rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px;">${w.place===1?'1st Place':w.place===2?'2nd Place':'3rd Place'}</div>
+              <div style="font-size:0.9375rem;font-weight:800;margin-bottom:4px;">${w.name}</div>
+              <div style="font-size:0.75rem;color:var(--text-3);margin-bottom:8px;">${w.owner} · ${w.vehicle}</div>
+              <div style="font-size:0.75rem;color:var(--accent);font-weight:700;">Won: ${w.prize}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  renderGallery('votes');
+  renderLeaderboard();
+  renderWinners();
+
+  window.switchContestTab = function(tab) {
+    document.querySelectorAll('.contest-tab').forEach((t,i) => {
+      const tabs = ['gallery','leaderboard','winners'];
+      t.classList.toggle('active', tabs[i] === tab);
+    });
+    document.querySelectorAll('.contest-panel').forEach(p => {
+      p.classList.toggle('active', p.id === 'tab-' + tab);
+    });
+  };
+
+  function getEntrySVG(entry) {
+    const color = entry.accentColor || '#FF551F';
+    return `
+      <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+        <rect width="400" height="200" fill="#0A0A0A"/>
+        <rect width="400" height="200" fill="url(#g-${entry.id})"/>
+        <defs>
+          <radialGradient id="g-${entry.id}" cx="50%" cy="80%" r="60%">
+            <stop offset="0%" stop-color="${color}" stop-opacity="0.12"/>
+            <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <!-- Truck silhouette -->
+        <rect x="60" y="95" width="110" height="52" fill="#1A1A1A" stroke="#2A2A2A" stroke-width="1"/>
+        <path d="M170 147 L170 95 L200 88 L215 72 L210 62 L172 61 L170 76 L170 147 Z" fill="#1C1C1C" stroke="#2A2A2A" stroke-width="1"/>
+        <path d="M215 147 L215 95 L200 88 L240 90 L250 100 L250 147 Z" fill="#1C1C1C" stroke="#2A2A2A" stroke-width="1"/>
+        <rect x="250" y="110" width="18" height="37" fill="#161616" stroke="#252525"/>
+        <rect x="42" y="117" width="20" height="28" fill="#1A1A1A" stroke="#252525"/>
+        <circle cx="96" cy="163" r="28" fill="#0E0E0E" stroke="#2A2A2A" stroke-width="1.5"/>
+        <circle cx="96" cy="163" r="18" fill="#161616" stroke="#2E2E2E"/>
+        <circle cx="216" cy="163" r="28" fill="#0E0E0E" stroke="#2A2A2A" stroke-width="1.5"/>
+        <circle cx="216" cy="163" r="18" fill="#161616" stroke="#2E2E2E"/>
+        <rect x="60" y="145" width="210" height="6" rx="2" fill="#141414"/>
+        <rect x="170" y="52" width="78" height="6" rx="2" fill="${color}" opacity="0.85"/>
+      </svg>`;
+  }
+})();
+</script>
+<script type="module" src="js/animations.js"></script>
+</body>
+</html>

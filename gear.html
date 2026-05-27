@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gear — BŌRYKU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/account.css">
+  <style>
+    .gear-layout { display: grid; grid-template-columns: 260px 1fr; gap: 0; min-height: calc(100vh - 72px); margin-top: 72px; }
+    .gear-filters {
+      background: var(--bg-2);
+      border-right: 1px solid var(--border);
+      padding: 28px 20px;
+      position: sticky;
+      top: 72px;
+      height: calc(100vh - 72px);
+      overflow-y: auto;
+    }
+    .gear-main { padding: 32px; }
+    .filter-section { margin-bottom: 28px; }
+    .filter-section-title { font-size: 0.625rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; }
+    .filter-check-list { display: flex; flex-direction: column; gap: 8px; }
+    .filter-check { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.8125rem; color: var(--text-2); transition: color 0.15s; }
+    .filter-check:hover { color: var(--text-1); }
+    .filter-check input[type="checkbox"] { accent-color: var(--accent); width: 14px; height: 14px; cursor: pointer; }
+    .products-count-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .view-toggle { display: flex; border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; }
+    .view-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: none; color: var(--text-3); cursor: pointer; transition: all 0.15s; border: none; }
+    .view-btn.active { background: var(--surface-2); color: var(--text-1); }
+    #gear-grid.list-view { grid-template-columns: 1fr; }
+    #gear-grid.list-view .product-card { flex-direction: row; }
+    #gear-grid.list-view .product-card-image { width: 140px; flex-shrink: 0; aspect-ratio: auto; height: auto; }
+    @media (max-width: 900px) {
+      .gear-layout { grid-template-columns: 1fr; }
+      .gear-filters { position: static; height: auto; display: none; }
+      .gear-filters.open { display: block; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-mark">RY</div>
+      <div><div class="nav-logo-text">BŌRYKU</div><span class="nav-logo-sub">/ RYKU</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="builds.html" class="nav-link">Builds</a></li>
+      <li><a href="gear.html" class="nav-link">Gear</a></li>
+      <li><a href="installers.html" class="nav-link">Installers</a></li>
+      <li><a href="about.html" class="nav-link">About</a></li>
+      <li><a href="contact.html" class="nav-link">Contact</a></li>
+      <li><a href="contest.html" class="nav-link">Contest</a></li>
+    </ul>
+    <div class="nav-cta">
+      <div class="nav-auth-area"></div>
+      <a href="build-planner.html" class="btn btn-primary btn-sm">Start Build</a>
+      <button class="nav-mobile-toggle">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect y="3" width="18" height="2" rx="1" fill="currentColor"/><rect y="8" width="18" height="2" rx="1" fill="currentColor"/><rect y="13" width="18" height="2" rx="1" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+<div class="nav-mobile-menu">
+  <a href="index.html" class="nav-mobile-link">Home</a>
+  <a href="builds.html" class="nav-mobile-link">Builds</a>
+  <a href="gear.html" class="nav-mobile-link">Gear</a>
+  <a href="installers.html" class="nav-mobile-link">Installers</a>
+  <a href="about.html" class="nav-mobile-link">About</a>
+  <a href="contact.html" class="nav-mobile-link">Contact</a>
+  <a href="contest.html" class="nav-mobile-link">Contest</a>
+  <a href="build-planner.html" class="btn btn-primary" style="margin-top:16px;">Start Build</a>
+  <div class="mobile-auth-section"></div>
+</div>
+
+<div class="gear-layout">
+  <!-- SIDEBAR FILTERS -->
+  <aside class="gear-filters" id="gear-filters">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <h3 style="font-size:0.875rem;font-weight:800;">Filters</h3>
+      <button class="btn btn-ghost btn-sm" id="clear-filters" style="font-size:0.6875rem;padding:4px 10px;">Clear All</button>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-section-title">Category</div>
+      <div class="filter-check-list" id="category-filter-list">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <div class="divider" style="margin:16px 0;"></div>
+
+    <div class="filter-section">
+      <div class="filter-section-title">Brand</div>
+      <div class="filter-check-list" id="brand-filter-list">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <div class="divider" style="margin:16px 0;"></div>
+
+    <div class="filter-section">
+      <div class="filter-section-title">Install Difficulty</div>
+      <div class="filter-check-list">
+        <label class="filter-check"><input type="checkbox" value="Easy Install" class="diff-filter"> Easy Install</label>
+        <label class="filter-check"><input type="checkbox" value="Pro Install" class="diff-filter"> Pro Install</label>
+      </div>
+    </div>
+
+    <div class="divider" style="margin:16px 0;"></div>
+
+    <div class="filter-section">
+      <div class="filter-section-title">Price Range</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <input type="range" id="price-max" min="0" max="6000" step="100" value="6000" style="accent-color:var(--accent);cursor:pointer;">
+        <div style="display:flex;justify-content:space-between;font-size:0.6875rem;color:var(--text-3);">
+          <span>$0</span>
+          <span style="color:var(--accent);" id="price-max-display">$6,000+</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider" style="margin:16px 0;"></div>
+
+    <a href="build-planner.html" class="btn btn-primary" style="width:100%;text-align:center;margin-top:8px;">
+      Open Build Planner →
+    </a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="gear-main">
+    <!-- Header -->
+    <div style="margin-bottom:24px;">
+      <h1 style="font-size:1.5rem;font-weight:900;margin-bottom:6px;">Gear Marketplace</h1>
+      <p style="font-size:0.875rem;color:var(--text-3);">180+ brands · 1,200+ products · All vehicle platforms</p>
+    </div>
+
+    <!-- Search + Category tabs -->
+    <div class="search-wrap" style="margin-bottom:20px;max-width:500px;">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M12 12l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <input type="text" class="form-input search-input" id="gear-search" placeholder="Search products, brands...">
+    </div>
+
+    <div class="filter-bar" style="margin-bottom:24px;" id="cat-tab-bar">
+      <button class="filter-btn active" data-cat="all">All</button>
+      <!-- Rendered by JS -->
+    </div>
+
+    <!-- Count + View Toggle -->
+    <div class="products-count-bar">
+      <span style="font-size:0.8125rem;color:var(--text-3);"><strong style="color:var(--text-1);" id="gear-count">0</strong> products</span>
+      <div class="view-toggle">
+        <button class="view-btn active" id="view-grid" title="Grid view">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor"/><rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor"/><rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor"/><rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor"/></svg>
+        </button>
+        <button class="view-btn" id="view-list" title="List view">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="12" height="2" rx="1" fill="currentColor"/><rect x="1" y="6" width="12" height="2" rx="1" fill="currentColor"/><rect x="1" y="10" width="12" height="2" rx="1" fill="currentColor"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid" id="gear-grid">
+      <!-- Rendered by JS -->
+    </div>
+
+    <!-- Brands Section -->
+    <div style="margin-top:64px;padding-top:48px;border-top:1px solid var(--border);">
+      <div class="section-eyebrow" style="margin-bottom:12px;">All Brands</div>
+      <h2 style="font-size:1.375rem;font-weight:900;margin-bottom:28px;">Shop by Brand</h2>
+      <div class="grid-4" id="all-brands-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+      <div class="nav-logo">
+        <div class="nav-logo-mark">RY</div>
+        <div><div class="nav-logo-text">BŌRYKU</div><span class="nav-logo-sub">/ RYKU</span></div>
+      </div>
+      <p class="footer-copy">© 2024 <span style="color:var(--accent);">BŌRYKU / RYKU</span>. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/auth.js"></script>
+<script>
+(function() {
+  let filteredProducts = [...BORIKU_DATA.products];
+  let activeCat = 'all';
+  let searchQ = '';
+  let priceMax = 6000;
+  let selectedDiffs = new Set();
+  let selectedBrands = new Set();
+
+  /* Render category tabs */
+  const tabBar = document.getElementById('cat-tab-bar');
+  BORIKU_DATA.categories.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.dataset.cat = cat.id;
+    btn.textContent = cat.label;
+    btn.addEventListener('click', () => {
+      activeCat = cat.id;
+      tabBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyFilters();
+    });
+    tabBar.appendChild(btn);
+  });
+
+  tabBar.querySelector('[data-cat="all"]')?.addEventListener('click', () => {
+    activeCat = 'all';
+    tabBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    tabBar.querySelector('[data-cat="all"]').classList.add('active');
+    applyFilters();
+  });
+
+  /* Category filter list */
+  const catFilterList = document.getElementById('category-filter-list');
+  BORIKU_DATA.categories.forEach(cat => {
+    catFilterList.innerHTML += `<label class="filter-check"><input type="checkbox" value="${cat.id}" class="cat-filter"> ${cat.label}</label>`;
+  });
+
+  /* Brand filter list */
+  const brandFilterList = document.getElementById('brand-filter-list');
+  const uniqueBrands = [...new Set(BORIKU_DATA.products.map(p => p.brand))].slice(0, 10);
+  uniqueBrands.forEach(b => {
+    brandFilterList.innerHTML += `<label class="filter-check"><input type="checkbox" value="${b}" class="brand-filter"> ${b}</label>`;
+  });
+
+  /* Event listeners */
+  document.getElementById('gear-search')?.addEventListener('input', e => {
+    searchQ = e.target.value.toLowerCase();
+    applyFilters();
+  });
+
+  document.getElementById('price-max')?.addEventListener('input', e => {
+    priceMax = parseInt(e.target.value);
+    document.getElementById('price-max-display').textContent = priceMax >= 6000 ? '$6,000+' : '$' + priceMax.toLocaleString();
+    applyFilters();
+  });
+
+  document.querySelectorAll('.cat-filter').forEach(cb => {
+    cb.addEventListener('change', applyFilters);
+  });
+  document.querySelectorAll('.brand-filter').forEach(cb => {
+    cb.addEventListener('change', () => {
+      if (cb.checked) selectedBrands.add(cb.value);
+      else selectedBrands.delete(cb.value);
+      applyFilters();
+    });
+  });
+  document.querySelectorAll('.diff-filter').forEach(cb => {
+    cb.addEventListener('change', () => {
+      if (cb.checked) selectedDiffs.add(cb.value);
+      else selectedDiffs.delete(cb.value);
+      applyFilters();
+    });
+  });
+
+  document.getElementById('clear-filters')?.addEventListener('click', () => {
+    searchQ = '';
+    activeCat = 'all';
+    priceMax = 6000;
+    selectedBrands.clear();
+    selectedDiffs.clear();
+    document.querySelectorAll('.cat-filter, .brand-filter, .diff-filter').forEach(cb => { cb.checked = false; });
+    document.getElementById('price-max').value = 6000;
+    document.getElementById('price-max-display').textContent = '$6,000+';
+    document.getElementById('gear-search').value = '';
+    tabBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    tabBar.querySelector('[data-cat="all"]').classList.add('active');
+    applyFilters();
+  });
+
+  function applyFilters() {
+    let p = [...BORIKU_DATA.products];
+    if (activeCat !== 'all') p = p.filter(x => x.category === activeCat);
+    if (searchQ) p = p.filter(x => x.name.toLowerCase().includes(searchQ) || x.brand.toLowerCase().includes(searchQ) || x.desc?.toLowerCase().includes(searchQ));
+    if (priceMax < 6000) p = p.filter(x => x.price <= priceMax);
+    if (selectedBrands.size > 0) p = p.filter(x => selectedBrands.has(x.brand));
+    if (selectedDiffs.size > 0) p = p.filter(x => selectedDiffs.has(x.installDifficulty));
+
+    filteredProducts = p;
+    renderProducts();
+  }
+
+  function getProductSVGIcon(cat) {
+    return `<svg width="56" height="56" viewBox="0 0 64 64" fill="none" style="opacity:0.2;"><rect x="8" y="8" width="48" height="48" rx="8" stroke="currentColor" stroke-width="1.5"/><path d="M20 32h24M32 20v24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+  }
+
+  function renderProducts() {
+    const grid = document.getElementById('gear-grid');
+    const countEl = document.getElementById('gear-count');
+    if (countEl) countEl.textContent = filteredProducts.length;
+    if (!grid) return;
+
+    if (filteredProducts.length === 0) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:64px;color:var(--text-3);">
+        <div style="font-size:2rem;margin-bottom:12px;">🔍</div>
+        <div style="font-weight:700;margin-bottom:6px;">No products match your filters</div>
+        <div style="font-size:0.8125rem;">Try clearing some filters or searching differently.</div>
+      </div>`;
+      return;
+    }
+
+    grid.innerHTML = filteredProducts.map(p => {
+      const diffClass = p.installDifficulty === 'Pro Install' ? 'tag-warning' : 'tag-success';
+      return `
+        <div class="product-card" style="cursor:default;">
+          <div class="product-card-image" style="background:var(--bg-3);">
+            ${getProductSVGIcon(p.category)}
+            ${p.popularity ? `<span class="product-card-badge">${p.popularity}</span>` : ''}
+          </div>
+          <div class="product-card-body">
+            <div class="product-card-brand">${p.brand}</div>
+            <div class="product-card-name">${p.name}</div>
+            <div class="product-card-compat">${p.model}</div>
+            <div class="product-card-meta">
+              <span class="tag ${diffClass}">${p.installDifficulty}</span>
+              ${p.weight ? `<span class="tag tag-default">${p.weight}</span>` : ''}
+            </div>
+            <div style="font-size:0.75rem;color:var(--text-3);margin-top:6px;line-height:1.5;">${p.desc || ''}</div>
+          </div>
+          <div class="product-card-footer">
+            <div>
+              <div class="product-card-price">$${p.price.toLocaleString()}</div>
+              ${p.installCost > 0 ? `<div style="font-size:0.6875rem;color:var(--text-3);">+$${p.installCost} install</div>` : ''}
+            </div>
+            <a href="build-planner.html" class="product-card-action" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px;">
+              Add to Build
+            </a>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  /* Render all brands */
+  const brandsGrid = document.getElementById('all-brands-grid');
+  if (brandsGrid) {
+    brandsGrid.innerHTML = BORIKU_DATA.brands.map(b => `
+      <div class="brand-card">
+        <div class="brand-logo" style="${b.premium ? 'border-color:var(--accent-dim);background:var(--accent-glow);' : ''}">${b.initials}</div>
+        <div class="brand-name">${b.name}</div>
+        <div class="brand-category">${b.category}</div>
+        <div class="brand-product-count">${b.productCount} Products</div>
+      </div>
+    `).join('');
+  }
+
+  /* View toggles */
+  document.getElementById('view-grid')?.addEventListener('click', () => {
+    document.getElementById('gear-grid').className = 'products-grid';
+    document.getElementById('view-grid').classList.add('active');
+    document.getElementById('view-list').classList.remove('active');
+  });
+  document.getElementById('view-list')?.addEventListener('click', () => {
+    document.getElementById('gear-grid').className = 'products-grid list-view';
+    document.getElementById('view-list').classList.add('active');
+    document.getElementById('view-grid').classList.remove('active');
+  });
+
+  applyFilters();
+})();
+</script>
+<script type="module" src="js/animations.js"></script>
+</body>
+</html>

@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Build Planner — BŌRYKU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/account.css">
+  <style>
+    body { overflow: hidden; }
+    @media (max-width: 900px) { body { overflow: auto; } }
+
+    .planner-top-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      z-index: 100;
+      background: rgba(8,8,8,0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 16px;
+    }
+    .planner-top-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      margin-right: 8px;
+    }
+    .planner-build-name-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      min-width: 0;
+    }
+    .planner-build-name-input {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 6px 12px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-1);
+      max-width: 200px;
+      transition: border-color 0.2s;
+    }
+    .planner-build-name-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .planner-top-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .part-counter {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-2);
+    }
+    .part-counter .badge { background: var(--accent); }
+
+    /* Vehicle Config Modal Styles */
+    .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .mission-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+    .mission-btn {
+      padding: 14px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      background: var(--surface-2);
+      color: var(--text-2);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .mission-btn:hover { border-color: var(--text-3); color: var(--text-1); }
+    .mission-btn.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
+    .mission-btn-icon { font-size: 1.5rem; margin-bottom: 6px; }
+    .mission-btn-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; }
+
+    /* Planner layout adjustments */
+    .planner-sidebar { height: 100%; }
+    .planner-main { height: 100%; }
+    .planner-summary { height: 100%; }
+
+    .preview-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 60%, rgba(255,85,31,0.05) 0%, transparent 70%);
+    }
+    .preview-grid {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(var(--border-subtle) 1px, transparent 1px), linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.35;
+    }
+    .vehicle-svg-wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      padding: 0 16px;
+    }
+
+    /* Summary empty state */
+    #summary-empty {
+      padding: 32px 20px;
+      text-align: center;
+      color: var(--text-3);
+    }
+    #summary-empty svg { margin: 0 auto 12px; opacity: 0.3; }
+
+    /* Mobile planner adjustments */
+    @media (max-width: 900px) {
+      body { overflow: auto; }
+      .planner-layout { height: auto; }
+      .planner-sidebar, .planner-main, .planner-summary { height: auto; }
+      .vehicle-config-box { max-height: 90vh; overflow-y: auto; }
+      .config-grid { grid-template-columns: 1fr; }
+      .mission-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== TOP BAR ===== -->
+<div class="planner-top-bar">
+  <a href="index.html" class="planner-top-logo">
+    <div class="nav-logo-mark">RY</div>
+    <div class="nav-logo-text" style="font-size:0.9375rem;">BŌRYKU</div>
+  </a>
+
+  <div style="width:1px;height:28px;background:var(--border);"></div>
+
+  <div class="planner-build-name-wrap">
+    <span style="font-size:0.6875rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-3);">Build:</span>
+    <input type="text" id="build-name-input" class="planner-build-name-input" value="MY BUILD" maxlength="24" placeholder="BUILD NAME">
+  </div>
+
+  <div class="part-counter">
+    <span>Parts</span>
+    <span class="badge" id="part-count">0</span>
+  </div>
+
+  <div class="planner-top-actions">
+    <div class="nav-auth-area"></div>
+    <button class="btn btn-ghost btn-sm" id="btn-clear-build" title="Clear Build">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Clear
+    </button>
+    <button class="btn btn-secondary btn-sm" id="btn-share-build">Share</button>
+    <button class="btn btn-secondary btn-sm" id="btn-export-quote">Export Quote</button>
+    <button class="btn btn-primary btn-sm" id="btn-save-build">Save Build</button>
+  </div>
+</div>
+<div class="nav-mobile-menu">
+  <a href="index.html" class="nav-mobile-link">Home</a>
+  <a href="builds.html" class="nav-mobile-link">Builds</a>
+  <a href="gear.html" class="nav-mobile-link">Gear</a>
+  <a href="installers.html" class="nav-mobile-link">Installers</a>
+  <a href="about.html" class="nav-mobile-link">About</a>
+  <a href="contact.html" class="nav-mobile-link">Contact</a>
+  <a href="contest.html" class="nav-mobile-link">Contest</a>
+  <div class="mobile-auth-section"></div>
+</div>
+
+<!-- ===== PLANNER LAYOUT ===== -->
+<div class="planner-layout">
+
+  <!-- ===== LEFT: SIDEBAR ===== -->
+  <aside class="planner-sidebar">
+    <!-- Vehicle Selector -->
+    <div class="vehicle-selector">
+      <div class="vehicle-selector-title">Vehicle Configuration</div>
+      <div class="vehicle-display" id="vehicle-display-panel">
+        <div class="vehicle-display-icon" id="vehicle-icon-display">🚗</div>
+        <div class="vehicle-display-info">
+          <div class="vehicle-display-name" id="vehicle-name-display">No Vehicle Selected</div>
+          <div class="vehicle-display-year" id="vehicle-year-display">Click to configure</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="open-vehicle-config" style="flex-shrink:0;padding:6px 10px;font-size:0.6875rem;">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Select
+        </button>
+      </div>
+    </div>
+
+    <!-- Category List -->
+    <div class="planner-panel-header">
+      <div class="planner-panel-title">Categories</div>
+    </div>
+
+    <div class="planner-categories" id="category-list">
+      <!-- Rendered by build-planner.js -->
+    </div>
+  </aside>
+
+  <!-- ===== CENTER: MAIN ===== -->
+  <main class="planner-main">
+    <!-- Vehicle Preview -->
+    <div class="preview-area">
+      <div class="preview-bg"></div>
+      <div class="preview-grid"></div>
+      <div class="vehicle-svg-wrap">
+        <!-- VEHICLE SVG -->
+        <svg id="vehicle-preview-svg" viewBox="0 0 1000 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;max-height:320px;">
+          <!-- Ground shadow -->
+          <ellipse cx="475" cy="400" rx="420" ry="16" fill="rgba(255,85,31,0.04)"/>
+
+          <!-- ---- ACCESSORY LAYERS (behind body, shown/hidden) ---- -->
+          <!-- Suspension Lift visual indicator -->
+          <g id="layer-suspension" class="vehicle-layer" style="display:none;transition:all 0.5s ease;">
+            <rect x="150" y="375" width="70" height="8" rx="2" fill="#FF551F" opacity="0.4"/>
+            <rect x="680" y="375" width="70" height="8" rx="2" fill="#FF551F" opacity="0.4"/>
+          </g>
+
+          <!-- ---- MAIN BODY ---- -->
+          <!-- Rear bumper (stock) -->
+          <rect x="90" y="235" width="48" height="58" rx="4" fill="#1C1C1C" stroke="#2E2E2E" stroke-width="1.5"/>
+          <rect x="92" y="248" width="44" height="8" rx="1" fill="#222"/>
+
+          <!-- Bed section -->
+          <rect x="136" y="178" width="272" height="115" fill="#181818" stroke="#282828" stroke-width="1.5"/>
+          <!-- Bed interior detail -->
+          <rect x="140" y="180" width="264" height="8" rx="1" fill="#1E1E1E"/>
+          <line x1="175" y1="192" x2="175" y2="290" stroke="#1A1A1A" stroke-width="1.5"/>
+          <line x1="220" y1="192" x2="220" y2="290" stroke="#1A1A1A" stroke-width="1.5"/>
+          <line x1="265" y1="192" x2="265" y2="290" stroke="#1A1A1A" stroke-width="1.5"/>
+          <line x1="310" y1="192" x2="310" y2="290" stroke="#1A1A1A" stroke-width="1.5"/>
+          <line x1="355" y1="192" x2="355" y2="290" stroke="#1A1A1A" stroke-width="1.5"/>
+          <!-- Tailgate handle -->
+          <rect x="210" y="275" width="80" height="10" rx="5" fill="#222" stroke="#333" stroke-width="1"/>
+
+          <!-- Cab section - body -->
+          <path d="M408 293 L408 178 L585 163 L620 128 L600 105 L445 103 L408 120 L408 293 Z"
+                fill="#1E1E1E" stroke="#282828" stroke-width="1.5"/>
+          <!-- Cab roof detail -->
+          <path d="M450 103 L600 103 L620 128 L585 163 L408 178 L408 120 Z"
+                fill="#212121" stroke="#2C2C2C" stroke-width="1.5"/>
+          <!-- Windshield -->
+          <path d="M415 121 L452 104 L598 104 L617 129 L578 160 L415 174 Z"
+                fill="#080E1A" opacity="0.92" stroke="#101A28" stroke-width="1"/>
+          <!-- Windshield reflection -->
+          <path d="M420 125 L455 107 L510 107 L460 170 L418 168 Z"
+                fill="rgba(255,255,255,0.015)"/>
+          <!-- B-pillar -->
+          <rect x="520" y="103" width="9" height="74" fill="#191919"/>
+          <!-- Rear window -->
+          <rect x="415" y="177" width="90" height="68" rx="2" fill="#0A1020" opacity="0.85"/>
+
+          <!-- Front cab section door -->
+          <rect x="408" y="178" width="116" height="112" fill="#1D1D1D" stroke="#2A2A2A" stroke-width="1"/>
+          <!-- Front door handle -->
+          <rect x="438" y="222" width="38" height="7" rx="3.5" fill="#2A2A2A" stroke="#333" stroke-width="0.5"/>
+          <!-- Rear door -->
+          <rect x="525" y="178" width="60" height="112" fill="#1D1D1D" stroke="#2A2A2A" stroke-width="1"/>
+          <rect x="546" y="222" width="28" height="7" rx="3.5" fill="#2A2A2A" stroke="#333" stroke-width="0.5"/>
+
+          <!-- Hood -->
+          <path d="M624 293 L624 163 L585 163 L620 128 L714 163 L758 183 L758 293 Z"
+                fill="#1C1C1C" stroke="#282828" stroke-width="1.5"/>
+          <!-- Hood line detail -->
+          <path d="M630 166 L645 133 L695 150 L705 163" fill="none" stroke="#242424" stroke-width="3.5" stroke-linecap="round"/>
+
+          <!-- Grill panel -->
+          <rect x="752" y="183" width="38" height="75" rx="4" fill="#141414" stroke="#252525" stroke-width="1.5"/>
+          <!-- Grill slats -->
+          <line x1="755" y1="198" x2="787" y2="198" stroke="#222" stroke-width="1.5"/>
+          <line x1="755" y1="210" x2="787" y2="210" stroke="#222" stroke-width="1.5"/>
+          <line x1="755" y1="222" x2="787" y2="222" stroke="#222" stroke-width="1.5"/>
+          <line x1="755" y1="234" x2="787" y2="234" stroke="#222" stroke-width="1.5"/>
+          <line x1="755" y1="246" x2="787" y2="246" stroke="#222" stroke-width="1.5"/>
+          <!-- Grill vertical bar -->
+          <line x1="771" y1="185" x2="771" y2="256" stroke="#1C1C1C" stroke-width="2"/>
+
+          <!-- Front bumper (stock) -->
+          <path d="M758 235 L805 242 L808 278 L758 278 Z" fill="#1C1C1C" stroke="#272727" stroke-width="1.5"/>
+          <!-- Tow hook -->
+          <circle cx="800" cy="265" r="5" fill="#222" stroke="#333" stroke-width="1"/>
+
+          <!-- Headlights -->
+          <rect x="753" y="163" width="32" height="19" rx="2" fill="#080E1A" stroke="#101828" stroke-width="1"/>
+          <!-- DRL line -->
+          <rect x="755" y="165" width="28" height="3" rx="1" fill="rgba(255,220,150,0.2)"/>
+
+          <!-- Running board -->
+          <rect x="136" y="291" width="628" height="10" rx="3" fill="#161616" stroke="#222" stroke-width="1"/>
+          <!-- Undercarriage -->
+          <rect x="155" y="299" width="600" height="8" fill="#111"/>
+
+          <!-- ===== WHEELS ===== -->
+          <!-- REAR WHEEL -->
+          <g id="wheel-rear-base">
+            <circle cx="228" cy="345" r="65" fill="#0C0C0C" stroke="#222" stroke-width="2"/>
+            <circle cx="228" cy="345" r="46" fill="#161616" stroke="#2E2E2E" stroke-width="2"/>
+            <!-- Spokes -->
+            <line x1="228" y1="299" x2="228" y2="329" stroke="#252525" stroke-width="5" stroke-linecap="round"/>
+            <line x1="228" y1="361" x2="228" y2="391" stroke="#252525" stroke-width="5" stroke-linecap="round"/>
+            <line x1="182" y1="345" x2="212" y2="345" stroke="#252525" stroke-width="5" stroke-linecap="round"/>
+            <line x1="244" y1="345" x2="274" y2="345" stroke="#252525" stroke-width="5" stroke-linecap="round"/>
+            <line x1="195" y1="312" x2="217" y2="329" stroke="#252525" stroke-width="5" stroke-linecap="round"/>
+            <line x1="239" y1="361" x2="261" y2="378" stroke="#252525" stroke-width="5" stroke-linecap="round"/>
+            <line x1="261" y1="312" x2="239" y2="329" stroke="#252525" stroke-width="5" stroke-linecap="round"/>
+            <line x1="217" y1="361" x2="195" y2="378" stroke="#252525" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="228" cy="345" r="12" fill="#1E1E1E" stroke="#333" stroke-width="1.5"/>
+            <!-- Tire inner ring -->
+            <circle cx="228" cy="345" r="61" fill="none" stroke="#141414" stroke-width="4"/>
+          </g>
+
+          <!-- FRONT WHEEL -->
+          <g id="wheel-front-base">
+            <circle cx="724" cy="345" r="65" fill="#0C0C0C" stroke="#222" stroke-width="2"/>
+            <circle cx="724" cy="345" r="46" fill="#161616" stroke="#2E2E2E" stroke-width="2"/>
+            <line x1="724" y1="299" x2="724" y2="329" stroke="#252525" stroke-width="5" stroke-linecap="round"/>
+            <line x1="724" y1="361" x2="724" y2="391" stroke="#252525" stroke-width="5" stroke-linecap="round"/>
+            <line x1="678" y1="345" x2="708" y2="345" stroke="#252525" stroke-width="5" stroke-linecap="round"/>
+            <line x1="740" y1="345" x2="770" y2="345" stroke="#252525" stroke-width="5" stroke-linecap="round"/>
+            <line x1="691" y1="312" x2="713" y2="329" stroke="#252525" stroke-width="5" stroke-linecap="round"/>
+            <line x1="735" y1="361" x2="757" y2="378" stroke="#252525" stroke-width="5" stroke-linecap="round"/>
+            <line x1="757" y1="312" x2="735" y2="329" stroke="#252525" stroke-width="5" stroke-linecap="round"/>
+            <line x1="713" y1="361" x2="691" y2="378" stroke="#252525" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="724" cy="345" r="12" fill="#1E1E1E" stroke="#333" stroke-width="1.5"/>
+            <circle cx="724" cy="345" r="61" fill="none" stroke="#141414" stroke-width="4"/>
+          </g>
+
+          <!-- Wheel wells (body covers over wheels) -->
+          <circle cx="228" cy="345" r="72" fill="none" stroke="#111111" stroke-width="16"/>
+          <circle cx="724" cy="345" r="72" fill="none" stroke="#111111" stroke-width="16"/>
+
+          <!-- ===== ACCESSORY LAYERS (above body) ===== -->
+
+          <!-- Upgraded Wheels (replaces base) -->
+          <g id="layer-wheels-upgraded" class="vehicle-layer" style="display:none">
+            <!-- Rear upgraded -->
+            <circle cx="228" cy="345" r="67" fill="#0A0A0A" stroke="rgba(255,85,31,0.6)" stroke-width="2"/>
+            <circle cx="228" cy="345" r="48" fill="#141414" stroke="rgba(255,85,31,0.3)" stroke-width="1.5"/>
+            <!-- 6-spoke method style -->
+            <g transform="rotate(0,228,345)"><path d="M228,299 L233,326 L228,330 L223,326 Z" fill="#FF551F" opacity="0.85"/></g>
+            <g transform="rotate(60,228,345)"><path d="M228,299 L233,326 L228,330 L223,326 Z" fill="#FF551F" opacity="0.85"/></g>
+            <g transform="rotate(120,228,345)"><path d="M228,299 L233,326 L228,330 L223,326 Z" fill="#FF551F" opacity="0.85"/></g>
+            <g transform="rotate(180,228,345)"><path d="M228,299 L233,326 L228,330 L223,326 Z" fill="#FF551F" opacity="0.85"/></g>
+            <g transform="rotate(240,228,345)"><path d="M228,299 L233,326 L228,330 L223,326 Z" fill="#FF551F" opacity="0.85"/></g>
+            <g transform="rotate(300,228,345)"><path d="M228,299 L233,326 L228,330 L223,326 Z" fill="#FF551F" opacity="0.85"/></g>
+            <circle cx="228" cy="345" r="12" fill="#1A1A1A" stroke="rgba(255,85,31,0.5)" stroke-width="1.5"/>
+            <!-- Front upgraded -->
+            <circle cx="724" cy="345" r="67" fill="#0A0A0A" stroke="rgba(255,85,31,0.6)" stroke-width="2"/>
+            <circle cx="724" cy="345" r="48" fill="#141414" stroke="rgba(255,85,31,0.3)" stroke-width="1.5"/>
+            <g transform="rotate(0,724,345)"><path d="M724,299 L729,326 L724,330 L719,326 Z" fill="#FF551F" opacity="0.85"/></g>
+            <g transform="rotate(60,724,345)"><path d="M724,299 L729,326 L724,330 L719,326 Z" fill="#FF551F" opacity="0.85"/></g>
+            <g transform="rotate(120,724,345)"><path d="M724,299 L729,326 L724,330 L719,326 Z" fill="#FF551F" opacity="0.85"/></g>
+            <g transform="rotate(180,724,345)"><path d="M724,299 L729,326 L724,330 L719,326 Z" fill="#FF551F" opacity="0.85"/></g>
+            <g transform="rotate(240,724,345)"><path d="M724,299 L729,326 L724,330 L719,326 Z" fill="#FF551F" opacity="0.85"/></g>
+            <g transform="rotate(300,724,345)"><path d="M724,299 L729,326 L724,330 L719,326 Z" fill="#FF551F" opacity="0.85"/></g>
+            <circle cx="724" cy="345" r="12" fill="#1A1A1A" stroke="rgba(255,85,31,0.5)" stroke-width="1.5"/>
+          </g>
+
+          <!-- Roof Rack -->
+          <g id="layer-roof-rack" class="vehicle-layer" style="display:none">
+            <rect x="413" y="90" width="190" height="12" rx="2" fill="#FF551F" opacity="0.9"/>
+            <rect x="413" y="90" width="190" height="5" rx="2" fill="rgba(255,255,255,0.12)"/>
+            <!-- Cross bars -->
+            <rect x="420" y="89" width="7" height="15" rx="1" fill="#CC4418"/>
+            <rect x="470" y="89" width="7" height="15" rx="1" fill="#CC4418"/>
+            <rect x="520" y="89" width="7" height="15" rx="1" fill="#CC4418"/>
+            <rect x="570" y="89" width="7" height="15" rx="1" fill="#CC4418"/>
+            <!-- Glow -->
+            <rect x="413" y="90" width="190" height="12" rx="2" fill="url(#rack-glow)" opacity="0.5"/>
+            <defs>
+              <linearGradient id="rack-glow" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:rgba(255,85,31,0.4)"/>
+                <stop offset="100%" style="stop-color:transparent"/>
+              </linearGradient>
+            </defs>
+          </g>
+
+          <!-- Rooftop Tent (requires rack layer also shown) -->
+          <g id="layer-rtt" class="vehicle-layer" style="display:none">
+            <rect x="413" y="90" width="190" height="10" rx="2" fill="#FF551F" opacity="0.8"/>
+            <!-- RTT box -->
+            <rect x="418" y="48" width="180" height="46" rx="5" fill="#242424" stroke="#383838" stroke-width="1.5"/>
+            <!-- RTT top panel -->
+            <rect x="418" y="48" width="180" height="7" rx="5" fill="#2C2C2C"/>
+            <!-- Zipper seam -->
+            <line x1="418" y1="70" x2="598" y2="70" stroke="#303030" stroke-width="1" stroke-dasharray="6,4"/>
+            <!-- Brand label area -->
+            <rect x="468" y="56" width="72" height="11" rx="2" fill="#1E1E1E"/>
+            <!-- Ladder (right side) -->
+            <rect x="596" y="72" width="4" height="40" rx="1" fill="#2A2A2A" stroke="#333" stroke-width="0.5"/>
+            <rect x="590" y="80" width="16" height="3" rx="1" fill="#252525"/>
+            <rect x="590" y="92" width="16" height="3" rx="1" fill="#252525"/>
+            <rect x="590" y="104" width="16" height="3" rx="1" fill="#252525"/>
+          </g>
+
+          <!-- Light Bar (windshield mount) -->
+          <g id="layer-lightbar" class="vehicle-layer" style="display:none">
+            <rect x="411" y="82" width="195" height="10" rx="4" fill="#1A1A1A" stroke="#333" stroke-width="1.5"/>
+            <!-- Lens array -->
+            <rect x="414" y="84" width="189" height="4" rx="2" fill="rgba(255,220,150,0.08)"/>
+            <!-- Individual LEDs -->
+            <g fill="rgba(255,220,150,0.5)">
+              <rect x="416" y="85" width="6" height="2" rx="1"/>
+              <rect x="424" y="85" width="6" height="2" rx="1"/>
+              <rect x="432" y="85" width="6" height="2" rx="1"/>
+              <rect x="440" y="85" width="6" height="2" rx="1"/>
+              <rect x="448" y="85" width="6" height="2" rx="1"/>
+              <rect x="456" y="85" width="6" height="2" rx="1"/>
+              <rect x="464" y="85" width="6" height="2" rx="1"/>
+              <rect x="472" y="85" width="6" height="2" rx="1"/>
+              <rect x="480" y="85" width="6" height="2" rx="1"/>
+              <rect x="488" y="85" width="6" height="2" rx="1"/>
+              <rect x="496" y="85" width="6" height="2" rx="1"/>
+              <rect x="504" y="85" width="6" height="2" rx="1"/>
+              <rect x="512" y="85" width="6" height="2" rx="1"/>
+              <rect x="520" y="85" width="6" height="2" rx="1"/>
+              <rect x="528" y="85" width="6" height="2" rx="1"/>
+              <rect x="536" y="85" width="6" height="2" rx="1"/>
+              <rect x="544" y="85" width="6" height="2" rx="1"/>
+              <rect x="552" y="85" width="6" height="2" rx="1"/>
+              <rect x="560" y="85" width="6" height="2" rx="1"/>
+              <rect x="568" y="85" width="6" height="2" rx="1"/>
+              <rect x="576" y="85" width="6" height="2" rx="1"/>
+              <rect x="584" y="85" width="6" height="2" rx="1"/>
+              <rect x="592" y="85" width="6" height="2" rx="1"/>
+            </g>
+          </g>
+
+          <!-- Aftermarket Front Bumper -->
+          <g id="layer-front-bumper" class="vehicle-layer" style="display:none">
+            <path d="M758 232 L816 228 L820 283 L758 283 Z" fill="#222222" stroke="#353535" stroke-width="2"/>
+            <!-- Winch housing -->
+            <rect x="760" y="242" width="48" height="22" rx="2" fill="#1C1C1C" stroke="#2E2E2E" stroke-width="1"/>
+            <rect x="762" y="244" width="22" height="7" rx="1" fill="#252525"/>
+            <!-- Skid plate -->
+            <rect x="758" y="278" width="64" height="9" rx="1.5" fill="#1E1E1E" stroke="#333" stroke-width="1"/>
+            <!-- D-ring mounts -->
+            <rect x="758" y="260" width="6" height="18" rx="1" fill="#1A1A1A" stroke="#333" stroke-width="1"/>
+            <rect x="810" y="260" width="6" height="18" rx="1" fill="#1A1A1A" stroke="#333" stroke-width="1"/>
+          </g>
+
+          <!-- Rear Bumper Aftermarket -->
+          <g id="layer-rear-bumper" class="vehicle-layer" style="display:none">
+            <path d="M88 230 L55 236 L52 283 L90 283 Z" fill="#222222" stroke="#353535" stroke-width="2"/>
+            <rect x="53" y="255" width="40" height="8" rx="1" fill="#1C1C1C" stroke="#2E2E2E" stroke-width="1"/>
+            <!-- Tire carrier hinge (right side visible) -->
+            <rect x="86" y="238" width="6" height="38" rx="1" fill="#1E1E1E" stroke="#333" stroke-width="1"/>
+          </g>
+
+          <!-- Rock Sliders -->
+          <g id="layer-sliders" class="vehicle-layer" style="display:none">
+            <rect x="153" y="295" width="608" height="16" rx="4" fill="#1F1F1F" stroke="#333" stroke-width="1.5"/>
+            <!-- Tab mounts -->
+            <rect x="200" y="293" width="9" height="8" rx="1" fill="#1A1A1A" stroke="#333" stroke-width="1"/>
+            <rect x="350" y="293" width="9" height="8" rx="1" fill="#1A1A1A" stroke="#333" stroke-width="1"/>
+            <rect x="500" y="293" width="9" height="8" rx="1" fill="#1A1A1A" stroke="#333" stroke-width="1"/>
+            <rect x="650" y="293" width="9" height="8" rx="1" fill="#1A1A1A" stroke="#333" stroke-width="1"/>
+            <!-- Accent edge -->
+            <line x1="153" y1="308" x2="761" y2="308" stroke="rgba(255,85,31,0.35)" stroke-width="1"/>
+          </g>
+
+          <!-- Aux Pod Lights -->
+          <g id="layer-aux-lights" class="vehicle-layer" style="display:none">
+            <!-- Left pod -->
+            <rect x="752" y="154" width="18" height="14" rx="3" fill="#181818" stroke="#333" stroke-width="1.5"/>
+            <rect x="754" y="156" width="14" height="5" rx="1" fill="rgba(255,220,150,0.2)"/>
+            <!-- Right pod -->
+            <rect x="772" y="154" width="18" height="14" rx="3" fill="#181818" stroke="#333" stroke-width="1.5"/>
+            <rect x="774" y="156" width="14" height="5" rx="1" fill="rgba(255,220,150,0.2)"/>
+          </g>
+
+          <!-- Orange accent bottom line -->
+          <rect x="155" y="408" width="596" height="1" fill="rgba(255,85,31,0.2)"/>
+        </svg>
+
+        <div class="preview-vehicle-label">BŌRYKU / RYKU — Live Build Preview</div>
+      </div>
+    </div>
+
+    <!-- Layer Tags -->
+    <div class="preview-layers-list" id="layer-tags">
+      <!-- Rendered by JS -->
+    </div>
+
+    <!-- Products Area -->
+    <div class="products-area" id="products-area">
+      <div class="products-area-header">
+        <div>
+          <h3 style="font-size:1rem;font-weight:800;margin-bottom:2px;" id="products-category-name">Roof Racks</h3>
+          <p style="font-size:0.75rem;color:var(--text-3);" id="products-count">Configure vehicle to filter compatible products</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="tag tag-default" style="font-size:0.625rem;">Compatible Only</span>
+        </div>
+      </div>
+      <div class="products-grid" id="products-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== RIGHT: SUMMARY ===== -->
+  <aside class="planner-summary">
+    <div class="planner-panel-header">
+      <div class="planner-panel-title">Build Summary</div>
+    </div>
+
+    <!-- Budget -->
+    <div class="summary-section">
+      <div class="summary-title">Budget</div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span style="font-size:1.25rem;font-weight:900;" id="summary-total">$0</span>
+        <span style="font-size:0.8125rem;color:var(--text-3);">of <strong style="color:var(--text-2);" id="summary-budget-cap">$15,000</strong></span>
+      </div>
+      <div class="budget-bar">
+        <div class="budget-bar-track">
+          <div class="budget-bar-fill" id="budget-bar-fill" style="width:0%;"></div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;">
+        <span style="font-size:0.6875rem;color:var(--text-3);">Parts: <strong style="color:var(--text-2);" id="summary-subtotal">$0</strong></span>
+        <span style="font-size:0.6875rem;color:var(--text-3);">Remaining: <strong id="summary-remaining" style="color:var(--success);">+$15,000</strong></span>
+      </div>
+      <div style="margin-top:4px;">
+        <span style="font-size:0.6875rem;color:var(--text-3);">Install Est.: <strong style="color:var(--text-2);" id="summary-install">$0</strong></span>
+      </div>
+
+      <!-- Budget Slider -->
+      <div style="margin-top:14px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:0.625rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);">Adjust Budget</span>
+          <span style="font-size:0.75rem;font-weight:800;color:var(--accent);" id="budget-display">$15,000</span>
+        </div>
+        <input type="range" id="budget-slider" min="2500" max="75000" step="500" value="15000"
+               style="width:100%;accent-color:var(--accent);background:var(--surface-3);border-radius:4px;cursor:pointer;">
+      </div>
+    </div>
+
+    <!-- Parts List -->
+    <div class="summary-section" style="flex:1;overflow-y:auto;">
+      <div class="summary-title">Selected Parts (<span id="part-count-2">0</span>)</div>
+
+      <div id="summary-empty" style="padding:24px 0;text-align:center;color:var(--text-3);">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" style="margin:0 auto 10px;opacity:0.3;">
+          <rect x="6" y="6" width="28" height="28" rx="6" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M14 20h12M20 14v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <div style="font-size:0.8125rem;font-weight:600;margin-bottom:4px;">No parts selected yet</div>
+        <div style="font-size:0.75rem;">Browse categories to add products to your build.</div>
+      </div>
+
+      <div id="summary-parts-list">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="summary-actions">
+      <button class="btn btn-primary" id="btn-save-build" style="width:100%;">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 1h8l2 2v10H2V1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><rect x="4" y="8" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1"/><rect x="4" y="1" width="5" height="3" rx="0.5" stroke="currentColor" stroke-width="1"/></svg>
+        Save Build
+      </button>
+      <button class="btn btn-secondary" id="btn-export-quote" style="width:100%;">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 3h6M4 6h6M4 9h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/></svg>
+        Export Quote
+      </button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <button class="btn btn-ghost" id="btn-share-build" style="width:100%;font-size:0.6875rem;">
+          Share
+        </button>
+        <button class="btn btn-ghost" id="btn-clear-build" style="width:100%;font-size:0.6875rem;color:var(--danger);">
+          Clear All
+        </button>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- ===== VEHICLE CONFIG MODAL ===== -->
+<div class="vehicle-config-modal" id="vehicle-config-modal">
+  <div class="vehicle-config-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
+      <div>
+        <h2 style="font-size:1.25rem;font-weight:900;margin-bottom:4px;">Configure Your Vehicle</h2>
+        <p style="font-size:0.8125rem;color:var(--text-3);">Select your vehicle to filter compatible products</p>
+      </div>
+      <button id="close-vehicle-config" class="btn btn-icon btn-secondary">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 2l12 12M14 2L2 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="config-grid" style="margin-bottom:20px;">
+      <div class="form-group">
+        <label class="form-label">Vehicle Platform</label>
+        <select class="form-select" id="vehicle-select">
+          <option value="">Select Vehicle</option>
+          <!-- Rendered by JS or hardcoded -->
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Year</label>
+        <select class="form-select" id="year-select" disabled>
+          <option value="">Select Year</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:20px;">
+      <label class="form-label">Trim Level</label>
+      <select class="form-select" id="trim-select" disabled>
+        <option value="">Select Trim</option>
+      </select>
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <label class="form-label" style="margin-bottom:12px;display:block;">Mission Type</label>
+      <div class="mission-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:24px;">
+      <label class="form-label" style="display:flex;justify-content:space-between;">
+        Build Budget
+        <span style="color:var(--accent);" id="budget-display-modal">$15,000</span>
+      </label>
+      <input type="range" id="budget-slider-modal" min="2500" max="75000" step="500" value="15000"
+             style="width:100%;margin-top:8px;accent-color:var(--accent);cursor:pointer;">
+      <div style="display:flex;justify-content:space-between;margin-top:6px;">
+        <span style="font-size:0.6875rem;color:var(--text-3);">$2,500</span>
+        <span style="font-size:0.6875rem;color:var(--text-3);">$75,000+</span>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="confirm-vehicle" style="width:100%;">
+      Confirm Vehicle & Start Building
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  /* Initialize vehicle config selects with data */
+  (function() {
+    const vehicleSelect = document.getElementById('vehicle-select');
+    const yearSelect = document.getElementById('year-select');
+    const trimSelect = document.getElementById('trim-select');
+    const missionGrid = document.querySelector('.mission-grid');
+
+    /* Populate vehicles */
+    BORIKU_DATA.vehicles.forEach(v => {
+      vehicleSelect.innerHTML += `<option value="${v.id}">${v.name}${v.popular ? ' ★' : ''}</option>`;
+    });
+
+    /* Enable year/trim on vehicle change */
+    vehicleSelect.addEventListener('change', () => {
+      const v = BORIKU_DATA.vehicles.find(v => v.id === vehicleSelect.value);
+      yearSelect.disabled = !v;
+      trimSelect.disabled = !v;
+      if (!v) return;
+      yearSelect.innerHTML = '<option value="">Select Year</option>';
+      trimSelect.innerHTML = '<option value="">Select Trim</option>';
+      v.generations.forEach(gen => gen.years.forEach(yr => {
+        yearSelect.innerHTML += `<option value="${yr}">${yr}</option>`;
+      }));
+      v.trims.forEach(t => { trimSelect.innerHTML += `<option value="${t}">${t}</option>`; });
+      yearSelect.disabled = false;
+      trimSelect.disabled = false;
+    });
+
+    /* Render missions */
+    if (missionGrid) {
+      missionGrid.innerHTML = BORIKU_DATA.missionTypes.map(m => `
+        <button class="mission-btn" data-mission="${m.id}">
+          <div class="mission-btn-icon">${m.icon}</div>
+          <div class="mission-btn-label">${m.label}</div>
+        </button>
+      `).join('');
+    }
+
+    /* Modal budget slider */
+    const sliderModal = document.getElementById('budget-slider-modal');
+    const displayModal = document.getElementById('budget-display-modal');
+    sliderModal?.addEventListener('input', () => {
+      const val = parseInt(sliderModal.value);
+      if (displayModal) displayModal.textContent = '$' + val.toLocaleString();
+      /* sync main slider */
+      const mainSlider = document.getElementById('budget-slider');
+      if (mainSlider) { mainSlider.value = val; }
+      const budgetCap = document.getElementById('summary-budget-cap');
+      if (budgetCap) budgetCap.textContent = '$' + val.toLocaleString();
+    });
+
+    /* Part count sync */
+    const partCount1 = document.getElementById('part-count');
+    const partCount2 = document.getElementById('part-count-2');
+    const observer = new MutationObserver(() => {
+      if (partCount2 && partCount1) partCount2.textContent = partCount1.textContent;
+    });
+    if (partCount1) observer.observe(partCount1, { childList: true });
+
+    /* Show modal on load if no vehicle */
+    setTimeout(() => {
+      const modal = document.getElementById('vehicle-config-modal');
+      if (modal) modal.classList.add('open');
+    }, 500);
+  })();
+</script>
+<script src="js/build-planner.js"></script>
+<script type="module" src="js/animations.js"></script>
+</body>
+</html>

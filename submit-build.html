@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submit Your Build — BŌRYKU Contest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/account.css">
+  <style>
+    .submit-layout { max-width: 720px; margin: 0 auto; }
+    .step-nav { display: flex; align-items: center; gap: 0; margin-bottom: 56px; position: relative; padding-bottom: 20px; }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-mark">RY</div>
+      <div><div class="nav-logo-text">BŌRYKU</div><span class="nav-logo-sub">/ RYKU</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="contest.html" class="nav-link">Contest</a></li>
+      <li><a href="builds.html" class="nav-link">Builds</a></li>
+    </ul>
+    <div class="nav-cta">
+      <div class="nav-auth-area"></div>
+      <a href="build-planner.html" class="btn btn-primary btn-sm">Start Build</a>
+      <button class="nav-mobile-toggle">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect y="3" width="18" height="2" rx="1" fill="currentColor"/><rect y="8" width="18" height="2" rx="1" fill="currentColor"/><rect y="13" width="18" height="2" rx="1" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+<div class="nav-mobile-menu">
+  <a href="index.html" class="nav-mobile-link">Home</a>
+  <a href="contest.html" class="nav-mobile-link">Contest</a>
+  <div class="mobile-auth-section"></div>
+</div>
+
+<section style="padding:calc(var(--nav-h) + 48px) 0 80px;">
+  <div class="container">
+    <div class="submit-layout">
+
+      <!-- Header -->
+      <div style="margin-bottom:40px;">
+        <a href="contest.html" style="display:inline-flex;align-items:center;gap:6px;font-size:0.8125rem;font-weight:600;color:var(--text-3);margin-bottom:20px;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--text-1)'" onmouseout="this.style.color='var(--text-3)'">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Back to Contest
+        </a>
+        <div class="section-eyebrow" style="margin-bottom:12px;">Monthly Build Drop</div>
+        <h1 class="display-md" style="margin-bottom:12px;">Submit Your Build</h1>
+        <p style="color:var(--text-2);font-size:1.0625rem;line-height:1.65;max-width:560px;">Show the community your real completed rig. Top 3 builds of the month win premium gear.</p>
+      </div>
+
+      <!-- Step Indicator -->
+      <div class="step-nav" id="step-nav">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Step Form -->
+      <div id="step-form">
+
+        <!-- ===== STEP 1: VEHICLE ===== -->
+        <div class="submit-step active" id="step-1">
+          <div style="margin-bottom:28px;">
+            <h2 style="font-size:1.125rem;font-weight:800;margin-bottom:4px;">Vehicle Information</h2>
+            <p style="font-size:0.875rem;color:var(--text-3);">Tell us about the rig you built.</p>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group">
+              <label class="form-label">Make <span style="color:var(--danger);">*</span></label>
+              <select class="form-select" id="f-make" required>
+                <option value="">Select Make</option>
+                <option>Toyota</option>
+                <option>Ford</option>
+                <option>Jeep</option>
+                <option>Chevy / GMC</option>
+                <option>Ram</option>
+                <option>Nissan</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Model <span style="color:var(--danger);">*</span></label>
+              <input type="text" class="form-input" id="f-model" placeholder="e.g. Tacoma, 4Runner, Wrangler" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Year <span style="color:var(--danger);">*</span></label>
+              <select class="form-select" id="f-year" required>
+                <option value="">Select Year</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Trim Level</label>
+              <input type="text" class="form-input" id="f-trim" placeholder="e.g. TRD Pro, Rubicon">
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-top:32px;">
+            <button class="btn btn-primary" onclick="nextStep()">
+              Next: Build Details
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== STEP 2: BUILD DETAILS ===== -->
+        <div class="submit-step" id="step-2">
+          <div style="margin-bottom:28px;">
+            <h2 style="font-size:1.125rem;font-weight:800;margin-bottom:4px;">Build Details</h2>
+            <p style="font-size:0.875rem;color:var(--text-3);">Give your build a name and tell us the story.</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="form-group">
+              <label class="form-label">Build Name <span style="color:var(--danger);">*</span></label>
+              <input type="text" class="form-input" id="f-name" placeholder="e.g. DUST PROTOCOL, ARCTIC SIEGE" maxlength="32" required>
+              <div style="font-size:0.6875rem;color:var(--text-3);margin-top:4px;">Keep it tactical. Max 32 characters.</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Build Description <span style="color:var(--danger);">*</span></label>
+              <textarea class="form-textarea" id="f-desc" style="min-height:120px;" placeholder="Tell the community about your build — where you've taken it, what it's built for, what makes it special…" required></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="display:flex;justify-content:space-between;">
+                Total Build Cost (Estimated)
+                <span style="color:var(--accent);" id="f-cost-display">$0</span>
+              </label>
+              <input type="range" class="form-input" id="f-cost-range" min="1000" max="80000" step="500" value="12000"
+                     style="padding:4px 0;background:none;border:none;box-shadow:none;accent-color:var(--accent);cursor:pointer;">
+              <input type="number" class="form-input" id="f-cost" placeholder="12000" value="12000" min="500">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Mission Type</label>
+              <select class="form-select" id="f-mission">
+                <option>Overland</option>
+                <option>Rock Crawling</option>
+                <option>Desert Running</option>
+                <option>Snow & Ice</option>
+                <option>Daily Driver+</option>
+                <option>Overlite</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:32px;">
+            <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+            <button class="btn btn-primary" onclick="nextStep()">
+              Next: Modifications
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== STEP 3: MODIFICATIONS ===== -->
+        <div class="submit-step" id="step-3">
+          <div style="margin-bottom:28px;">
+            <h2 style="font-size:1.125rem;font-weight:800;margin-bottom:4px;">Modifications & Products</h2>
+            <p style="font-size:0.875rem;color:var(--text-3);">List what's on your rig. Add one item at a time.</p>
+          </div>
+
+          <div style="margin-bottom:20px;">
+            <label class="form-label" style="margin-bottom:10px;display:block;">Add Modification / Product</label>
+            <div style="display:flex;gap:8px;">
+              <input type="text" class="form-input" id="mod-input" placeholder="e.g. 2&quot; ICON Stage 5 Coilovers" style="flex:1;">
+              <button class="btn btn-secondary" onclick="addMod()">Add</button>
+            </div>
+          </div>
+
+          <!-- Quick-add common mods -->
+          <div style="margin-bottom:20px;">
+            <div style="font-size:0.6875rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px;">Quick Add:</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">
+              ${['Roof Rack','Rooftop Tent','Front Bumper','Rear Bumper','Rock Sliders','Lift Kit','Winch','Light Bar','Aux Lights','Recovery Boards','Fridge/Freezer','Wheels & Tires'].map(m =>
+                `<button class="btn btn-secondary btn-sm" onclick="addModQuick('${m}')">${m}</button>`
+              ).join('')}
+            </div>
+          </div>
+
+          <div id="mod-tags-wrap" class="mod-tag-input" style="min-height:40px;margin-bottom:16px;">
+            <!-- Tags rendered here -->
+          </div>
+          <div id="mod-empty" style="font-size:0.8125rem;color:var(--text-3);padding:12px;background:var(--surface);border-radius:var(--r-md);border:1px dashed var(--border);">
+            No modifications added yet. Add what's on your rig above.
+          </div>
+
+          <div style="display:flex;justify-content:space-between;margin-top:32px;">
+            <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+            <button class="btn btn-primary" onclick="nextStep()">
+              Next: Photos & Info
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== STEP 4: PHOTOS + SOCIAL ===== -->
+        <div class="submit-step" id="step-4">
+          <div style="margin-bottom:28px;">
+            <h2 style="font-size:1.125rem;font-weight:800;margin-bottom:4px;">Photos & Profile</h2>
+            <p style="font-size:0.875rem;color:var(--text-3);">Upload photos of your build and add your social handle.</p>
+          </div>
+
+          <!-- Photo upload -->
+          <div style="margin-bottom:24px;">
+            <label class="form-label" style="margin-bottom:10px;display:block;">Build Photos <span style="color:var(--text-3);font-weight:400;">(up to 6)</span></label>
+            <div class="photo-upload-zone" onclick="document.getElementById('photo-input').click();">
+              <input type="file" id="photo-input" multiple accept="image/*" onchange="handlePhotoUpload(this)">
+              <div style="font-size:2rem;margin-bottom:12px;">📸</div>
+              <div style="font-size:0.9375rem;font-weight:700;margin-bottom:6px;">Click to upload photos</div>
+              <div style="font-size:0.8125rem;color:var(--text-3);">JPG, PNG, WEBP · Max 10MB each</div>
+            </div>
+            <div class="photo-preview-grid" id="photo-previews" style="display:none;">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+          <!-- Social handle -->
+          <div class="form-group" style="margin-bottom:16px;">
+            <label class="form-label">Instagram / Social Handle <span style="color:var(--text-3);font-weight:400;">(optional)</span></label>
+            <input type="text" class="form-input" id="f-social" placeholder="@yourusername">
+          </div>
+
+          <!-- Rules acknowledgement -->
+          <div style="padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:24px;">
+            <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px;">Contest Rules</div>
+            <ul style="display:flex;flex-direction:column;gap:6px;padding-left:0;">
+              <li style="display:flex;gap:8px;font-size:0.8125rem;color:var(--text-2);"><span style="color:var(--accent);">✓</span> Build must be a real completed vehicle, not a digital concept</li>
+              <li style="display:flex;gap:8px;font-size:0.8125rem;color:var(--text-2);"><span style="color:var(--accent);">✓</span> One submission per user per month</li>
+              <li style="display:flex;gap:8px;font-size:0.8125rem;color:var(--text-2);"><span style="color:var(--accent);">✓</span> BŌRYKU team reviews all entries before publishing</li>
+              <li style="display:flex;gap:8px;font-size:0.8125rem;color:var(--text-2);"><span style="color:var(--accent);">✓</span> Winners notified by end of month</li>
+            </ul>
+            <div style="margin-top:12px;display:flex;align-items:center;gap:8px;">
+              <input type="checkbox" id="agree-rules" style="accent-color:var(--accent);width:14px;height:14px;cursor:pointer;" required>
+              <label for="agree-rules" style="font-size:0.8125rem;color:var(--text-2);cursor:pointer;">I confirm this is my real completed build and I agree to the contest rules.</label>
+            </div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;margin-top:8px;">
+            <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+            <button class="btn btn-primary btn-lg" onclick="submitBuild()">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M4 6l4-4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Submit Build Entry
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== SUCCESS ===== -->
+        <div class="submit-step" id="step-success" style="text-align:center;padding:48px 0;">
+          <div style="font-size:4rem;margin-bottom:20px;">🏆</div>
+          <h2 style="font-size:1.5rem;font-weight:900;margin-bottom:12px;">Build Submitted!</h2>
+          <p style="color:var(--text-2);max-width:440px;margin:0 auto 32px;line-height:1.65;">
+            Your build is under review. Once approved it'll appear in the contest gallery and be open for community voting. Good luck!
+          </p>
+          <div style="padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);max-width:360px;margin:0 auto 32px;text-align:left;">
+            <div style="font-size:0.625rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px;">Submission Summary</div>
+            <div id="success-summary"></div>
+          </div>
+          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+            <a href="contest.html" class="btn btn-primary">View Contest Gallery</a>
+            <a href="account.html#contest" class="btn btn-secondary">My Entries</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/contest.js"></script>
+<script>
+(function() {
+  /* Auth guard */
+  if (!BORIKU_AUTH.isLoggedIn()) {
+    window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+    return;
+  }
+
+  /* Populate years */
+  const yearSel = document.getElementById('f-year');
+  if (yearSel) {
+    for (let y = new Date().getFullYear(); y >= 2000; y--) {
+      yearSel.innerHTML += `<option value="${y}">${y}</option>`;
+    }
+  }
+
+  /* Cost slider sync */
+  const costRange = document.getElementById('f-cost-range');
+  const costInput = document.getElementById('f-cost');
+  const costDisplay = document.getElementById('f-cost-display');
+  costRange?.addEventListener('input', () => {
+    costInput.value = costRange.value;
+    costDisplay.textContent = '$' + parseInt(costRange.value).toLocaleString();
+  });
+  costInput?.addEventListener('input', () => {
+    costRange.value = costInput.value;
+    costDisplay.textContent = '$' + parseInt(costInput.value || 0).toLocaleString();
+  });
+  costDisplay.textContent = '$' + parseInt(costInput.value || 0).toLocaleString();
+
+  /* Stepper */
+  let currentStep = 1;
+  const TOTAL_STEPS = 4;
+  const STEP_LABELS = ['Vehicle', 'Details', 'Modifications', 'Photos'];
+
+  function renderStepNav() {
+    const nav = document.getElementById('step-nav');
+    if (!nav) return;
+    nav.innerHTML = STEP_LABELS.map((label, i) => {
+      const n = i + 1;
+      const cls = n < currentStep ? 'done' : n === currentStep ? 'active' : '';
+      return `
+        ${i > 0 ? `<div class="step-line ${n <= currentStep ? 'done' : ''}"></div>` : ''}
+        <div class="step-dot ${cls}" style="position:relative;">
+          ${n < currentStep ? '✓' : n}
+          <span class="step-label">${label}</span>
+        </div>`;
+    }).join('');
+  }
+
+  window.nextStep = function() {
+    const current = document.getElementById('step-' + currentStep);
+    /* simple validation */
+    const required = current?.querySelectorAll('[required]');
+    for (const el of (required || [])) {
+      if (!el.value) { el.focus(); window.showToast('Please fill in all required fields.','warning'); return; }
+    }
+    if (currentStep < TOTAL_STEPS) {
+      document.getElementById('step-' + currentStep).classList.remove('active');
+      currentStep++;
+      document.getElementById('step-' + currentStep).classList.add('active');
+      renderStepNav();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  window.prevStep = function() {
+    if (currentStep > 1) {
+      document.getElementById('step-' + currentStep).classList.remove('active');
+      currentStep--;
+      document.getElementById('step-' + currentStep).classList.add('active');
+      renderStepNav();
+    }
+  };
+
+  renderStepNav();
+
+  /* Modifications */
+  const mods = [];
+  window.addMod = function() {
+    const input = document.getElementById('mod-input');
+    const val = input.value.trim();
+    if (!val) return;
+    mods.push(val);
+    input.value = '';
+    renderMods();
+  };
+  window.addModQuick = function(val) {
+    if (!mods.includes(val)) { mods.push(val); renderMods(); }
+  };
+  window.removeMod = function(i) {
+    mods.splice(i, 1);
+    renderMods();
+  };
+  document.getElementById('mod-input')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); window.addMod(); }
+  });
+
+  function renderMods() {
+    const wrap = document.getElementById('mod-tags-wrap');
+    const empty = document.getElementById('mod-empty');
+    if (!wrap) return;
+    if (mods.length === 0) {
+      wrap.innerHTML = '';
+      if (empty) empty.style.display = '';
+    } else {
+      if (empty) empty.style.display = 'none';
+      wrap.innerHTML = mods.map((m, i) => `
+        <span class="mod-tag">
+          ${m}
+          <button class="mod-tag-remove" onclick="removeMod(${i})">✕</button>
+        </span>`).join('');
+    }
+  }
+
+  /* Photo upload */
+  window.handlePhotoUpload = function(input) {
+    const files = Array.from(input.files).slice(0, 6);
+    const grid = document.getElementById('photo-previews');
+    if (!grid) return;
+    grid.style.display = 'grid';
+    grid.innerHTML = files.map((file, i) => {
+      const url = URL.createObjectURL(file);
+      return `
+        <div class="photo-preview-thumb">
+          <img src="${url}" alt="Photo ${i+1}" style="width:100%;height:100%;object-fit:cover;border-radius:var(--r-md);">
+        </div>`;
+    }).join('');
+    if (files.length < 6) {
+      grid.innerHTML += `
+        <div class="photo-preview-thumb" onclick="document.getElementById('photo-input').click();" style="cursor:pointer;border:2px dashed var(--border);">
+          <div style="text-align:center;padding:8px;color:var(--text-4);">
+            <div style="font-size:1.25rem;margin-bottom:4px;">+</div>
+            <div style="font-size:0.5625rem;">Add</div>
+          </div>
+        </div>`;
+    }
+    window.showToast(`${files.length} photo${files.length !== 1 ? 's' : ''} added!`);
+  };
+
+  /* Submit */
+  window.submitBuild = function() {
+    if (!document.getElementById('agree-rules')?.checked) {
+      window.showToast('Please agree to the contest rules.','warning');
+      return;
+    }
+
+    const user = BORIKU_AUTH.currentUser;
+    const buildData = {
+      userId: user.id,
+      ownerName: user.fullName,
+      ownerAvatar: user.avatar,
+      socialHandle: document.getElementById('f-social').value || '',
+      vehicleMake: document.getElementById('f-make').value,
+      vehicleModel: document.getElementById('f-model').value,
+      vehicleYear: parseInt(document.getElementById('f-year').value),
+      vehicleTrim: document.getElementById('f-trim').value,
+      vehicle: [document.getElementById('f-year').value, document.getElementById('f-make').value, document.getElementById('f-model').value].join(' '),
+      buildName: document.getElementById('f-name').value,
+      description: document.getElementById('f-desc').value,
+      totalCost: parseInt(document.getElementById('f-cost').value || 0),
+      mission: document.getElementById('f-mission').value,
+      modifications: [...mods],
+      photos: []
+    };
+
+    const entry = BORIKU_CONTEST.submitEntry(buildData);
+
+    /* Show success */
+    document.getElementById('step-' + currentStep).classList.remove('active');
+    document.getElementById('step-success').classList.add('active');
+    document.getElementById('step-nav').style.display = 'none';
+
+    const summary = document.getElementById('success-summary');
+    if (summary) {
+      summary.innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;justify-content:space-between;font-size:0.8125rem;">
+            <span style="color:var(--text-3);">Build Name</span>
+            <strong>${buildData.buildName}</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.8125rem;">
+            <span style="color:var(--text-3);">Vehicle</span>
+            <strong>${buildData.vehicle}</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.8125rem;">
+            <span style="color:var(--text-3);">Cost</span>
+            <strong>$${buildData.totalCost.toLocaleString()}</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.8125rem;">
+            <span style="color:var(--text-3);">Modifications</span>
+            <strong>${mods.length} items</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.8125rem;">
+            <span style="color:var(--text-3);">Status</span>
+            <span class="tag tag-warning">Pending Review</span>
+          </div>
+        </div>`;
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  /* Quick-add buttons inline template rendering */
+  const quickBtns = document.getElementById('step-3');
+  if (quickBtns) {
+    const placeholder = quickBtns.querySelector('.quick-add-placeholder');
+    if (placeholder) {
+      placeholder.innerHTML = ['Roof Rack','Rooftop Tent','Front Bumper','Rear Bumper','Rock Sliders','Lift Kit','Winch','Light Bar','Aux Lights','Recovery Boards','Fridge/Freezer','Wheels & Tires']
+        .map(m => `<button class="btn btn-secondary btn-sm" onclick="addModQuick('${m}')">${m}</button>`)
+        .join('');
+    }
+  }
+})();
+</script>
+<script type="module" src="js/animations.js"></script>
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Installers — BŌRYKU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/account.css">
+  <style>
+    .installers-layout { display: grid; grid-template-columns: 1fr 380px; gap: 32px; }
+    .map-area { position: sticky; top: calc(var(--nav-h) + 24px); height: calc(100vh - var(--nav-h) - 48px); }
+    .installer-list { display: flex; flex-direction: column; gap: 20px; }
+    .availability-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); display: inline-block; animation: pulse 2s infinite; }
+    .availability-dot.busy { background: var(--warning); }
+    .availability-dot.booked { background: var(--danger); }
+    .quote-modal {
+      position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+      display: none; align-items: center; justify-content: center; padding: 24px;
+    }
+    .quote-modal.open { display: flex; }
+    .quote-modal-box {
+      background: var(--bg-2); border: 1px solid var(--border);
+      border-radius: var(--r-2xl); width: 100%; max-width: 520px; padding: 32px;
+      max-height: 90vh; overflow-y: auto;
+    }
+    @media (max-width: 1000px) {
+      .installers-layout { grid-template-columns: 1fr; }
+      .map-area { position: static; height: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-mark">RY</div>
+      <div><div class="nav-logo-text">BŌRYKU</div><span class="nav-logo-sub">/ RYKU</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="builds.html" class="nav-link">Builds</a></li>
+      <li><a href="gear.html" class="nav-link">Gear</a></li>
+      <li><a href="installers.html" class="nav-link">Installers</a></li>
+      <li><a href="about.html" class="nav-link">About</a></li>
+      <li><a href="contact.html" class="nav-link">Contact</a></li>
+      <li><a href="contest.html" class="nav-link">Contest</a></li>
+    </ul>
+    <div class="nav-cta">
+      <div class="nav-auth-area"></div>
+      <a href="build-planner.html" class="btn btn-primary btn-sm">Start Build</a>
+      <button class="nav-mobile-toggle">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect y="3" width="18" height="2" rx="1" fill="currentColor"/><rect y="8" width="18" height="2" rx="1" fill="currentColor"/><rect y="13" width="18" height="2" rx="1" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+<div class="nav-mobile-menu">
+  <a href="index.html" class="nav-mobile-link">Home</a>
+  <a href="builds.html" class="nav-mobile-link">Builds</a>
+  <a href="gear.html" class="nav-mobile-link">Gear</a>
+  <a href="installers.html" class="nav-mobile-link">Installers</a>
+  <a href="about.html" class="nav-mobile-link">About</a>
+  <a href="contact.html" class="nav-mobile-link">Contact</a>
+  <a href="contest.html" class="nav-mobile-link">Contest</a>
+  <a href="build-planner.html" class="btn btn-primary" style="margin-top:16px;">Start Build</a>
+  <div class="mobile-auth-section"></div>
+</div>
+
+<!-- Page Hero -->
+<section class="page-hero" style="background:var(--bg-2);border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div style="max-width:640px;">
+      <div class="page-hero-tag"><span class="tag tag-accent">Network</span></div>
+      <h1 class="display-md page-hero-title">Find Certified Installers</h1>
+      <p class="page-hero-desc">Connect with vetted overland and off-road installers near you. Compare services, read reviews, and request quotes.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section-sm">
+  <div class="container">
+    <!-- Search & Filter Bar -->
+    <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+      <div class="search-wrap" style="flex:1;min-width:240px;">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M12 12l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <input type="text" class="form-input search-input" id="inst-search" placeholder="City, zip code, or shop name...">
+      </div>
+      <select class="form-select" id="inst-specialty" style="max-width:220px;">
+        <option value="">All Specialties</option>
+        <option value="Suspension">Suspension</option>
+        <option value="Fabrication">Fabrication</option>
+        <option value="Rooftop Tents">Rooftop Tents</option>
+        <option value="Lighting">Lighting</option>
+        <option value="Recovery">Recovery</option>
+        <option value="Winches">Winches</option>
+        <option value="Electronics">Electronics</option>
+        <option value="Full Builds">Full Builds</option>
+      </select>
+      <select class="form-select" id="inst-sort" style="max-width:180px;">
+        <option value="distance">Nearest First</option>
+        <option value="rating">Highest Rated</option>
+        <option value="builds">Most Builds</option>
+      </select>
+    </div>
+
+    <!-- Specialty Filter Tags -->
+    <div class="filter-bar" style="margin-bottom:32px;">
+      <button class="filter-btn active" data-specialty="all">All</button>
+      <button class="filter-btn" data-specialty="Suspension">Suspension</button>
+      <button class="filter-btn" data-specialty="Fabrication">Fabrication</button>
+      <button class="filter-btn" data-specialty="Rooftop Tents">RTTs</button>
+      <button class="filter-btn" data-specialty="Lighting">Lighting</button>
+      <button class="filter-btn" data-specialty="Full Builds">Full Builds</button>
+    </div>
+
+    <div class="installers-layout">
+      <!-- Installer List -->
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+          <span style="font-size:0.8125rem;color:var(--text-3);"><strong style="color:var(--text-1);" id="inst-count">6</strong> installers near you</span>
+          <span style="display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--text-3);">
+            <span class="availability-dot"></span> Available
+            <span class="availability-dot busy" style="margin-left:4px;"></span> Limited
+            <span class="availability-dot booked" style="margin-left:4px;"></span> Booked Out
+          </span>
+        </div>
+
+        <div class="installer-list" id="installer-list">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Map -->
+      <div class="map-area">
+        <div class="map-placeholder" style="height:100%;min-height:480px;border-radius:var(--r-xl);">
+          <div class="map-grid"></div>
+          <!-- Map pins -->
+          <div class="map-pin" style="top:30%;left:45%;" title="Phoenix Overland Co."></div>
+          <div class="map-pin" style="top:42%;left:38%;animation-delay:0.3s;" title="APEX Off-Road"></div>
+          <div class="map-pin" style="top:38%;left:58%;animation-delay:0.6s;" title="Terrain Command"></div>
+          <div class="map-pin" style="top:55%;left:52%;animation-delay:0.9s;" title="Mesa Motorsports"></div>
+          <div class="map-pin" style="top:62%;left:33%;animation-delay:1.2s;" title="Desert Iron"></div>
+          <div class="map-pin" style="top:70%;left:65%;animation-delay:1.5s;" title="Grit & Steel"></div>
+          <!-- You Are Here indicator -->
+          <div style="position:absolute;top:48%;left:47%;width:14px;height:14px;border-radius:50%;background:var(--info);box-shadow:0 0 0 4px rgba(59,130,246,0.2);z-index:2;"></div>
+          <div style="position:absolute;top:calc(48% + 18px);left:calc(47% - 20px);font-size:0.5625rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--info);white-space:nowrap;z-index:2;">You</div>
+          <div style="position:relative;z-index:1;text-align:center;margin-top:24px;">
+            <div style="font-size:0.6875rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-3);">Phoenix Metro Area</div>
+            <div style="font-size:0.75rem;color:var(--text-4);margin-top:4px;">6 shops within 20 miles</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="stats-strip" style="margin-top:0;">
+  <div class="container">
+    <div class="stats-strip-inner">
+      <div class="stats-strip-item">
+        <div class="stats-strip-number"><em data-count="340" data-suffix="+">0+</em></div>
+        <div class="stats-strip-label">Verified Shops</div>
+      </div>
+      <div class="stats-strip-item">
+        <div class="stats-strip-number"><em data-count="48">0</em></div>
+        <div class="stats-strip-label">States Covered</div>
+      </div>
+      <div class="stats-strip-item">
+        <div class="stats-strip-number"><em data-count="98" data-suffix="%">0%</em></div>
+        <div class="stats-strip-label">Satisfaction Rate</div>
+      </div>
+      <div class="stats-strip-item">
+        <div class="stats-strip-number"><em data-count="180" data-suffix="+">0+</em></div>
+        <div class="stats-strip-label">Brand Certifications</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Are You an Installer? -->
+<section class="section-sm" style="background:var(--bg-2);border-top:1px solid var(--border);">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;">
+      <div>
+        <div class="section-eyebrow">For Shops</div>
+        <h2 class="heading-1" style="margin-bottom:16px;">Are You a Certified Installer?</h2>
+        <p style="color:var(--text-2);line-height:1.65;margin-bottom:24px;">Join the BŌRYKU installer network. Get discovered by serious builders in your area, showcase your work, and manage quote requests from one platform.</p>
+        <a href="contact.html" class="btn btn-primary">Apply to Join Network</a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="card" style="padding:20px;">
+          <div style="font-size:0.875rem;font-weight:700;margin-bottom:4px;">📍 Local Discovery</div>
+          <div style="font-size:0.8125rem;color:var(--text-3);">Get found by builders searching in your area, filtered by your specialties.</div>
+        </div>
+        <div class="card" style="padding:20px;">
+          <div style="font-size:0.875rem;font-weight:700;margin-bottom:4px;">📋 Quote Requests</div>
+          <div style="font-size:0.8125rem;color:var(--text-3);">Receive detailed build quotes from BŌRYKU users who've already configured their gear.</div>
+        </div>
+        <div class="card" style="padding:20px;">
+          <div style="font-size:0.875rem;font-weight:700;margin-bottom:4px;">⭐ Reviews & Reputation</div>
+          <div style="font-size:0.8125rem;color:var(--text-3);">Build your reputation with verified reviews from real overland and off-road builds.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+      <div class="nav-logo">
+        <div class="nav-logo-mark">RY</div>
+        <div><div class="nav-logo-text">BŌRYKU</div><span class="nav-logo-sub">/ RYKU</span></div>
+      </div>
+      <p class="footer-copy">© 2024 <span style="color:var(--accent);">BŌRYKU / RYKU</span>. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Quote Request Modal -->
+<div class="quote-modal" id="quote-modal">
+  <div class="quote-modal-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div>
+        <h2 style="font-size:1.125rem;font-weight:900;margin-bottom:3px;">Request a Quote</h2>
+        <p id="quote-modal-shop" style="font-size:0.8125rem;color:var(--accent);font-weight:700;"></p>
+      </div>
+      <button id="close-quote-modal" class="btn btn-icon btn-secondary">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 2l12 12M14 2L2 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <input type="text" class="form-input" placeholder="Full name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone / Email</label>
+        <input type="text" class="form-input" placeholder="Your contact info">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Your Vehicle</label>
+        <input type="text" class="form-input" placeholder="e.g. 2022 Toyota Tacoma TRD Pro">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Services Needed</label>
+        <select class="form-select">
+          <option>Suspension Lift Install</option>
+          <option>Roof Rack Install</option>
+          <option>Rooftop Tent Install</option>
+          <option>Bumper Replacement</option>
+          <option>Lighting Install</option>
+          <option>Full Build Package</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes / Build Details</label>
+        <textarea class="form-textarea" style="min-height:80px;" placeholder="Describe your build or specific products..."></textarea>
+      </div>
+      <button class="btn btn-primary" style="width:100%;" onclick="submitQuote()">Send Quote Request</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/auth.js"></script>
+<script>
+(function() {
+  let installers = [...BORIKU_DATA.installers];
+  let activeSpecialty = 'all';
+  let searchQ = '';
+
+  function getAvailDot(avail) {
+    if (avail.toLowerCase().includes('this week') || avail.toLowerCase().includes('tomorrow')) {
+      return '<span class="availability-dot"></span>';
+    } else if (avail.toLowerCase().includes('next')) {
+      return '<span class="availability-dot busy"></span>';
+    }
+    return '<span class="availability-dot booked"></span>';
+  }
+
+  function renderInstallers(list) {
+    const container = document.getElementById('installer-list');
+    const countEl = document.getElementById('inst-count');
+    if (countEl) countEl.textContent = list.length;
+    if (!container) return;
+
+    if (list.length === 0) {
+      container.innerHTML = `<div style="text-align:center;padding:48px;color:var(--text-3);">
+        <div style="font-size:2rem;margin-bottom:12px;">🔍</div>
+        <div style="font-weight:700;margin-bottom:6px;">No installers match your search</div>
+        <div style="font-size:0.8125rem;">Try a different specialty or clear your filters.</div>
+      </div>`;
+      return;
+    }
+
+    container.innerHTML = list.map(inst => `
+      <div class="installer-card">
+        <div class="installer-card-header">
+          <div class="installer-avatar">${inst.initials}</div>
+          <div style="flex:1;min-width:0;">
+            <div class="installer-name">${inst.name}</div>
+            <div class="installer-location">📍 ${inst.location} · ${inst.distance}</div>
+            <div class="installer-rating">
+              ★ ${inst.rating}
+              <span style="font-weight:400;color:var(--text-3);">(${inst.reviewCount} reviews)</span>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-size:1rem;font-weight:900;margin-bottom:2px;">${inst.priceRange}</div>
+            <div style="font-size:0.625rem;color:var(--text-3);text-transform:uppercase;letter-spacing:0.08em;">Price Range</div>
+          </div>
+        </div>
+
+        <div class="installer-specialties">
+          ${inst.specialties.map(s => `<span class="tag tag-default">${s}</span>`).join('')}
+        </div>
+
+        ${inst.certifications && inst.certifications.length > 0 ? `
+        <div style="margin-bottom:14px;display:flex;flex-wrap:wrap;gap:6px;">
+          ${inst.certifications.map(c => `<span class="tag tag-accent" style="font-size:0.5625rem;">${c}</span>`).join('')}
+        </div>` : ''}
+
+        <div class="installer-stats">
+          <div class="installer-stat">
+            <div class="installer-stat-value">${inst.stats.builds.toLocaleString()}</div>
+            <div class="installer-stat-label">Builds</div>
+          </div>
+          <div class="installer-stat">
+            <div class="installer-stat-value">${inst.stats.brands}</div>
+            <div class="installer-stat-label">Brands</div>
+          </div>
+          <div class="installer-stat">
+            <div class="installer-stat-value" style="font-size:0.875rem;">${inst.stats.avgTime}</div>
+            <div class="installer-stat-label">Avg. Time</div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div style="display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--text-2);">
+            ${getAvailDot(inst.availability)}
+            ${inst.availability}
+          </div>
+          <span style="font-size:0.6875rem;color:var(--text-3);">Est. since ${inst.since}</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <a href="tel:${inst.phone}" class="btn btn-secondary btn-sm">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2a1 1 0 011-1h2.5l1 3-1.5 1.5A9.5 9.5 0 009 11l1.5-1.5 3 1V13a1 1 0 01-1 1C6.5 14 0 7.5 0 3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.2"/></svg>
+            Call
+          </a>
+          <button class="btn btn-primary btn-sm" onclick="openQuoteModal('${inst.name}')">
+            Request Quote
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function applyFilters() {
+    let list = [...BORIKU_DATA.installers];
+    if (activeSpecialty !== 'all') {
+      list = list.filter(i => i.specialties.some(s => s.toLowerCase().includes(activeSpecialty.toLowerCase())));
+    }
+    if (searchQ) {
+      list = list.filter(i =>
+        i.name.toLowerCase().includes(searchQ) ||
+        i.location.toLowerCase().includes(searchQ) ||
+        i.specialties.some(s => s.toLowerCase().includes(searchQ))
+      );
+    }
+    renderInstallers(list);
+  }
+
+  /* Specialty filter tabs */
+  document.querySelectorAll('.filter-btn[data-specialty]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn[data-specialty]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeSpecialty = btn.dataset.specialty;
+      applyFilters();
+    });
+  });
+
+  document.getElementById('inst-search')?.addEventListener('input', e => {
+    searchQ = e.target.value.toLowerCase();
+    applyFilters();
+  });
+
+  document.getElementById('inst-sort')?.addEventListener('change', e => {
+    const val = e.target.value;
+    installers.sort((a, b) => {
+      if (val === 'rating') return b.rating - a.rating;
+      if (val === 'builds') return b.stats.builds - a.stats.builds;
+      return parseFloat(a.distance) - parseFloat(b.distance);
+    });
+    applyFilters();
+  });
+
+  renderInstallers(installers);
+})();
+
+function openQuoteModal(shopName) {
+  document.getElementById('quote-modal-shop').textContent = shopName;
+  document.getElementById('quote-modal').classList.add('open');
+}
+
+function submitQuote() {
+  document.getElementById('quote-modal').classList.remove('open');
+  window.showToast('Quote request sent! The shop will contact you within 24 hours.');
+}
+
+document.getElementById('close-quote-modal')?.addEventListener('click', () => {
+  document.getElementById('quote-modal').classList.remove('open');
+});
+document.getElementById('quote-modal')?.addEventListener('click', e => {
+  if (e.target === document.getElementById('quote-modal')) {
+    document.getElementById('quote-modal').classList.remove('open');
+  }
+});
+</script>
+<script type="module" src="js/animations.js"></script>
+</body>
+</html>
