@@ -11,6 +11,14 @@ PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(pwd)}"
 echo "=== RYKU-builder session start ==="
 echo "Project: $PROJECT_DIR"
 
+# Install npm dependencies if package.json exists
+if [ -f "$PROJECT_DIR/package.json" ]; then
+  echo "Installing npm dependencies..."
+  cd "$PROJECT_DIR"
+  npm install
+  echo "npm install complete."
+fi
+
 # Verify key project files are present
 REQUIRED_FILES=(
   "index.html"
