@@ -136,36 +136,6 @@ export default function LoadingScreen({ onComplete }: Props) {
         style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
       >
 
-        {/* ── Brand mark ─────────────────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: -14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1], delay: 0.08 }}
-          style={{ marginBottom: 38, textAlign: 'center' }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/ryku-logo-icon.png"
-            alt="BŌRYKU"
-            style={{
-              width: 104, height: 104, display: 'block',
-              objectFit: 'contain', mixBlendMode: 'screen',
-              margin: '0 auto 12px',
-            }}
-          />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'center' }}>
-            <div style={{ width: 22, height: 1, background: 'linear-gradient(to right, transparent, rgba(255,85,31,0.50))' }} />
-            <span style={{
-              fontFamily: 'var(--font-mono)', fontSize: 8.5,
-              letterSpacing: '0.28em', color: 'rgba(255,85,31,0.55)',
-              textTransform: 'uppercase',
-            }}>
-              BŌRYKU EXPEDITION SYSTEMS
-            </span>
-            <div style={{ width: 22, height: 1, background: 'linear-gradient(to left, transparent, rgba(255,85,31,0.50))' }} />
-          </div>
-        </motion.div>
-
         {/* ══════════════════════════════════════════════════════════
             PUSH BUTTON
         ══════════════════════════════════════════════════════════ */}
