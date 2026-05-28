@@ -37,24 +37,16 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Cinematic reveal: hide navbar during homepage intro, reveal at 70% scroll
-  // CinematicHero is 450vh tall, viewport is 100vh → scroll range = 350vh = 3.5×vh
+  // On homepage: hidden during loading screen, revealed via ryku:intro-complete event.
+  // On other pages: always visible immediately.
   useEffect(() => {
     if (!isHomepage) {
       setNavVisible(true)
       return
     }
-
-    setNavVisible(false)
-
-    const onScroll = () => {
-      const progress = window.scrollY / (3.5 * window.innerHeight)
-      if (progress >= 0.70) setNavVisible(true)
-    }
-
-    onScroll() // evaluate immediately (handles page load mid-scroll)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    const handler = () => setNavVisible(true)
+    window.addEventListener('ryku:intro-complete', handler)
+    return () => window.removeEventListener('ryku:intro-complete', handler)
   }, [isHomepage])
 
   // Close mobile menu on route change
