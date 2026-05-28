@@ -10,11 +10,15 @@ interface Step {
   label: string
 }
 
+// Widen connector lines for 5-step layout
+
+
 const STEPS: Step[] = [
-  { num: 1, label: 'VEHICLE'   },
-  { num: 2, label: 'MISSION'   },
-  { num: 3, label: 'BUDGET'    },
-  { num: 4, label: 'CONFIGURE' },
+  { num: 1, label: 'VEHICLE'  },
+  { num: 2, label: 'MISSION'  },
+  { num: 3, label: 'BUDGET'   },
+  { num: 4, label: 'RECON'    },
+  { num: 5, label: 'REVIEW'   },
 ]
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -62,7 +66,7 @@ export default function StepBar() {
             {idx > 0 && (
               <div
                 style={{
-                  width: '40px',
+                  width: '28px',
                   height: '1px',
                   background: isDone
                     ? 'rgba(74,222,128,0.4)'

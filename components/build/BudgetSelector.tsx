@@ -92,7 +92,7 @@ export default function BudgetSelector() {
 
   function handleConfirm() {
     setBudget(budget)
-    setStep(4)
+    setStep(4)  // → Recommendations step
   }
 
   const isUnlimited = budget >= 99999
@@ -101,7 +101,7 @@ export default function BudgetSelector() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
       {/* Eyebrow */}
       <div>
-        <p className="eyebrow" style={{ marginBottom: '4px' }}>STEP 03 / 04</p>
+        <p className="eyebrow" style={{ marginBottom: '4px' }}>STEP 03 / 05</p>
         <h2
           style={{
             fontFamily: 'var(--font-bebas), sans-serif',

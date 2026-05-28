@@ -4,12 +4,16 @@
 
 /* ─── DESIGN TOKENS ─────────────────────────────────────────────────────── */
 :root {
+  /* Core palette */
   --orange:        #FF551F;
+  --orange-soft:   #FF7A4A;
   --orange-dim:    rgba(255, 85, 31, 0.12);
   --orange-glow:   rgba(255, 85, 31, 0.20);
   --orange-hover:  #FF6B35;
   --cyan:          #66FFFF;
   --cyan-dim:      rgba(102, 255, 255, 0.10);
+  --green:         #9BBF6A;
+  --green-mil:     #6B7A55;
   --black:         #000000;
   --dark:          #0A0A0A;
   --carbon:        #1E1E1E;
@@ -18,12 +22,27 @@
   --border:        rgba(255, 85, 31, 0.12);
   --border-subtle: rgba(255, 255, 255, 0.06);
   --border-cyan:   rgba(102, 255, 255, 0.10);
-  --text:          #E8E8E8;
-  --text-2:        #A0A0A0;
-  --text-3:        #6A6A6A;
+  --text:          #F3EDE2;
+  --text-2:        rgba(243, 237, 226, 0.62);
+  --text-3:        rgba(243, 237, 226, 0.32);
   --nav-h:         58px;
   --status-h:      32px;
+  --pad-x:         40px;
   --ease:          cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Handoff token aliases */
+  --bg:       #050505;
+  --bg-1:     #08070A;
+  --bg-2:     #0D0C0E;
+  --ink:      #F3EDE2;
+  --ink-dim:  rgba(243, 237, 226, 0.62);
+  --ink-faint:rgba(243, 237, 226, 0.32);
+  --line:     rgba(243, 237, 226, 0.14);
+  --line-strong: rgba(243, 237, 226, 0.28);
+
+  /* Font aliases — map old names to new font vars */
+  --font-bebas:    var(--font-display);
+  --font-rajdhani: var(--font-tactical);
 }
 
 /* ─── RESET ─────────────────────────────────────────────────────────────── */
@@ -38,7 +57,7 @@ html {
 body {
   background: var(--dark);
   color: var(--text);
-  font-family: var(--font-rajdhani), system-ui, sans-serif;
+  font-family: var(--font-body), var(--font-tactical), system-ui, sans-serif;
   font-size: 1rem;
   line-height: 1.6;
   min-height: 100dvh;
@@ -52,10 +71,12 @@ body {
 
 /* ─── TYPOGRAPHY ─────────────────────────────────────────────────────────── */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-bebas), sans-serif;
+  font-family: var(--font-display), var(--font-tactical), sans-serif;
+  font-weight: 700;
   letter-spacing: 0.04em;
   line-height: 1;
   color: var(--text);
+  text-transform: uppercase;
 }
 
 p { color: var(--text-2); line-height: 1.65; }
@@ -68,7 +89,7 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-family: var(--font-rajdhani), sans-serif;
+  font-family: var(--font-tactical), var(--font-body), sans-serif;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -345,7 +366,7 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid var(--border-subtle);
   border-radius: 3px;
   padding: 10px 14px;
-  font-family: var(--font-rajdhani), sans-serif;
+  font-family: var(--font-body), var(--font-tactical), sans-serif;
   font-size: 0.9375rem;
   color: var(--text);
   outline: none;

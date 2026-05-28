@@ -47,7 +47,7 @@ export default function MissionSelector() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Eyebrow */}
       <div>
-        <p className="eyebrow" style={{ marginBottom: '4px' }}>STEP 02 / 04</p>
+        <p className="eyebrow" style={{ marginBottom: '4px' }}>STEP 02 / 05</p>
         <h2
           style={{
             fontFamily: 'var(--font-bebas), sans-serif',

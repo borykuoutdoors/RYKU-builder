@@ -149,14 +149,13 @@ export default function Navbar() {
                       fontSize: '0.75rem',
                       letterSpacing: '0.18em',
                       color: isActive ? 'var(--orange)' : 'var(--text-2)',
-                      padding: '6px 12px',
+                      padding: '6px 10px',
                       transition: 'color 0.2s',
-                      borderBottom: isActive ? '1px solid var(--orange)' : '1px solid transparent',
                     }}
                     onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text)' }}
                     onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-2)' }}
                   >
-                    {label}
+                    {isActive ? `[ ${label} ]` : label}
                   </Link>
                   {/* SHOP button — inserted immediately after GEAR */}
                   {label === 'GEAR' && (
@@ -207,27 +206,42 @@ export default function Navbar() {
           {/* ── Right-side controls ───────────────────────────────── */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
 
-            {/* Build badge — shown only when a vehicle is selected */}
+            {/* MY BUILD pill — shown only when a vehicle is selected */}
             {vehicle && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.85 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.85 }}
-                className="nav-build-badge"
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.5625rem',
-                  letterSpacing: '0.16em',
-                  color: 'var(--cyan)',
-                  border: '1px solid rgba(102,255,255,0.25)',
-                  background: 'rgba(102,255,255,0.06)',
-                  padding: '4px 10px',
-                  textTransform: 'uppercase',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {buildName || vehicle.name}
-              </motion.div>
+              <Link href="/my-build" aria-label="View your build" style={{ textDecoration: 'none' }}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.85 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.85 }}
+                  className="nav-build-badge"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.5625rem',
+                    letterSpacing: '0.14em',
+                    color: 'var(--green)',
+                    border: '1px solid rgba(155,191,106,0.3)',
+                    background: 'rgba(155,191,106,0.07)',
+                    padding: '5px 11px',
+                    textTransform: 'uppercase',
+                    whiteSpace: 'nowrap',
+                    borderRadius: 2,
+                    cursor: 'pointer',
+                  }}
+                  whileHover={{ background: 'rgba(155,191,106,0.14)', borderColor: 'rgba(155,191,106,0.5)' }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <span style={{
+                    display: 'inline-block', width: 5, height: 5, borderRadius: '50%',
+                    background: 'var(--green)',
+                    boxShadow: '0 0 6px rgba(155,191,106,0.7)',
+                    flexShrink: 0,
+                  }} />
+                  MY BUILD
+                </motion.div>
+              </Link>
             )}
 
             {/* Auth buttons — always visible */}
@@ -260,7 +274,7 @@ export default function Navbar() {
                 </motion.button>
               </Link>
 
-              <Link href="/login?mode=signup" aria-label="Create a free account" data-action="nav-signup">
+              <Link href="/signup" aria-label="Create a free account" data-action="nav-signup">
                 <motion.button
                   whileHover={{ background: 'rgba(255,85,31,0.18)', borderColor: 'rgba(255,85,31,0.6)', color: '#fff' }}
                   transition={{ duration: 0.15 }}
@@ -441,7 +455,7 @@ export default function Navbar() {
                   LOG IN
                 </button>
               </Link>
-              <Link href="/login?mode=signup" style={{ flex: 1 }} data-action="mobile-signup">
+              <Link href="/signup" style={{ flex: 1 }} data-action="mobile-signup">
                 <button
                   style={{
                     width: '100%', background: 'rgba(255,85,31,0.08)',
