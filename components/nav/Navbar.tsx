@@ -21,9 +21,14 @@ export default function Navbar() {
   const vehicle    = useBuildStore(s => s.vehicle)
   const buildName  = useBuildStore(s => s.buildName)
 
+  const isHomepage = pathname === '/'
+
   const [scrolled,     setScrolled]     = useState(false)
   const [mobileOpen,   setMobileOpen]   = useState(false)
   const [shopOpen,     setShopOpen]     = useState(false)
+  // Homepage: hidden until 70% of the cinematic scroll section
+  // Other pages: always visible immediately
+  const [navVisible,   setNavVisible]   = useState(!isHomepage)
 
   // Track scroll position to toggle .scrolled class
   useEffect(() => {
@@ -31,6 +36,18 @@ export default function Navbar() {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  // On homepage: hidden during loading screen, revealed via ryku:intro-complete event.
+  // On other pages: always visible immediately.
+  useEffect(() => {
+    if (!isHomepage) {
+      setNavVisible(true)
+      return
+    }
+    const handler = () => setNavVisible(true)
+    window.addEventListener('ryku:intro-complete', handler)
+    return () => window.removeEventListener('ryku:intro-complete', handler)
+  }, [isHomepage])
 
   // Close mobile menu on route change
   useEffect(() => { setMobileOpen(false) }, [pathname])
@@ -40,9 +57,15 @@ export default function Navbar() {
       {/* ── Main nav bar ───────────────────────────────────────────── */}
       <motion.nav
         className={`nav${scrolled ? ' scrolled' : ''}`}
-        initial={{ y: -58, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+        // On homepage: driven by scroll reveal (initial=false → animate is the starting state)
+        // On other pages: classic slide-in from top on mount
+        initial={isHomepage ? false : { y: -58, opacity: 0 }}
+        animate={{
+          y:       navVisible ? 0 : -72,
+          opacity: navVisible ? 1 : 0,
+        }}
+        transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
+        style={{ pointerEvents: navVisible ? 'auto' : 'none' }}
         role="navigation"
         aria-label="Primary navigation"
       >
@@ -57,24 +80,51 @@ export default function Navbar() {
         }}>
 
           {/* ── Logo ─────────────────────────────────────────────── */}
-          <Link href="/" aria-label="BŌRYKU home" style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
-            <span style={{
-              fontFamily: 'var(--font-bebas)',
-              fontSize: '1.75rem',
-              letterSpacing: '0.08em',
-              color: 'var(--text)',
-            }}>
-              B<span style={{ color: 'var(--orange)' }}>Ō</span>RYKU
-            </span>
-            <span style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.5rem',
-              letterSpacing: '0.3em',
-              color: 'var(--text-3)',
-              marginTop: '-2px',
-            }}>
-              RYKU
-            </span>
+          <Link href="/" aria-label="BŌRYKU home" style={{ display: 'flex', alignItems: 'center', gap: 10, lineHeight: 1, textDecoration: 'none' }}>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
+              style={{ display: 'flex', alignItems: 'center', gap: 10 }}
+            >
+              {/* Flame icon — mix-blend-mode:screen removes dark bg against dark navbar */}
+              <div style={{ filter: 'drop-shadow(0 0 10px rgba(255,85,31,0.55))', flexShrink: 0 }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/ryku-logo.jpeg"
+                  alt=""
+                  aria-hidden="true"
+                  style={{
+                    display: 'block',
+                    width: 36,
+                    height: 36,
+                    objectFit: 'cover',
+                    borderRadius: 4,
+                    mixBlendMode: 'screen',
+                  }}
+                />
+              </div>
+              {/* Text */}
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{
+                  fontFamily: 'var(--font-bebas)',
+                  fontSize: '1.75rem',
+                  letterSpacing: '0.08em',
+                  color: '#fff',
+                  lineHeight: 1,
+                }}>
+                  B<span style={{ color: 'var(--orange)', textShadow: '0 0 20px rgba(255,85,31,0.55)' }}>Ō</span>RYKU
+                </span>
+                <span style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.5rem',
+                  letterSpacing: '0.3em',
+                  color: 'var(--text-3)',
+                  marginTop: '-2px',
+                }}>
+                  RYKU
+                </span>
+              </div>
+            </motion.div>
           </Link>
 
           {/* ── Desktop nav links ─────────────────────────────────── */}
