@@ -126,10 +126,10 @@ export default function CinematicHero({ introComplete }: Props) {
         position: 'absolute', inset: 0, pointerEvents: 'none',
         background: 'radial-gradient(ellipse 72% 66% at 50% 50%, transparent 0%, rgba(0,0,0,0.28) 52%, rgba(0,0,0,0.88) 100%)',
       }} />
-      {/* Top */}
+      {/* Top — feathered dark fade for nav readability; stays cinematic not framed */}
       <div style={{
-        position: 'absolute', top: 0, left: 0, right: 0, height: '26%', pointerEvents: 'none',
-        background: 'linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, transparent 100%)',
+        position: 'absolute', top: 0, left: 0, right: 0, height: '30%', pointerEvents: 'none',
+        background: 'linear-gradient(to bottom, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.18) 55%, transparent 100%)',
       }} />
       {/* Bottom — reduced height since text floats above the bumper now */}
       <div style={{
