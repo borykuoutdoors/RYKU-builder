@@ -206,26 +206,31 @@ export default function Navbar() {
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '6px',
+                    gap: '7px',
                     fontFamily: 'var(--font-mono)',
                     fontSize: '0.5625rem',
                     letterSpacing: '0.14em',
-                    color: 'var(--green)',
-                    border: '1px solid rgba(155,191,106,0.3)',
-                    background: 'rgba(155,191,106,0.07)',
-                    padding: '5px 11px',
+                    color: '#fff',
+                    border: '1px solid rgba(255,85,31,0.55)',
+                    background: 'rgba(255,85,31,0.08)',
+                    padding: '6px 13px',
                     textTransform: 'uppercase',
                     whiteSpace: 'nowrap',
-                    borderRadius: 2,
+                    borderRadius: 20,
                     cursor: 'pointer',
+                    boxShadow: '0 0 14px rgba(255,85,31,0.25), inset 0 0 8px rgba(255,85,31,0.06)',
                   }}
-                  whileHover={{ background: 'rgba(155,191,106,0.14)', borderColor: 'rgba(155,191,106,0.5)' }}
+                  whileHover={{
+                    background: 'rgba(255,85,31,0.14)',
+                    borderColor: 'rgba(255,85,31,0.80)',
+                    boxShadow: '0 0 22px rgba(255,85,31,0.40), inset 0 0 10px rgba(255,85,31,0.08)',
+                  }}
                   transition={{ duration: 0.15 }}
                 >
                   <span style={{
-                    display: 'inline-block', width: 5, height: 5, borderRadius: '50%',
-                    background: 'var(--green)',
-                    boxShadow: '0 0 6px rgba(155,191,106,0.7)',
+                    display: 'inline-block', width: 6, height: 6, borderRadius: '50%',
+                    background: 'var(--orange)',
+                    boxShadow: '0 0 8px rgba(255,85,31,0.9)',
                     flexShrink: 0,
                   }} />
                   MY BUILD
