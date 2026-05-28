@@ -294,21 +294,21 @@ export default function LoadingScreen({ onComplete }: Props) {
 
               <span style={{
                 fontFamily: 'var(--font-bebas)',
-                fontSize: 36, letterSpacing: '0.08em',
+                fontSize: 28, letterSpacing: '0.06em',
                 color: '#e0d5cb', lineHeight: 1,
                 textShadow: '0 1px 5px rgba(0,0,0,0.85)',
               }}>
-                START
+                BEGIN THE
               </span>
               <span style={{
                 fontFamily: 'var(--font-bebas)',
-                fontSize: 19, letterSpacing: '0.22em',
+                fontSize: 22, letterSpacing: '0.18em',
                 color: igniting ? 'rgba(255,135,55,1)' : 'rgba(255,85,31,0.76)',
                 lineHeight: 1,
                 textShadow: '0 0 16px rgba(255,85,31,0.48)',
                 transition: 'color 0.35s ease',
               }}>
-                JOURNEY
+                MISSION
               </span>
             </motion.button>
           </div>

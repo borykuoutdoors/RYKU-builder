@@ -12,6 +12,8 @@ const SERVICES = ['Off-Road', 'Suspension', 'Overland', 'Lighting', 'Recovery', 
 type ServiceType = typeof SERVICES[number]
 
 export default function InstallerSearch() {
+  const [country, setCountry] = useState('')
+  const [city, setCity] = useState('')
   const [zip, setZip] = useState('')
   const [selectedServices, setSelectedServices] = useState<ServiceType[]>([])
   const [distance, setDistance] = useState(25)
@@ -80,6 +82,88 @@ export default function InstallerSearch() {
           gap: '20px',
         }}
       >
+        {/* Country input */}
+        <div>
+          <label
+            className="font-mono"
+            htmlFor="country-input"
+            style={{
+              display: 'block',
+              fontSize: '11px',
+              color: 'rgba(255,255,255,0.45)',
+              letterSpacing: '0.1em',
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+            }}
+          >
+            COUNTRY
+          </label>
+          <input
+            id="country-input"
+            type="text"
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            placeholder="United States"
+            data-input="country"
+            style={{
+              width: '100%',
+              background: '#111',
+              border: '1px solid rgba(255,85,31,0.3)',
+              borderRadius: '4px',
+              color: '#fff',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '14px',
+              padding: '12px 16px',
+              outline: 'none',
+              letterSpacing: '0.08em',
+              boxSizing: 'border-box',
+            }}
+            onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--orange)' }}
+            onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,85,31,0.3)' }}
+          />
+        </div>
+
+        {/* City input */}
+        <div>
+          <label
+            className="font-mono"
+            htmlFor="city-input"
+            style={{
+              display: 'block',
+              fontSize: '11px',
+              color: 'rgba(255,255,255,0.45)',
+              letterSpacing: '0.1em',
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+            }}
+          >
+            CITY
+          </label>
+          <input
+            id="city-input"
+            type="text"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            placeholder="Denver"
+            data-input="city"
+            style={{
+              width: '100%',
+              background: '#111',
+              border: '1px solid rgba(255,85,31,0.3)',
+              borderRadius: '4px',
+              color: '#fff',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '14px',
+              padding: '12px 16px',
+              outline: 'none',
+              letterSpacing: '0.08em',
+              boxSizing: 'border-box',
+            }}
+            onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--orange)' }}
+            onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,85,31,0.3)' }}
+          />
+        </div>
+
         {/* ZIP input */}
         <div>
           <label
@@ -94,7 +178,7 @@ export default function InstallerSearch() {
               textTransform: 'uppercase',
             }}
           >
-            ZIP CODE / LOCATION
+            ZIP CODE
           </label>
           <input
             id="zip-input"
@@ -253,7 +337,7 @@ export default function InstallerSearch() {
             }}
           >
             {results.length > 0
-              ? `${results.length} INSTALLERS FOUND${zip ? ` NEAR ${zip}` : ''}`
+              ? `${results.length} INSTALLERS FOUND${zip ? ` NEAR ${zip}` : city ? ` IN ${city.toUpperCase()}` : country ? ` IN ${country.toUpperCase()}` : ''}`
               : 'NO INSTALLERS FOUND — TRY ADJUSTING FILTERS'}
           </div>
 
