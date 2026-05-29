@@ -307,67 +307,106 @@ export const shopFeatured: ShopFeatured[] = [
   { id: 'sf8', name: 'DECKED Drawer System',    brand: 'DECKED',      price: '$1,100', tag: 'STORAGE'    },
 ]
 
-// ─── Installers (8) ──────────────────────────────────────────────────────────
-export interface Installer {
-  id:       string
-  name:     string
-  city:     string
-  state:    string
-  rating:   number
-  reviews:  number
-  leadTime: string
-  specialty:string[]
-  thumb:    string
-}
+// ─── Installers ──────────────────────────────────────────────────────────────
+export type { Installer } from '@/types/installer'
+import type { Installer } from '@/types/installer'
 
 export const installers: Installer[] = [
   {
-    id: 'i1', name: 'Pacific Overland',   city: 'Portland',    state: 'OR',
+    id: 'i1', name: 'Pacific Overland', city: 'Portland', state: 'OR',
+    lat: 45.52, lng: -122.68, distance: 12,
     rating: 4.9, reviews: 84, leadTime: '1–2 weeks',
     specialty: ['Suspension', 'Roof Racks', 'Electrical'],
-    thumb: '',
+    services: ['Suspension Install', 'Roof Rack Install', 'Electrical Systems'],
+    verified: true, tier: 'certified', thumb: '', phone: '(503) 555-0142',
   },
   {
-    id: 'i2', name: 'Desert Armor Works', city: 'Phoenix',     state: 'AZ',
+    id: 'i2', name: 'Desert Armor Works', city: 'Phoenix', state: 'AZ',
+    lat: 33.45, lng: -112.07, distance: 8,
     rating: 4.8, reviews: 127, leadTime: '2–3 weeks',
     specialty: ['Armor', 'Recovery', 'Lighting'],
-    thumb: '',
+    services: ['Armor / Bumper Install', 'Recovery Gear', 'Lighting Install'],
+    verified: true, tier: 'elite', thumb: '', phone: '(602) 555-0198',
   },
   {
-    id: 'i3', name: 'Rocky Mountain Rigs', city: 'Denver',     state: 'CO',
+    id: 'i3', name: 'Rocky Mountain Rigs', city: 'Denver', state: 'CO',
+    lat: 39.74, lng: -104.99, distance: 4,
     rating: 5.0, reviews: 61, leadTime: '1 week',
     specialty: ['Full Builds', 'Suspension', 'Tents'],
-    thumb: '',
+    services: ['Full Build Shops', 'Suspension Install', 'RTT Install', 'Fabrication'],
+    verified: true, tier: 'elite', thumb: '', phone: '(720) 555-0167',
   },
   {
-    id: 'i4', name: 'Lone Star Overland',  city: 'Austin',     state: 'TX',
+    id: 'i4', name: 'Lone Star Overland', city: 'Austin', state: 'TX',
+    lat: 30.27, lng: -97.74, distance: 22,
     rating: 4.7, reviews: 98, leadTime: '2–4 weeks',
     specialty: ['Electrical', 'Storage', 'Towing'],
-    thumb: '',
+    services: ['Electrical Systems', 'Suspension Install', 'Roof Rack Install'],
+    verified: false, tier: 'standard', thumb: '', phone: '(512) 555-0219',
   },
   {
-    id: 'i5', name: 'Cascadia Outfitters', city: 'Seattle',    state: 'WA',
+    id: 'i5', name: 'Cascadia Outfitters', city: 'Seattle', state: 'WA',
+    lat: 47.61, lng: -122.33, distance: 18,
     rating: 4.9, reviews: 73, leadTime: '1–2 weeks',
     specialty: ['Roof Racks', 'Tents', 'Power'],
-    thumb: '',
+    services: ['Roof Rack Install', 'RTT Install', 'Electrical Systems'],
+    verified: true, tier: 'certified', thumb: '', phone: '(206) 555-0134',
   },
   {
-    id: 'i6', name: 'SoCal Trail Works',   city: 'San Diego',  state: 'CA',
+    id: 'i6', name: 'SoCal Trail Works', city: 'San Diego', state: 'CA',
+    lat: 32.72, lng: -117.16, distance: 35,
     rating: 4.8, reviews: 156, leadTime: '3 weeks',
     specialty: ['Suspension', 'Armor', 'Off-Road'],
-    thumb: '',
+    services: ['Suspension Install', 'Armor / Bumper Install', 'Lighting Install', 'Recovery Gear'],
+    verified: true, tier: 'certified', thumb: '', phone: '(619) 555-0177',
   },
   {
-    id: 'i7', name: 'Appalachian Builds',  city: 'Asheville',  state: 'NC',
+    id: 'i7', name: 'Appalachian Builds', city: 'Asheville', state: 'NC',
+    lat: 35.58, lng: -82.55, distance: 47,
     rating: 4.6, reviews: 44, leadTime: '2 weeks',
     specialty: ['Full Builds', 'Recovery'],
-    thumb: '',
+    services: ['Full Build Shops', 'Recovery Gear', 'Fabrication'],
+    verified: false, tier: 'standard', thumb: '', phone: '(828) 555-0189',
   },
   {
-    id: 'i8', name: 'Great Plains Rigs',   city: 'Kansas City', state: 'KS',
+    id: 'i8', name: 'Great Plains Rigs', city: 'Kansas City', state: 'KS',
+    lat: 39.10, lng: -94.58, distance: 31,
     rating: 4.7, reviews: 52, leadTime: '1–3 weeks',
     specialty: ['Towing', 'Storage', 'Electrical'],
-    thumb: '',
+    services: ['Electrical Systems', 'Suspension Install', 'Roof Rack Install'],
+    verified: false, tier: 'standard', thumb: '', phone: '(913) 555-0156',
+  },
+  {
+    id: 'i9', name: 'Midwest Overland Co.', city: 'Chicago', state: 'IL',
+    lat: 41.85, lng: -87.65, distance: 58,
+    rating: 4.8, reviews: 91, leadTime: '2–3 weeks',
+    specialty: ['Full Builds', 'Suspension', 'Lighting'],
+    services: ['Full Build Shops', 'Suspension Install', 'Lighting Install', 'Electrical Systems'],
+    verified: true, tier: 'certified', thumb: '', phone: '(312) 555-0112',
+  },
+  {
+    id: 'i10', name: 'Blue Ridge Builds', city: 'Roanoke', state: 'VA',
+    lat: 37.27, lng: -79.94, distance: 62,
+    rating: 4.5, reviews: 38, leadTime: '2–4 weeks',
+    specialty: ['Fabrication', 'Recovery', 'Armor'],
+    services: ['Fabrication', 'Recovery Gear', 'Armor / Bumper Install'],
+    verified: false, tier: 'standard', thumb: '', phone: '(540) 555-0145',
+  },
+  {
+    id: 'i11', name: 'Gulf Coast Outfitters', city: 'Houston', state: 'TX',
+    lat: 29.76, lng: -95.37, distance: 27,
+    rating: 4.7, reviews: 67, leadTime: '1–2 weeks',
+    specialty: ['Towing', 'Armor', 'Electrical'],
+    services: ['Armor / Bumper Install', 'Electrical Systems', 'Suspension Install'],
+    verified: true, tier: 'certified', thumb: '', phone: '(713) 555-0188',
+  },
+  {
+    id: 'i12', name: 'High Desert Rigs', city: 'Salt Lake City', state: 'UT',
+    lat: 40.76, lng: -111.89, distance: 15,
+    rating: 4.9, reviews: 55, leadTime: '1–2 weeks',
+    specialty: ['Suspension', 'Recovery', 'Lighting'],
+    services: ['Suspension Install', 'Recovery Gear', 'Lighting Install', 'RTT Install'],
+    verified: true, tier: 'elite', thumb: '', phone: '(801) 555-0123',
   },
 ]
 
