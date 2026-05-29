@@ -1,154 +1,30 @@
 'use client'
 
 import { useBuildStore } from '@/store/buildStore'
+import { rankRecommendations, budgetToTierId } from '@/lib/rank'
 
-// ─── Gear category ranker ─────────────────────────────────────────────────────
-
-interface RankedCategory {
-  id:    string
-  label: string
-  icon:  string
-  score: number
-  pct:   number
-  picks: Array<{ name: string; brand: string; price: number }>
+// Mission ID → catalog purpose ID bridge (old store keys → lib/catalog keys)
+const MISSION_TO_PURPOSE: Record<string, string> = {
+  overland:   'p_over',
+  camping:    'p_camp',
+  daily:      'p_daily',
+  offroad:    'p_offroad',
+  expedition: 'p_travel',
+  tactical:   'p_util',
+  recovery:   'p_offroad',
+  utility:    'p_work',
 }
-
-const BASE_CATEGORIES = [
-  {
-    id: 'suspension', label: 'Suspension & Lift',  icon: '⚙️',
-    base: 0.6,
-    overland: 0.8, offroad: 1.0, expedition: 0.8, adventure: 0.6,
-    daily: 0.2,    camping: 0.3, tactical: 0.5,  touring: 0.2,
-    picks: [
-      { name: 'Stage 2 Lift System', brand: 'ICON Vehicle Dynamics', price: 2800 },
-      { name: 'Old Man Emu 2" Lift',  brand: 'ARB',                   price: 1650 },
-      { name: 'Fox 2.0 Performance',  brand: 'Fox',                   price: 1400 },
-    ],
-  },
-  {
-    id: 'roof-rack', label: 'Roof Rack Systems',   icon: '🏗️',
-    base: 0.5,
-    overland: 0.9, expedition: 1.0, camping: 0.8, adventure: 0.7,
-    offroad: 0.4,  daily: 0.3,     tactical: 0.5, touring: 0.6,
-    picks: [
-      { name: 'Slimline II Platform', brand: 'Front Runner', price: 950 },
-      { name: 'Alu-Cab Rack',         brand: 'Alu-Cab',      price: 1200 },
-      { name: 'Rhino-Rack Pioneer',   brand: 'Rhino-Rack',   price: 760 },
-    ],
-  },
-  {
-    id: 'rtt', label: 'Rooftop Tent',  icon: '⛺',
-    base: 0.3,
-    camping: 1.0, overland: 0.9, expedition: 0.8, adventure: 0.7,
-    offroad: 0.3, daily: 0.0,    tactical: 0.2,  touring: 0.5,
-    picks: [
-      { name: 'Skycamp 3.0',          brand: 'iKamper',      price: 3400 },
-      { name: 'Rooftop Tent 2.0',     brand: 'Roofnest',     price: 2800 },
-      { name: 'Ruggedized RTT',       brand: 'Tepui',        price: 1950 },
-    ],
-  },
-  {
-    id: 'lighting', label: 'Auxiliary Lighting', icon: '💡',
-    base: 0.5,
-    offroad: 1.0, tactical: 0.9, overland: 0.8, expedition: 0.7,
-    adventure: 0.6, camping: 0.6, daily: 0.4,   touring: 0.5,
-    picks: [
-      { name: 'Dual LED Spot/Flood',  brand: 'Baja Designs', price: 890 },
-      { name: 'Radiance Scene Light', brand: 'Rigid Industries', price: 640 },
-      { name: 'SAE Driving/Fog',      brand: 'KC HiLiTES',   price: 480 },
-    ],
-  },
-  {
-    id: 'recovery', label: 'Recovery Gear',  icon: '🪝',
-    base: 0.4,
-    offroad: 1.0, expedition: 0.9, overland: 0.8, adventure: 0.7,
-    camping: 0.5, tactical: 0.6,  daily: 0.1,    touring: 0.2,
-    picks: [
-      { name: 'Zeon 10-S Winch',      brand: 'WARN',         price: 1800 },
-      { name: 'TRED PRO Boards',      brand: 'MAXTRAX',      price: 380 },
-      { name: 'Recovery Kit Pro',     brand: 'ARB',          price: 290 },
-    ],
-  },
-  {
-    id: 'armor', label: 'Armor & Protection', icon: '🛡️',
-    base: 0.3,
-    offroad: 1.0, tactical: 0.9, overland: 0.7, expedition: 0.6,
-    adventure: 0.5, camping: 0.2, daily: 0.1,   touring: 0.1,
-    picks: [
-      { name: 'Steel Bumper w/ Winch', brand: 'ARB', price: 2100 },
-      { name: 'Rock Sliders',          brand: 'Shrockworks', price: 750 },
-      { name: 'Skid Plate System',     brand: 'SteelCraft',  price: 480 },
-    ],
-  },
-  {
-    id: 'power', label: 'Power & Electrical', icon: '⚡',
-    base: 0.4,
-    expedition: 1.0, overland: 0.8, camping: 0.9, touring: 0.7,
-    offroad: 0.4,    tactical: 0.5, adventure: 0.6, daily: 0.3,
-    picks: [
-      { name: 'Lithium Portable 1000W', brand: 'Goal Zero', price: 1100 },
-      { name: 'Dual Battery System',    brand: 'Redarc',    price: 780 },
-      { name: 'Solar Panel 100W',       brand: 'Renogy',    price: 180 },
-    ],
-  },
-  {
-    id: 'wheels', label: 'Wheels & Tires', icon: '🔩',
-    base: 0.5,
-    offroad: 1.0, overland: 0.8, expedition: 0.7, adventure: 0.7,
-    tactical: 0.6, camping: 0.5, daily: 0.4,     touring: 0.4,
-    picks: [
-      { name: '17" Beadlock Wheel', brand: 'Method Race', price: 320 },
-      { name: 'KO2 All-Terrain',    brand: 'BF Goodrich', price: 285 },
-      { name: 'Wildpeak AT3W',      brand: 'Falken',      price: 240 },
-    ],
-  },
-  {
-    id: 'nav', label: 'Navigation & Comms', icon: '🧭',
-    base: 0.3,
-    expedition: 1.0, touring: 0.8, overland: 0.7, tactical: 0.6,
-    adventure: 0.5,  camping: 0.4, offroad: 0.4,  daily: 0.2,
-    picks: [
-      { name: 'inReach Mini 2',     brand: 'Garmin',       price: 350 },
-      { name: 'TREAD XL',          brand: 'Garmin',       price: 499 },
-      { name: 'SPOT Gen4',         brand: 'SPOT',         price: 150 },
-    ],
-  },
-]
-
-type MissionKey = 'overland' | 'offroad' | 'expedition' | 'adventure' | 'camping' | 'daily' | 'tactical' | 'touring'
-
-function rankCategories(mission: string | null, budget: number): RankedCategory[] {
-  const key = (mission?.toLowerCase() ?? 'overland') as MissionKey
-  return BASE_CATEGORIES
-    .map(c => {
-      let score = c.base
-      const missionScore = c[key] as number | undefined
-      if (missionScore != null) score += missionScore
-      // Budget bonus for premium categories
-      if (budget >= 15000 && ['suspension', 'armor', 'power'].includes(c.id)) score += 0.3
-      if (budget <= 5000  && ['rtt', 'armor'].includes(c.id))                  score -= 0.4
-      return {
-        id:    c.id,
-        label: c.label,
-        icon:  c.icon,
-        score,
-        pct:   Math.round(Math.min(100, (Math.max(0, score) / 2.2) * 100)),
-        picks: c.picks,
-      }
-    })
-    .filter(c => c.score > 0.4)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 6)
-}
-
-// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function RecommendationsStep() {
   const mission = useBuildStore(s => s.mission)
   const budget  = useBuildStore(s => s.budget)
   const setStep = useBuildStore(s => s.setStep)
 
-  const ranked = rankCategories(mission, budget)
+  // Convert legacy store values → catalog IDs for rank engine
+  const purposeIds  = mission ? [MISSION_TO_PURPOSE[mission] ?? 'p_over'] : ['p_over']
+  const budgetTierId = budgetToTierId(budget)
+  const ranked       = rankRecommendations(purposeIds, budgetTierId)
+
   const missionLabel = mission
     ? mission.charAt(0).toUpperCase() + mission.slice(1)
     : 'Overland'
@@ -225,12 +101,12 @@ export default function RecommendationsStep() {
                 letterSpacing: '0.1em', color: 'var(--text-3)',
               }}>
                 <span>MISSION MATCH</span>
-                <span style={{ color: 'var(--orange)' }}>{cat.pct}%</span>
+                <span style={{ color: 'var(--orange)' }}>{cat.matchPct}%</span>
               </div>
               <div style={{ height: '3px', background: 'rgba(255,255,255,0.06)', borderRadius: '2px', overflow: 'hidden' }}>
                 <div style={{
-                  height: '100%', width: `${cat.pct}%`,
-                  background: cat.pct >= 80 ? 'var(--orange)' : cat.pct >= 50 ? 'rgba(255,85,31,0.6)' : 'rgba(255,85,31,0.3)',
+                  height: '100%', width: `${cat.matchPct}%`,
+                  background: cat.matchPct >= 80 ? 'var(--orange)' : cat.matchPct >= 50 ? 'rgba(255,85,31,0.6)' : 'rgba(255,85,31,0.3)',
                   borderRadius: '2px',
                   transition: 'width 1.2s cubic-bezier(0.16,1,0.3,1)',
                 }} />

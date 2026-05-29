@@ -145,7 +145,7 @@ export const useBuildStore = create<BuildState>()(
       setCompleted:   (val)  => set({ completed: val }),
     }),
     {
-      name: 'boryku-build',
+      name: 'ryku.build.v1',
       partialize: (s) => ({
         vehicle: s.vehicle, year: s.year, trim: s.trim, drive: s.drive,
         mission: s.mission, budget: s.budget, items: s.items,
