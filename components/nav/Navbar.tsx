@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useBuildStore } from '@/store/buildStore'
@@ -88,17 +89,14 @@ export default function Navbar() {
             >
               {/* Flame icon — transparent PNG, no card, no blend mode */}
               <div style={{ filter: 'drop-shadow(0 0 10px rgba(255,85,31,0.50))', flexShrink: 0 }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src="/brand/mark.png"
                   alt=""
                   aria-hidden="true"
-                  style={{
-                    display: 'block',
-                    width: 38,
-                    height: 38,
-                    objectFit: 'contain',
-                  }}
+                  width={38}
+                  height={38}
+                  priority
+                  style={{ objectFit: 'contain' }}
                 />
               </div>
               {/* Wordmark */}
