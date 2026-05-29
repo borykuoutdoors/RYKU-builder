@@ -38,9 +38,9 @@ export default function StatusBar() {
         width: '100%',
         height: '100%',
         fontFamily: 'var(--font-mono)',
-        fontSize: '0.5625rem',
-        letterSpacing: '0.12em',
-        color: 'var(--text-3)',
+        fontSize: '10px',
+        letterSpacing: '0.4em',
+        color: 'var(--ink-faint)',
         overflow: 'hidden',
       }}>
 

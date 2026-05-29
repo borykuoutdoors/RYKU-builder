@@ -25,10 +25,17 @@
   --text:          #F3EDE2;
   --text-2:        rgba(243, 237, 226, 0.62);
   --text-3:        rgba(243, 237, 226, 0.32);
-  --nav-h:         58px;
-  --status-h:      32px;
+  --nav-h:         84px;
+  --status-h:      46px;
+  --strip-h:       46px;
   --pad-x:         40px;
+  --pad-x-1200:    26px;
+  --pad-x-720:     18px;
+  --page-top:      calc(var(--nav-h) + 28px);
+  --page-bottom:   calc(var(--strip-h) + 40px);
   --ease:          cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-ui:       cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-mech:     cubic-bezier(0.36, 0.07, 0.19, 0.97);
 
   /* Handoff token aliases */
   --bg:       #050505;
@@ -40,7 +47,14 @@
   --line:     rgba(243, 237, 226, 0.14);
   --line-strong: rgba(243, 237, 226, 0.28);
 
-  /* Font aliases — map old names to new font vars */
+  /* Spec font aliases */
+  --f-display:  var(--font-display);
+  --f-body:     var(--font-body);
+  --f-mono:     var(--font-mono);
+  --f-tactical: var(--font-tactical);
+  --f-stencil:  var(--font-stencil);
+
+  /* Legacy aliases for existing components */
   --font-bebas:    var(--font-display);
   --font-rajdhani: var(--font-tactical);
 }
@@ -197,7 +211,7 @@ a { color: inherit; text-decoration: none; }
   position: fixed;
   top: 0; left: 0; right: 0;
   height: var(--nav-h);
-  z-index: 100;
+  z-index: 30;
   background: transparent;
   border-bottom: none;
   transition: background 0.4s ease, backdrop-filter 0.4s ease, border-color 0.4s ease;
@@ -450,6 +464,104 @@ a { color: inherit; text-decoration: none; }
 @keyframes loading {
   0%   { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
+}
+
+/* ─── KEYFRAMES ─────────────────────────────────────────────────────────── */
+
+/* THE CHAOS sustained pulse — fires at t=4520ms after ignition */
+@keyframes chaosPulse {
+  0%, 100% { text-shadow: 0 0 22px rgba(255,85,31,.38), 0 0 56px rgba(255,85,31,.20); }
+  50%       { text-shadow: 0 0 32px rgba(255,85,31,.6),  0 0 92px rgba(255,85,31,.32); }
+}
+
+/* Lock applied to .l2 once live — !important overrides framer-motion state */
+.chaos-live {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+  animation: chaosPulse 6s ease-in-out infinite;
+}
+
+/* Hero mascot breathe */
+@keyframes breathe {
+  0%, 100% { transform: translateY(-50%) scale(1.0); }
+  50%       { transform: translateY(calc(-50% - 4px)) scale(1.012); }
+}
+
+/* Grain texture jitter */
+@keyframes grainShift {
+  0%        { transform: translate(0,    0); }
+  16.67%    { transform: translate(-4px, 2px); }
+  33.33%    { transform: translate(3px, -3px); }
+  50%       { transform: translate(-2px, 4px); }
+  66.67%    { transform: translate(4px, -1px); }
+  83.33%    { transform: translate(-3px, 3px); }
+  100%      { transform: translate(0,    0); }
+}
+
+/* Scan line drift — hero (14s) and global (16s) */
+@keyframes scanDrift {
+  0%   { top: 14%; opacity: 0; }
+  5%   { opacity: 0.5; }
+  95%  { opacity: 0.5; }
+  100% { top: 88%; opacity: 0; }
+}
+
+/* Fog layer drift */
+@keyframes fogDrift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(3%, -2%) scale(1.06); }
+}
+
+/* Ember pulse on atmosphere */
+@keyframes emberBreathe {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.03); }
+}
+
+/* Ring spin — ignition bezel ticks */
+@keyframes ringSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Ring glow breathe */
+@keyframes ringBreathe {
+  0%, 100% { box-shadow: 0 0 20px rgba(255,85,31,.28); }
+  50%      { box-shadow: 0 0 40px rgba(255,85,31,.50); }
+}
+
+/* Dot pulse */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+/* Coming soon pulse */
+@keyframes comingPulse {
+  0%, 100% { text-shadow: 0 0 22px rgba(255,85,31,.38), 0 0 56px rgba(255,85,31,.20); }
+  50%      { text-shadow: 0 0 38px rgba(255,85,31,.6),  0 0 92px rgba(255,85,31,.32); }
+}
+
+/* Marquee */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Scan line animation (already uses .scan-line keyframe) */
+@keyframes scan {
+  from { left: -2px; }
+  to   { left: 100%; }
+}
+
+/* ─── REDUCED MOTION ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
 
 /* ─── PRINT ──────────────────────────────────────────────────────────────── */

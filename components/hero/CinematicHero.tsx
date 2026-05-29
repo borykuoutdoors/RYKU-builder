@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
 
@@ -42,6 +42,14 @@ interface Props { introComplete: boolean }
 
 export default function CinematicHero({ introComplete }: Props) {
   const sectionRef = useRef<HTMLElement>(null)
+  // THE CHAOS pulse fires at t=4520ms after introComplete (spec: §ANIMATIONS)
+  const [chaosLive, setChaosLive] = useState(false)
+
+  useEffect(() => {
+    if (!introComplete) return
+    const t = setTimeout(() => setChaosLive(true), 4520)
+    return () => clearTimeout(t)
+  }, [introComplete])
 
   const { scrollYProgress } = useScroll({
     target:  sectionRef,
@@ -51,10 +59,11 @@ export default function CinematicHero({ introComplete }: Props) {
 
   const show = introComplete
 
+  // Spec: fadeUp entries — opacity:0, y:14px, blur:8px → settled
   const fadeUp = (delay = 0) => ({
-    initial:    { opacity: 0, y: 20 },
-    animate:    show ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 },
-    transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] as const, delay },
+    initial:    { opacity: 0, y: 14, filter: 'blur(8px)' },
+    animate:    show ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 0, y: 14, filter: 'blur(8px)' },
+    transition: { duration: 1.0, ease: [0.2, 0.7, 0.2, 1] as const, delay },
   })
 
   return (
@@ -152,10 +161,35 @@ export default function CinematicHero({ introComplete }: Props) {
           ))}
         </svg>
 
-        {/* Scanlines */}
+        {/* Blueprint grid — 120px lines, opacity .55 per spec */}
+        <div style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          backgroundImage: [
+            'linear-gradient(rgba(243,237,226,0.028) 1px, transparent 1px)',
+            'linear-gradient(90deg, rgba(243,237,226,0.028) 1px, transparent 1px)',
+          ].join(', '),
+          backgroundSize: '120px 120px',
+          opacity: 0.55,
+          maskImage: 'radial-gradient(ellipse 90% 90% at 50% 50%, black 40%, transparent 100%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 90% 90% at 50% 50%, black 40%, transparent 100%)',
+        }} />
+
+        {/* CRT scanlines */}
         <div style={{
           position: 'absolute', inset: 0, pointerEvents: 'none',
           backgroundImage: 'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.032) 2px,rgba(0,0,0,0.032) 4px)',
+        }} />
+
+        {/* Grain texture */}
+        <div style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\' opacity=\'0.4\'/%3E%3C/svg%3E")',
+          backgroundRepeat: 'repeat',
+          backgroundSize: '200px 200px',
+          opacity: 0.09,
+          animation: 'grainShift 0.9s steps(6) infinite',
+          mixBlendMode: 'overlay',
+          zIndex: 9999,
         }} />
       </motion.div>
 
@@ -211,27 +245,27 @@ export default function CinematicHero({ introComplete }: Props) {
         }}
       />
 
-      {/* ── CORNER BRACKETS ─────────────────────────────────────────── */}
+      {/* ── CORNER BRACKETS — spec: .stage__corner 24px, 1px solid --line-strong ─ */}
       {([
-        { top: 20, left: 20,      borderTop:    '1px solid rgba(255,85,31,0.28)', borderLeft:   '1px solid rgba(255,85,31,0.28)' },
-        { top: 20, right: 20,     borderTop:    '1px solid rgba(255,85,31,0.28)', borderRight:  '1px solid rgba(255,85,31,0.28)' },
-        { bottom: 38, left: 20,   borderBottom: '1px solid rgba(255,85,31,0.28)', borderLeft:   '1px solid rgba(255,85,31,0.28)' },
-        { bottom: 38, right: 20,  borderBottom: '1px solid rgba(255,85,31,0.28)', borderRight:  '1px solid rgba(255,85,31,0.28)' },
+        { top: 20, left: 20,      borderTop:    '1px solid rgba(243,237,226,0.28)', borderLeft:   '1px solid rgba(243,237,226,0.28)' },
+        { top: 20, right: 20,     borderTop:    '1px solid rgba(243,237,226,0.28)', borderRight:  '1px solid rgba(243,237,226,0.28)' },
+        { bottom: 54, left: 20,   borderBottom: '1px solid rgba(243,237,226,0.28)', borderLeft:   '1px solid rgba(243,237,226,0.28)' },
+        { bottom: 54, right: 20,  borderBottom: '1px solid rgba(243,237,226,0.28)', borderRight:  '1px solid rgba(243,237,226,0.28)' },
       ] as React.CSSProperties[]).map((s, i) => (
         <motion.div
           key={i}
           initial={{ opacity: 0, scale: 0.7 }}
           animate={show ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.7 }}
-          transition={{ duration: 0.65, delay: 0.10 + i * 0.06, ease: [0.16, 1, 0.3, 1] }}
-          style={{ position: 'absolute', width: 22, height: 22, pointerEvents: 'none', zIndex: 10, ...s }}
+          transition={{ duration: 0.65, delay: 2.6 + i * 0.06, ease: [0.2, 0.7, 0.2, 1] }}
+          style={{ position: 'absolute', width: 24, height: 24, pointerEvents: 'none', zIndex: 10, ...s }}
         />
       ))}
 
-      {/* ── LEFT HUD — LATITUDE MARKERS ─────────────────────────────── */}
+      {/* ── LEFT HUD TICKS — spec: N44°→N40°, mono 9px, .25em tracking ── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={show ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 0.9, delay: 0.55 }}
+        transition={{ duration: 0.9, delay: 1.6 }}
         style={{
           position: 'absolute', left: 22, top: 0, bottom: 38,
           display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly',
@@ -239,12 +273,12 @@ export default function CinematicHero({ introComplete }: Props) {
           pointerEvents: 'none', zIndex: 10,
         }}
       >
-        {[45, 44, 43, 42, 41].map(lat => (
-          <div key={lat} style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-            <div style={{ width: 14, height: 1, background: 'rgba(255,85,31,0.30)', flexShrink: 0 }} />
+        {[44, 43, 42, 41, 40].map(lat => (
+          <div key={lat} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 10, height: 1, background: 'rgba(243,237,226,0.22)', flexShrink: 0 }} />
             <span style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.4375rem',
-              letterSpacing: '0.12em', color: 'rgba(255,255,255,0.22)',
+              fontFamily: 'var(--font-mono)', fontSize: '9px',
+              letterSpacing: '0.25em', color: 'var(--ink-faint)',
               textTransform: 'uppercase',
             }}>
               N {lat}°
@@ -257,13 +291,13 @@ export default function CinematicHero({ introComplete }: Props) {
       <motion.div
         initial={{ opacity: 0 }}
         animate={show ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 0.9, delay: 0.6 }}
+        transition={{ duration: 0.9, delay: 1.7 }}
         style={{
           position: 'absolute', top: 22, right: 22,
           display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4,
           pointerEvents: 'none', zIndex: 10,
-          fontFamily: 'var(--font-mono)', fontSize: '0.4375rem',
-          letterSpacing: '0.12em', color: 'rgba(255,255,255,0.22)',
+          fontFamily: 'var(--font-mono)', fontSize: '9px',
+          letterSpacing: '0.25em', color: 'var(--ink-faint)',
         }}
       >
         <span>44°N · 110°W</span>
@@ -274,7 +308,7 @@ export default function CinematicHero({ introComplete }: Props) {
       <motion.div
         initial={{ opacity: 0 }}
         animate={show ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 0.9, delay: 0.7 }}
+        transition={{ duration: 0.9, delay: 1.8 }}
         style={{
           position: 'absolute', right: 24, bottom: 44,
           display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6,
@@ -288,16 +322,16 @@ export default function CinematicHero({ introComplete }: Props) {
         ].map(row => (
           <div key={row.label} style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
             <span style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.4375rem',
-              letterSpacing: '0.14em', color: 'rgba(255,255,255,0.28)',
+              fontFamily: 'var(--font-mono)', fontSize: '9px',
+              letterSpacing: '0.25em', color: 'var(--ink-faint)',
               textTransform: 'uppercase',
             }}>
               {row.label}
             </span>
             <span style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.6875rem',
+              fontFamily: 'var(--font-mono)', fontSize: '11px',
               letterSpacing: '0.06em',
-              color: row.orange ? 'var(--orange)' : 'rgba(255,255,255,0.60)',
+              color: row.orange ? 'var(--orange)' : 'var(--ink-dim)',
               textShadow: row.orange ? '0 0 10px rgba(255,85,31,0.5)' : 'none',
             }}>
               {row.value}
@@ -307,29 +341,31 @@ export default function CinematicHero({ introComplete }: Props) {
       </motion.div>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          HERO CONTENT — vertically centered in the left dark zone
+          HERO CONTENT — vertically centered, left padding per spec
+          spec: paddingLeft clamp(96px,9vw,188px), col max-width 780px, translateY(-3vh)
       ══════════════════════════════════════════════════════════════════════ */}
       <div
         className="hero-text-panel"
         style={{
           position: 'absolute',
           top: '50%',
-          transform: 'translateY(-50%)',
+          transform: 'translateY(calc(-50% - 3vh))',
           left: 0,
-          padding: 'clamp(28px, 5vw, 72px)',
-          paddingRight: 0,
-          maxWidth: 'clamp(320px, 46vw, 580px)',
+          paddingLeft: 'clamp(96px, 9vw, 188px)',
+          paddingRight: '5vw',
+          maxWidth: 'clamp(420px, 50vw, 780px)',
           zIndex: 10,
           pointerEvents: 'none',
         }}
       >
 
-        {/* EYEBROW */}
-        <motion.div {...fadeUp(0.28)} style={{ marginBottom: 22, pointerEvents: 'none' }}>
+        {/* EYEBROW — spec: .hero__meta, 13px tactical, 700, .42em tracking */}
+        <motion.div {...fadeUp(1.8)} style={{ marginBottom: 22, pointerEvents: 'none' }}>
           <span style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: 'clamp(8px, 0.72vw, 10.5px)',
-            letterSpacing: '0.28em',
+            fontFamily: 'var(--font-tactical)',
+            fontSize: '13px',
+            fontWeight: 700,
+            letterSpacing: '0.42em',
             color: 'var(--orange)',
             textTransform: 'uppercase',
           }}>
@@ -337,94 +373,142 @@ export default function CinematicHero({ introComplete }: Props) {
           </span>
         </motion.div>
 
-        {/* TITLE */}
-        <motion.div
-          initial={{ opacity: 0, y: 28, filter: 'blur(16px)' }}
-          animate={show
-            ? { opacity: 1, y: 0, filter: 'blur(0px)' }
-            : { opacity: 0, y: 28, filter: 'blur(16px)' }
-          }
-          transition={{ duration: 0.92, ease: [0.16, 1, 0.3, 1], delay: 0.36 }}
-          style={{ marginBottom: 24, pointerEvents: 'auto', willChange: 'filter, transform, opacity' }}
-        >
+        {/* TITLE — spec: clamp(64px,7.6vw,132px), weight 700, tracking .005em */}
+        <div style={{ marginBottom: 24, pointerEvents: 'auto', willChange: 'filter, transform, opacity' }}>
           <h1 style={{
-            fontFamily: 'var(--font-bebas)',
-            fontSize: 'clamp(46px, 7.2vw, 108px)',
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(64px, 7.6vw, 132px)',
             lineHeight: 0.88,
-            letterSpacing: '0.04em',
+            letterSpacing: '0.005em',
+            fontWeight: 700,
             margin: 0,
+            textTransform: 'uppercase',
           }}>
-            <span style={{
-              display: 'block',
-              color: '#fff',
-              textShadow: '0 2px 52px rgba(0,0,0,0.92)',
-            }}>
+            {/* .l1 "Control" — blurUp 1.4s, delay 2.1s from introComplete */}
+            <motion.span
+              className="l1"
+              initial={{ opacity: 0, y: 20, filter: 'blur(14px)' }}
+              animate={show
+                ? { opacity: 1, y: 0, filter: 'blur(0px)' }
+                : { opacity: 0, y: 20, filter: 'blur(14px)' }
+              }
+              transition={{ duration: 1.4, ease: [0.2, 0.7, 0.2, 1], delay: 2.1 }}
+              style={{
+                display: 'block',
+                color: 'var(--ink)',
+                textShadow: '0 2px 52px rgba(0,0,0,0.92)',
+              }}
+            >
               CONTROL
-            </span>
-            <span style={{
-              display: 'block',
-              color: 'var(--orange)',
-              textShadow: '0 0 36px rgba(255,85,31,0.55), 0 0 80px rgba(255,85,31,0.18), 0 2px 52px rgba(0,0,0,0.9)',
-            }}>
+            </motion.span>
+            {/* .l2 "The Chaos" — blurUp 1.4s, delay 2.5s; chaos-live class at t=4520ms */}
+            <motion.span
+              className={`l2${chaosLive ? ' chaos-live' : ''}`}
+              initial={{ opacity: 0, y: 20, filter: 'blur(14px)' }}
+              animate={chaosLive
+                ? { opacity: 1, y: 0, filter: 'blur(0px)' }
+                : show
+                  ? { opacity: 1, y: 0, filter: 'blur(0px)' }
+                  : { opacity: 0, y: 20, filter: 'blur(14px)' }
+              }
+              transition={{ duration: 1.4, ease: [0.2, 0.7, 0.2, 1], delay: 2.5 }}
+              style={{
+                display: 'block',
+                color: 'var(--orange)',
+                textShadow: chaosLive
+                  ? undefined  /* chaosPulse keyframe takes over */
+                  : '0 0 36px rgba(255,85,31,0.55), 0 0 80px rgba(255,85,31,0.18), 0 2px 52px rgba(0,0,0,0.9)',
+              }}
+            >
               THE CHAOS
-            </span>
+            </motion.span>
           </h1>
-        </motion.div>
+        </div>
 
-        {/* BODY TEXT */}
-        <motion.div {...fadeUp(0.50)} style={{ marginBottom: 32, pointerEvents: 'auto' }}>
+        {/* BODY TEXT — spec: .hero__sub, 16px body, weight 300, ink-dim */}
+        <motion.div {...fadeUp(3.8)} style={{ marginBottom: 32, pointerEvents: 'auto' }}>
           <p style={{
             fontFamily: 'var(--font-body)',
-            fontSize: 'clamp(13px, 1.02vw, 15px)',
-            color: 'rgba(255,255,255,0.52)',
+            fontSize: '16px',
+            fontWeight: 300,
+            color: 'var(--ink-dim)',
             margin: 0,
-            lineHeight: 1.7,
+            lineHeight: 1.65,
             maxWidth: '38ch',
           }}>
             The all-in-one platform for building, customizing, and outfitting your vehicle for any expedition.
           </p>
         </motion.div>
 
-        {/* CTA BUTTONS */}
+        {/* CTA BUTTONS — spec: btn-hero 13.5px, display font, 600, .3em tracking */}
         <motion.div
-          {...fadeUp(0.62)}
+          {...fadeUp(4.2)}
           style={{ display: 'flex', gap: 12, flexWrap: 'wrap', pointerEvents: 'auto' }}
         >
           <Link href="/build">
             <motion.button
-              whileHover={{ boxShadow: '0 0 28px rgba(255,85,31,0.45), 0 0 8px rgba(255,85,31,0.25)', scale: 1.02 }}
+              whileHover={{
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,.35), 0 18px 50px rgba(255,85,31,.55), 0 0 60px rgba(255,85,31,.35)',
+                scale: 1.02,
+              }}
               whileTap={{ scale: 0.97 }}
               transition={{ duration: 0.15 }}
-              className="btn btn-primary"
-              style={{ fontSize: '0.78rem', padding: '13px 28px', letterSpacing: '0.14em' }}
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontWeight: 600,
+                fontSize: '13.5px',
+                letterSpacing: '0.3em',
+                textTransform: 'uppercase',
+                padding: '19px 30px',
+                background: 'var(--orange)',
+                color: '#0a0604',
+                border: 'none',
+                borderRadius: 2,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 10,
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,.25), 0 12px 30px rgba(255,85,31,.36), 0 0 0 1px rgba(255,85,31,.4)',
+                transition: 'box-shadow 0.15s, transform 0.15s',
+              }}
               data-action="hero-start-build"
             >
-              START YOUR BUILD →
+              START YOUR BUILD
+              <span style={{ display: 'inline-block', transition: 'width 0.35s', fontSize: '0.9em' }}>→</span>
             </motion.button>
           </Link>
 
           <Link href="/builds">
             <motion.button
               whileHover={{
-                borderColor: 'rgba(255,255,255,0.28)',
-                color: 'rgba(255,255,255,0.78)',
-                background: 'rgba(255,255,255,0.05)',
+                borderColor: 'rgba(243,237,226,0.28)',
+                color: 'rgba(243,237,226,0.78)',
+                background: 'rgba(243,237,226,0.04)',
               }}
               whileTap={{ scale: 0.97 }}
               transition={{ duration: 0.15 }}
               style={{
-                fontFamily: 'var(--font-rajdhani)', fontWeight: 700,
-                fontSize: '0.78rem', letterSpacing: '0.14em',
-                padding: '13px 24px',
-                background: 'rgba(255,255,255,0.025)',
-                border: '1px solid rgba(255,255,255,0.18)',
-                color: 'rgba(255,255,255,0.52)',
-                cursor: 'pointer', textTransform: 'uppercase', borderRadius: 2,
+                fontFamily: 'var(--font-display)',
+                fontWeight: 600,
+                fontSize: '13.5px',
+                letterSpacing: '0.3em',
+                textTransform: 'uppercase',
+                padding: '19px 24px',
+                background: 'rgba(243,237,226,0.02)',
+                border: '1px solid rgba(243,237,226,0.14)',
+                color: 'var(--ink-dim)',
+                cursor: 'pointer',
+                borderRadius: 2,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 10,
+                backdropFilter: 'blur(12px)',
                 transition: 'all 0.15s',
               }}
               data-action="hero-explore-builds"
             >
-              EXPLORE BUILDS →
+              EXPLORE BUILDS
+              <span style={{ display: 'inline-block', fontSize: '0.9em' }}>→</span>
             </motion.button>
           </Link>
         </motion.div>

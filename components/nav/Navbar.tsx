@@ -90,7 +90,7 @@ export default function Navbar() {
               <div style={{ filter: 'drop-shadow(0 0 10px rgba(255,85,31,0.50))', flexShrink: 0 }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/ryku-logo-icon.png"
+                  src="/brand/mark.png"
                   alt=""
                   aria-hidden="true"
                   style={{
