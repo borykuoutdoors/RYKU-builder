@@ -6,11 +6,13 @@ import type { Installer } from '@/types/installer'
 import InstallerCard from './InstallerCard'
 import LoadingBar from '@/components/ui/LoadingBar'
 import BtnColorful from '@/components/ui/BtnColorful'
+import AnimatedSearchBar from '@/components/ui/AnimatedSearchBar'
 
 const SERVICES = ['Off-Road', 'Suspension', 'Overland', 'Lighting', 'Recovery', 'Armor'] as const
 type ServiceType = typeof SERVICES[number]
 
 export default function InstallerSearch() {
+  const [quickSearch, setQuickSearch] = useState('')
   const [country, setCountry] = useState('')
   const [city, setCity] = useState('')
   const [zip, setZip] = useState('')
@@ -36,6 +38,15 @@ export default function InstallerSearch() {
 
     setTimeout(() => {
       let filtered: Installer[] = CATALOG_INSTALLERS
+
+      if (quickSearch.trim()) {
+        const q = quickSearch.toLowerCase()
+        filtered = filtered.filter((inst) =>
+          inst.name.toLowerCase().includes(q) ||
+          inst.city.toLowerCase().includes(q) ||
+          inst.state.toLowerCase().includes(q)
+        )
+      }
 
       if (selectedServices.length > 0) {
         filtered = filtered.filter((inst) =>
@@ -79,6 +90,15 @@ export default function InstallerSearch() {
           gap: '20px',
         }}
       >
+        {/* Quick search */}
+        <AnimatedSearchBar
+          placeholder="Search installers near you…"
+          value={quickSearch}
+          onChange={setQuickSearch}
+          aria-label="Quick search installers"
+          data-search-scope="installers"
+        />
+
         {/* Country input */}
         <div>
           <label

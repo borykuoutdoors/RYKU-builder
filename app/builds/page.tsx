@@ -1,18 +1,34 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import SectionEyebrow from '@/components/ui/SectionEyebrow'
 import { buildsGallery, buildFilterChips } from '@/lib/catalog'
 import BtnColorful from '@/components/ui/BtnColorful'
+import AnimatedSearchBar from '@/components/ui/AnimatedSearchBar'
 
 export default function BuildsPage() {
   const [activeFilter, setActiveFilter] = useState('all')
+  const [searchTerm, setSearchTerm] = useState('')
 
-  const filtered = activeFilter === 'all'
-    ? buildsGallery
-    : buildsGallery.filter(b => b.filter === activeFilter)
+  const filtered = useMemo(() => {
+    let list = activeFilter === 'all'
+      ? buildsGallery
+      : buildsGallery.filter(b => b.filter === activeFilter)
+
+    if (searchTerm.trim()) {
+      const q = searchTerm.toLowerCase()
+      list = list.filter(b =>
+        b.title.toLowerCase().includes(q) ||
+        b.owner.toLowerCase().includes(q) ||
+        b.tag.toLowerCase().includes(q) ||
+        b.region.toLowerCase().includes(q)
+      )
+    }
+
+    return list
+  }, [activeFilter, searchTerm])
 
   return (
     <div style={{ background: 'var(--dark)', minHeight: '100vh' }}>
@@ -39,6 +55,16 @@ export default function BuildsPage() {
               FEATURED<br /><span style={{ color: 'var(--orange)' }}>BUILDS</span>
             </h1>
             <Link href="/build"><BtnColorful arrow>START YOUR BUILD</BtnColorful></Link>
+          </div>
+
+          <div style={{ maxWidth: 520, marginTop: 32 }}>
+            <AnimatedSearchBar
+              placeholder="Search builds, vehicles, or builders…"
+              value={searchTerm}
+              onChange={setSearchTerm}
+              aria-label="Search community builds"
+              data-search-scope="builds"
+            />
           </div>
         </div>
       </section>

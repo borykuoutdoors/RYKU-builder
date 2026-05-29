@@ -7,6 +7,7 @@ import { PRODUCTS, CATEGORIES } from '@/data/products'
 import { VEHICLES } from '@/data/vehicles'
 import type { Product } from '@/types/product'
 import SectionEyebrow from '@/components/ui/SectionEyebrow'
+import AnimatedSearchBar from '@/components/ui/AnimatedSearchBar'
 
 // ─── Difficulty helpers ───────────────────────────────────────────────────────
 
@@ -195,6 +196,7 @@ export default function GearPage() {
   const [selectedVehicle, setSelectedVehicle] = useState<string>('all')
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL')
   const [sort, setSort] = useState<SortKey>('price-asc')
+  const [searchTerm, setSearchTerm] = useState('')
 
   const filtered = useMemo(() => {
     let list = PRODUCTS
@@ -205,9 +207,18 @@ export default function GearPage() {
     if (selectedCategory !== 'ALL') {
       list = list.filter((p) => p.category === selectedCategory)
     }
+    if (searchTerm.trim()) {
+      const q = searchTerm.toLowerCase()
+      list = list.filter((p) =>
+        p.name.toLowerCase().includes(q) ||
+        p.brand.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q) ||
+        (p.note ?? '').toLowerCase().includes(q)
+      )
+    }
 
     return sortProducts(list, sort)
-  }, [selectedVehicle, selectedCategory, sort])
+  }, [selectedVehicle, selectedCategory, sort, searchTerm])
 
   const allCategories = ['ALL', ...CATEGORIES.map((c) => c.id)]
 
@@ -241,6 +252,16 @@ export default function GearPage() {
         >
           {PRODUCTS.length} products across {CATEGORIES.length} categories — curated for the mission
         </p>
+
+        <div style={{ maxWidth: '520px', margin: '28px auto 0' }}>
+          <AnimatedSearchBar
+            placeholder="Search gear, brands, or products…"
+            value={searchTerm}
+            onChange={setSearchTerm}
+            aria-label="Search gear catalog"
+            data-search-scope="gear"
+          />
+        </div>
       </div>
 
       {/* ── Filter Bar ─────────────────────────────────────────────────────── */}
