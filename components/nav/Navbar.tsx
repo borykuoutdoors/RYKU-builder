@@ -1,13 +1,15 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useBuildStore } from '@/store/buildStore'
 import ShopModal from '@/components/modals/ShopModal'
+import BtnColorful from '@/components/ui/BtnColorful'
 
+/* ─── Nav links ─────────────────────────────────────────────────────────── */
 const NAV_LINKS = [
   { label: 'HOME',       href: '/' },
   { label: 'BUILDS',     href: '/builds' },
@@ -17,480 +19,557 @@ const NAV_LINKS = [
   { label: 'CONTACT',    href: '/contact' },
 ]
 
+/* ─── Animated hamburger icon ───────────────────────────────────────────── */
+function HamburgerIcon({ open }: { open: boolean }) {
+  return (
+    <div style={{ width: 22, height: 16, position: 'relative', flexShrink: 0 }}>
+      {[0, 1, 2].map(i => (
+        <motion.span
+          key={i}
+          style={{
+            display: 'block',
+            position: 'absolute',
+            left: 0, right: 0,
+            height: 1.5,
+            borderRadius: 2,
+            background: open ? '#FF551F' : 'rgba(255,255,255,0.72)',
+            top: i === 0 ? 0 : i === 1 ? 7 : 14,
+            transformOrigin: 'center',
+          }}
+          animate={
+            open
+              ? i === 0 ? { top: 7, rotate: 45 }
+              : i === 1 ? { opacity: 0, scaleX: 0 }
+              : { top: 7, rotate: -45 }
+              : { top: i === 0 ? 0 : i === 1 ? 7 : 14, rotate: 0, opacity: 1, scaleX: 1 }
+          }
+          transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+        />
+      ))}
+    </div>
+  )
+}
+
+/* ─── Active-link underline indicator ──────────────────────────────────── */
+function NavLink({
+  href,
+  label,
+  isActive,
+  isShop,
+  onShopClick,
+}: {
+  href?: string
+  label: string
+  isActive: boolean
+  isShop?: boolean
+  onShopClick?: () => void
+}) {
+  const [hovered, setHovered] = useState(false)
+
+  const textColor = isActive
+    ? '#FF551F'
+    : hovered
+    ? '#fff'
+    : 'rgba(255,255,255,0.60)'
+
+  const sharedStyle: React.CSSProperties = {
+    position: 'relative',
+    display: 'inline-flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 0,
+    fontFamily: 'var(--font-mono)',
+    fontWeight: 400,
+    fontSize: '0.6rem',
+    letterSpacing: '0.18em',
+    textTransform: 'uppercase',
+    padding: '6px 10px',
+    color: textColor,
+    background: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'color 0.18s',
+    textDecoration: 'none',
+    whiteSpace: 'nowrap',
+    lineHeight: 1.2,
+  }
+
+  const indicator = (
+    <motion.span
+      style={{
+        position: 'absolute',
+        bottom: 2,
+        left: '50%',
+        translateX: '-50%',
+        height: 1,
+        background: isActive
+          ? 'linear-gradient(to right, #FF551F, #FFC857)'
+          : 'rgba(255,85,31,0.6)',
+        borderRadius: 1,
+        pointerEvents: 'none',
+      }}
+      initial={false}
+      animate={{ width: isActive ? '60%' : hovered ? '40%' : 0, opacity: isActive || hovered ? 1 : 0 }}
+      transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+    />
+  )
+
+  if (isShop) {
+    return (
+      <button
+        onClick={onShopClick}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={sharedStyle}
+        data-action="nav-shop"
+      >
+        {label}
+        <span style={{
+          marginLeft: 4,
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.48rem',
+          letterSpacing: '0.10em',
+          background: 'rgba(255,85,31,0.18)',
+          color: '#FF551F',
+          border: '1px solid rgba(255,85,31,0.35)',
+          padding: '1px 4px',
+          borderRadius: 2,
+          lineHeight: 1.4,
+          verticalAlign: 'middle',
+        }}>
+          SOON
+        </span>
+        {indicator}
+      </button>
+    )
+  }
+
+  return (
+    <Link
+      href={href!}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={sharedStyle}
+    >
+      {label}
+      {indicator}
+    </Link>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Main Navbar
+   ═══════════════════════════════════════════════════════════════════════════ */
 export default function Navbar() {
-  const pathname   = usePathname()
-  const vehicle    = useBuildStore(s => s.vehicle)
-  const buildName  = useBuildStore(s => s.buildName)
+  const pathname  = usePathname()
+  const vehicle   = useBuildStore(s => s.vehicle)
 
   const isHomepage = pathname === '/'
 
-  const [scrolled,     setScrolled]     = useState(false)
-  const [mobileOpen,   setMobileOpen]   = useState(false)
-  const [shopOpen,     setShopOpen]     = useState(false)
-  // Homepage: hidden until 70% of the cinematic scroll section
-  // Other pages: always visible immediately
-  const [navVisible,   setNavVisible]   = useState(!isHomepage)
+  const [scrolled,   setScrolled]   = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [shopOpen,   setShopOpen]   = useState(false)
+  const [navVisible, setNavVisible] = useState(!isHomepage)
 
-  // Track scroll position to toggle .scrolled class
+  /* scroll → scrolled state */
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
+    const onScroll = () => setScrolled(window.scrollY > 24)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // On homepage: hidden during loading screen, revealed via ryku:intro-complete event.
-  // On other pages: always visible immediately.
+  /* homepage: wait for intro-complete; other pages: instant */
   useEffect(() => {
-    if (!isHomepage) {
-      setNavVisible(true)
-      return
-    }
+    if (!isHomepage) { setNavVisible(true); return }
     const handler = () => setNavVisible(true)
     window.addEventListener('ryku:intro-complete', handler)
     return () => window.removeEventListener('ryku:intro-complete', handler)
   }, [isHomepage])
 
-  // Close mobile menu on route change
+  /* close mobile menu on navigation */
   useEffect(() => { setMobileOpen(false) }, [pathname])
+
+  /* ── Border & bg driven by scrolled state ──────────────────────────── */
+  const navBg          = scrolled ? 'rgba(4,4,4,0.90)'         : 'transparent'
+  const navBorder      = scrolled ? 'rgba(255,255,255,0.07)'   : 'transparent'
+  const navBlur        = scrolled ? 'blur(28px)'               : 'blur(0px)'
 
   return (
     <>
-      {/* ── Main nav bar ───────────────────────────────────────────── */}
+      {/* ── Main nav ──────────────────────────────────────────────────── */}
       <motion.nav
-        className={`nav${scrolled ? ' scrolled' : ''}`}
-        // On homepage: driven by scroll reveal (initial=false → animate is the starting state)
-        // On other pages: classic slide-in from top on mount
-        initial={isHomepage ? false : { y: -58, opacity: 0 }}
-        animate={{
-          y:       navVisible ? 0 : -72,
-          opacity: navVisible ? 1 : 0,
-        }}
-        transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
-        style={{ pointerEvents: navVisible ? 'auto' : 'none' }}
         role="navigation"
         aria-label="Primary navigation"
+        initial={isHomepage ? false : { y: -68, opacity: 0 }}
+        animate={{ y: navVisible ? 0 : -72, opacity: navVisible ? 1 : 0 }}
+        transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          position:         'fixed',
+          top: 0, left: 0, right: 0,
+          height:           'var(--nav-h)',
+          zIndex:           30,
+          pointerEvents:    navVisible ? 'auto' : 'none',
+          background:       navBg,
+          borderBottom:     `1px solid ${navBorder}`,
+          backdropFilter:   navBlur,
+          WebkitBackdropFilter: navBlur,
+          transition:       'background 0.38s ease, border-color 0.38s ease, backdrop-filter 0.38s ease',
+        }}
       >
+        {/* ── Inner: 3-column grid — logo | links | actions ────────── */}
         <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          height: '100%',
-          padding: '0 24px',
-          maxWidth: '1440px',
-          margin: '0 auto',
+          display:       'grid',
+          gridTemplateColumns: '1fr auto 1fr',
+          alignItems:    'center',
+          height:        '100%',
+          padding:       '0 28px',
+          maxWidth:      '1440px',
+          margin:        '0 auto',
+          gap:           16,
         }}>
 
-          {/* ── Logo ─────────────────────────────────────────────── */}
-          <Link href="/" aria-label="BŌRYKU home" style={{ display: 'flex', alignItems: 'center', gap: 12, lineHeight: 1, textDecoration: 'none' }}>
-            <motion.div
-              whileHover={{ scale: 1.04 }}
-              transition={{ duration: 0.2 }}
-              style={{ display: 'flex', alignItems: 'center', gap: 12 }}
+          {/* COL 1 — Logo ─────────────────────────────────────────── */}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Link
+              href="/"
+              aria-label="BŌRYKU home"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 11, textDecoration: 'none', lineHeight: 1 }}
             >
-              {/* Flame icon — transparent PNG, no card, no blend mode */}
-              <div style={{ filter: 'drop-shadow(0 0 10px rgba(255,85,31,0.50))', flexShrink: 0 }}>
-                <Image
-                  src="/brand/mark.png"
-                  alt=""
-                  aria-hidden="true"
-                  width={38}
-                  height={38}
-                  priority
-                  style={{ objectFit: 'contain' }}
-                />
-              </div>
-              {/* Wordmark */}
-              <span style={{
-                fontFamily: 'var(--font-bebas)',
-                fontSize: '1.75rem',
-                letterSpacing: '0.08em',
-                color: '#fff',
-                lineHeight: 1,
-                textShadow: '0 1px 24px rgba(0,0,0,0.5)',
-              }}>
-                B<span style={{ color: 'var(--orange)' }}>Ō</span>RYKU
-              </span>
-            </motion.div>
-          </Link>
+              <motion.div
+                whileHover={{ scale: 1.04 }}
+                transition={{ duration: 0.2 }}
+                style={{ display: 'flex', alignItems: 'center', gap: 11 }}
+              >
+                <div style={{
+                  filter: `drop-shadow(0 0 ${scrolled ? 14 : 8}px rgba(255,85,31,${scrolled ? 0.55 : 0.40}))`,
+                  transition: 'filter 0.4s ease',
+                  flexShrink: 0,
+                }}>
+                  <Image
+                    src="/brand/mark.png"
+                    alt=""
+                    aria-hidden="true"
+                    width={34}
+                    height={34}
+                    priority
+                    style={{ objectFit: 'contain' }}
+                  />
+                </div>
+                <span style={{
+                  fontFamily:  'var(--font-bebas)',
+                  fontSize:    '1.6rem',
+                  letterSpacing: '0.08em',
+                  color:       '#fff',
+                  lineHeight:  1,
+                  textShadow:  '0 1px 20px rgba(0,0,0,0.5)',
+                }}>
+                  B<span style={{ color: '#FF551F' }}>Ō</span>RYKU
+                </span>
+              </motion.div>
+            </Link>
+          </div>
 
-          {/* ── Desktop nav links ─────────────────────────────────── */}
+          {/* COL 2 — Center nav links ─────────────────────────────── */}
           <nav
+            className="desktop-nav"
             aria-label="Site links"
             style={{
-              display: 'flex',
-              gap: '4px',
+              display:    'flex',
               alignItems: 'center',
+              gap:        2,
             }}
-            className="desktop-nav"
           >
             {NAV_LINKS.map(({ label, href }) => {
               const isActive = pathname === href || (href !== '/' && pathname.startsWith(href))
               return (
-                <span key={href}>
-                  <Link
-                    href={href}
-                    style={{
-                      fontFamily: 'var(--font-rajdhani)',
-                      fontWeight: 700,
-                      fontSize: '0.75rem',
-                      letterSpacing: '0.18em',
-                      color: isActive ? 'var(--orange)' : 'rgba(255,255,255,0.72)',
-                      padding: '6px 10px',
-                      transition: 'color 0.2s',
-                      textShadow: '0 1px 12px rgba(0,0,0,0.6)',
-                    }}
-                    onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.color = '#fff' }}
-                    onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(255,255,255,0.72)' }}
-                  >
-                    {isActive ? `[ ${label} ]` : label}
-                  </Link>
-                  {/* SHOP button — inserted immediately after GEAR */}
-                  {label === 'GEAR' && (
-                    <button
-                      onClick={() => setShopOpen(true)}
-                      data-action="nav-shop"
-                      style={{
-                        fontFamily: 'var(--font-rajdhani)',
-                        fontWeight: 700,
-                        fontSize: '0.75rem',
-                        letterSpacing: '0.18em',
-                        color: 'var(--orange)',
-                        padding: '6px 10px',
-                        background: 'transparent',
-                        border: 'none',
-                        borderBottom: '1px solid transparent',
-                        cursor: 'pointer',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 5,
-                        transition: 'color 0.2s',
-                        verticalAlign: 'middle',
-                      }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = '#fff' }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--orange)' }}
-                    >
-                      SHOP
-                      <span style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: 7,
-                        letterSpacing: '0.1em',
-                        background: 'var(--orange)',
-                        color: '#000',
-                        padding: '1px 4px',
-                        borderRadius: 2,
-                        fontWeight: 700,
-                        lineHeight: 1.4,
-                      }}>
-                        SOON
-                      </span>
-                    </button>
-                  )}
-                </span>
+                <NavLink
+                  key={href}
+                  href={href}
+                  label={label}
+                  isActive={isActive}
+                />
               )
             })}
+            {/* SHOP — after GEAR */}
+            <NavLink
+              label="SHOP"
+              isActive={false}
+              isShop
+              onShopClick={() => setShopOpen(true)}
+            />
           </nav>
 
-          {/* ── Right-side controls ───────────────────────────────── */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* COL 3 — Right actions ────────────────────────────────── */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
 
-            {/* MY BUILD pill — shown only when a vehicle is selected */}
-            {vehicle && (
-              <Link href="/my-build" aria-label="View your build" style={{ textDecoration: 'none' }}>
+            {/* MY BUILD badge — visible when vehicle selected */}
+            <AnimatePresence>
+              {vehicle && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.85 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.85 }}
+                  key="build-badge"
+                  initial={{ opacity: 0, scale: 0.82, x: 8 }}
+                  animate={{ opacity: 1, scale: 1, x: 0 }}
+                  exit={{ opacity: 0, scale: 0.82, x: 8 }}
+                  transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                   className="nav-build-badge"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '7px',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.5625rem',
-                    letterSpacing: '0.14em',
-                    color: '#fff',
-                    border: '1px solid rgba(255,85,31,0.55)',
-                    background: 'rgba(255,85,31,0.08)',
-                    padding: '6px 13px',
-                    textTransform: 'uppercase',
-                    whiteSpace: 'nowrap',
-                    borderRadius: 20,
-                    cursor: 'pointer',
-                    boxShadow: '0 0 14px rgba(255,85,31,0.25), inset 0 0 8px rgba(255,85,31,0.06)',
-                  }}
-                  whileHover={{
-                    background: 'rgba(255,85,31,0.14)',
-                    borderColor: 'rgba(255,85,31,0.80)',
-                    boxShadow: '0 0 22px rgba(255,85,31,0.40), inset 0 0 10px rgba(255,85,31,0.08)',
-                  }}
-                  transition={{ duration: 0.15 }}
                 >
-                  <span style={{
-                    display: 'inline-block', width: 6, height: 6, borderRadius: '50%',
-                    background: 'var(--orange)',
-                    boxShadow: '0 0 8px rgba(255,85,31,0.9)',
-                    flexShrink: 0,
-                  }} />
-                  MY BUILD
+                  <Link href="/my-build" aria-label="View your build" style={{ textDecoration: 'none' }}>
+                    <motion.div
+                      whileHover={{
+                        background: 'rgba(255,85,31,0.16)',
+                        borderColor: 'rgba(255,85,31,0.80)',
+                        boxShadow:   '0 0 20px rgba(255,85,31,0.36)',
+                      }}
+                      transition={{ duration: 0.15 }}
+                      style={{
+                        display:     'inline-flex',
+                        alignItems:  'center',
+                        gap:         6,
+                        fontFamily:  'var(--font-mono)',
+                        fontSize:    '0.5rem',
+                        letterSpacing: '0.16em',
+                        textTransform: 'uppercase',
+                        color:       '#fff',
+                        border:      '1px solid rgba(255,85,31,0.50)',
+                        background:  'rgba(255,85,31,0.08)',
+                        padding:     '5px 12px',
+                        borderRadius: 20,
+                        whiteSpace:  'nowrap',
+                        cursor:      'pointer',
+                        boxShadow:   '0 0 12px rgba(255,85,31,0.22)',
+                      }}
+                    >
+                      <span style={{
+                        display:      'inline-block',
+                        width: 5, height: 5,
+                        borderRadius: '50%',
+                        background:   '#FF551F',
+                        boxShadow:    '0 0 7px rgba(255,85,31,0.9)',
+                        flexShrink:   0,
+                      }} />
+                      MY BUILD
+                    </motion.div>
+                  </Link>
                 </motion.div>
-              </Link>
-            )}
+              )}
+            </AnimatePresence>
 
-            {/* Auth buttons — always visible */}
-            <motion.div
-              className="nav-auth-btns"
-              style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
-            >
-              <Link href="/login" aria-label="Log in to your account" data-action="nav-login">
-                <motion.button
-                  whileHover={{ color: '#fff' }}
-                  transition={{ duration: 0.15 }}
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    color: 'rgba(255,255,255,0.52)',
-                    fontFamily: 'var(--font-rajdhani)',
-                    fontWeight: 700,
-                    fontSize: '0.72rem',
-                    letterSpacing: '0.16em',
-                    padding: '7px 12px',
-                    cursor: 'pointer',
-                    textTransform: 'uppercase',
-                    whiteSpace: 'nowrap',
-                    textShadow: '0 1px 12px rgba(0,0,0,0.6)',
-                  }}
+            {/* Desktop auth row — hidden on mobile */}
+            <div className="nav-auth-row desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Link href="/login" aria-label="Log in" data-action="nav-login" style={{ textDecoration: 'none' }}>
+                <BtnColorful
+                  variant="secondary"
+                  style={{ padding: '8px 16px', fontSize: '0.62rem', letterSpacing: '0.16em', whiteSpace: 'nowrap' }}
                 >
-                  LOG IN
-                </motion.button>
+                  LOG IN TO BŌRYKU
+                </BtnColorful>
               </Link>
 
-              <Link href="/signup" aria-label="Create a free account" data-action="nav-signup">
-                <motion.button
-                  whileHover={{ color: '#fff' }}
-                  transition={{ duration: 0.15 }}
-                  style={{
-                    background: 'transparent',
-                    border: '1px solid rgba(255,85,31,0.45)',
-                    color: 'var(--orange)',
-                    fontFamily: 'var(--font-rajdhani)',
-                    fontWeight: 700,
-                    fontSize: '0.72rem',
-                    letterSpacing: '0.16em',
-                    padding: '7px 14px',
-                    cursor: 'pointer',
-                    textTransform: 'uppercase',
-                    borderRadius: 2,
-                    whiteSpace: 'nowrap',
-                  }}
+              <Link href="/build" aria-label="Start your build" data-action="nav-start-build" style={{ textDecoration: 'none' }}>
+                <BtnColorful
+                  variant="primary"
+                  arrow
+                  style={{ padding: '8px 18px', fontSize: '0.62rem', letterSpacing: '0.16em', whiteSpace: 'nowrap' }}
                 >
-                  SIGN UP
-                </motion.button>
+                  START BUILD
+                </BtnColorful>
               </Link>
-            </motion.div>
-
-            {/* START BUILD button */}
-            <Link href="/build" aria-label="Start your build" className="nav-start-build">
-              <button
-                className="btn btn-primary"
-                style={{ fontSize: '0.72rem', padding: '9px 18px' }}
-                data-action="start-build"
-              >
-                START BUILD
-              </button>
-            </Link>
+            </div>
 
             {/* Hamburger — mobile only */}
             <button
               className="hamburger-btn"
-              data-action="toggle-mobile-menu"
               aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={mobileOpen}
+              data-action="toggle-mobile-menu"
               onClick={() => setMobileOpen(v => !v)}
               style={{
                 background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '6px',
-                display: 'none',
-                flexDirection: 'column',
-                gap: '5px',
+                border:     'none',
+                cursor:     'pointer',
+                padding:    '8px',
+                display:    'none',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 4,
               }}
             >
-              {[0, 1, 2].map(i => (
-                <span
-                  key={i}
-                  style={{
-                    display: 'block',
-                    width: '22px',
-                    height: '2px',
-                    background: mobileOpen
-                      ? i === 1 ? 'transparent' : 'var(--orange)'
-                      : 'var(--text-2)',
-                    transform: mobileOpen
-                      ? i === 0 ? 'rotate(45deg) translate(5px, 5px)'
-                      : i === 2 ? 'rotate(-45deg) translate(5px, -5px)'
-                      : 'none'
-                      : 'none',
-                    transition: 'all 0.25s ease',
-                    transformOrigin: 'center',
-                  }}
-                />
-              ))}
+              <HamburgerIcon open={mobileOpen} />
             </button>
           </div>
         </div>
       </motion.nav>
 
-      {/* ── Mobile slide-down menu ──────────────────────────────────── */}
+      {/* ── Mobile slide-down menu ───────────────────────────────────────── */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
             key="mobile-menu"
-            initial={{ y: -12, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -12, opacity: 0 }}
-            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
             className="mobile-menu"
             style={{
-              position: 'fixed',
-              top: 'var(--nav-h)',
-              left: 0,
-              right: 0,
-              background: 'rgba(5,5,5,0.97)',
-              backdropFilter: 'blur(20px)',
-              borderBottom: '1px solid var(--border)',
-              zIndex: 99,
-              padding: '16px 24px 24px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '2px',
+              position:       'fixed',
+              top:            'var(--nav-h)',
+              left: 0, right: 0,
+              zIndex:         29,
+              background:     'rgba(4,4,4,0.97)',
+              backdropFilter: 'blur(28px)',
+              WebkitBackdropFilter: 'blur(28px)',
+              borderBottom:   '1px solid rgba(255,85,31,0.12)',
+              padding:        '8px 0 24px',
             }}
           >
-            {NAV_LINKS.map(({ label, href }) => {
-              const isActive = pathname === href || (href !== '/' && pathname.startsWith(href))
-              return (
-                <span key={href}>
-                  <Link
-                    href={href}
-                    style={{
-                      display: 'block',
-                      fontFamily: 'var(--font-rajdhani)',
-                      fontWeight: 700,
-                      fontSize: '1.125rem',
-                      letterSpacing: '0.2em',
-                      color: isActive ? 'var(--orange)' : 'var(--text-2)',
-                      padding: '12px 0',
-                      borderBottom: '1px solid var(--border-subtle)',
-                    }}
+            {/* Scan-line accent */}
+            <div style={{
+              position:   'absolute',
+              top: 0, left: 0, right: 0,
+              height:     1,
+              background: 'linear-gradient(to right, transparent, rgba(255,85,31,0.5) 40%, rgba(255,200,87,0.4) 60%, transparent)',
+              pointerEvents: 'none',
+            }} />
+
+            {/* Nav links with stagger */}
+            <div style={{ padding: '4px 0' }}>
+              {NAV_LINKS.map(({ label, href }, i) => {
+                const isActive = pathname === href || (href !== '/' && pathname.startsWith(href))
+                return (
+                  <motion.div
+                    key={href}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.22, delay: i * 0.045, ease: [0.16, 1, 0.3, 1] }}
                   >
-                    {label}
-                  </Link>
-                  {label === 'GEAR' && (
-                    <button
-                      onClick={() => { setShopOpen(true); setMobileOpen(false) }}
-                      data-action="mobile-shop"
+                    <Link
+                      href={href}
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 8,
-                        width: '100%',
-                        background: 'transparent',
-                        border: 'none',
-                        borderBottom: '1px solid var(--border-subtle)',
-                        fontFamily: 'var(--font-rajdhani)',
-                        fontWeight: 700,
-                        fontSize: '1.125rem',
-                        letterSpacing: '0.2em',
-                        color: 'var(--orange)',
-                        padding: '12px 0',
-                        cursor: 'pointer',
-                        textAlign: 'left',
+                        display:       'flex',
+                        alignItems:    'center',
+                        justifyContent:'space-between',
+                        padding:       '13px 28px',
+                        fontFamily:    'var(--font-mono)',
+                        fontSize:      '0.72rem',
+                        letterSpacing: '0.22em',
                         textTransform: 'uppercase',
+                        color:         isActive ? '#FF551F' : 'rgba(255,255,255,0.70)',
+                        textDecoration:'none',
+                        borderBottom:  '1px solid rgba(255,255,255,0.04)',
+                        transition:    'color 0.15s, background 0.15s',
+                        background:    isActive ? 'rgba(255,85,31,0.04)' : 'transparent',
                       }}
                     >
-                      SHOP
-                      <span style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: 8,
-                        letterSpacing: '0.1em',
-                        background: 'var(--orange)',
-                        color: '#000',
-                        padding: '1px 5px',
-                        borderRadius: 2,
-                        fontWeight: 700,
-                      }}>
-                        SOON
-                      </span>
-                    </button>
-                  )}
-                </span>
-              )
-            })}
+                      <span>{label}</span>
+                      {isActive && (
+                        <span style={{
+                          width: 4, height: 4, borderRadius: '50%',
+                          background: '#FF551F',
+                          boxShadow: '0 0 8px rgba(255,85,31,0.8)',
+                          flexShrink: 0,
+                        }} />
+                      )}
+                    </Link>
+                  </motion.div>
+                )
+              })}
 
-            {/* Auth row */}
-            <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
-              <Link href="/login" style={{ flex: 1 }} data-action="mobile-login">
+              {/* SHOP row */}
+              <motion.div
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.22, delay: NAV_LINKS.length * 0.045, ease: [0.16, 1, 0.3, 1] }}
+              >
                 <button
+                  onClick={() => { setShopOpen(true); setMobileOpen(false) }}
+                  data-action="mobile-shop"
                   style={{
-                    width: '100%', background: 'transparent',
-                    border: '1px solid rgba(255,255,255,0.12)',
-                    color: 'rgba(255,255,255,0.6)',
-                    fontFamily: 'var(--font-rajdhani)', fontWeight: 700,
-                    fontSize: '0.875rem', letterSpacing: '0.16em',
-                    padding: '11px 0', cursor: 'pointer', textTransform: 'uppercase', borderRadius: 2,
+                    display:       'flex',
+                    alignItems:    'center',
+                    justifyContent:'space-between',
+                    width:         '100%',
+                    padding:       '13px 28px',
+                    fontFamily:    'var(--font-mono)',
+                    fontSize:      '0.72rem',
+                    letterSpacing: '0.22em',
+                    textTransform: 'uppercase',
+                    color:         '#FF551F',
+                    background:    'transparent',
+                    border:        'none',
+                    borderBottom:  '1px solid rgba(255,255,255,0.04)',
+                    cursor:        'pointer',
+                    textAlign:     'left',
                   }}
                 >
-                  LOG IN
+                  <span>SHOP</span>
+                  <span style={{
+                    fontFamily:    'var(--font-mono)',
+                    fontSize:      '0.48rem',
+                    letterSpacing: '0.10em',
+                    background:    'rgba(255,85,31,0.18)',
+                    color:         '#FF551F',
+                    border:        '1px solid rgba(255,85,31,0.35)',
+                    padding:       '2px 5px',
+                    borderRadius:  2,
+                  }}>
+                    SOON
+                  </span>
                 </button>
-              </Link>
-              <Link href="/signup" style={{ flex: 1 }} data-action="mobile-signup">
-                <button
-                  style={{
-                    width: '100%', background: 'rgba(255,85,31,0.08)',
-                    border: '1px solid rgba(255,85,31,0.4)',
-                    color: 'var(--orange)',
-                    fontFamily: 'var(--font-rajdhani)', fontWeight: 700,
-                    fontSize: '0.875rem', letterSpacing: '0.16em',
-                    padding: '11px 0', cursor: 'pointer', textTransform: 'uppercase', borderRadius: 2,
-                  }}
-                >
-                  SIGN UP
-                </button>
-              </Link>
+              </motion.div>
             </div>
 
-            <Link href="/build" style={{ marginTop: '8px' }}>
-              <button
-                className="btn btn-primary"
-                style={{ width: '100%', justifyContent: 'center' }}
-                data-action="start-build-mobile"
-              >
-                START BUILD
-              </button>
-            </Link>
+            {/* CTA row */}
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.26, delay: (NAV_LINKS.length + 1) * 0.045, ease: [0.16, 1, 0.3, 1] }}
+              style={{
+                padding:  '16px 24px 0',
+                display:  'flex',
+                flexDirection: 'column',
+                gap:      8,
+              }}
+            >
+              <Link href="/login" data-action="mobile-login" style={{ textDecoration: 'none', display: 'block' }}>
+                <BtnColorful
+                  variant="secondary"
+                  style={{ width: '100%', justifyContent: 'center', padding: '12px 20px' }}
+                >
+                  LOG IN TO BŌRYKU
+                </BtnColorful>
+              </Link>
+              <Link href="/build" data-action="mobile-start-build" style={{ textDecoration: 'none', display: 'block' }}>
+                <BtnColorful
+                  variant="primary"
+                  arrow
+                  style={{ width: '100%', justifyContent: 'center', padding: '13px 20px' }}
+                >
+                  START BUILD
+                </BtnColorful>
+              </Link>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ── Shop coming-soon modal ─────────────────────────────────── */}
+      {/* ── Shop modal ──────────────────────────────────────────────────── */}
       <ShopModal isOpen={shopOpen} onClose={() => setShopOpen(false)} />
 
-      {/* ── Responsive styles injected as a style tag ─────────────── */}
+      {/* ── Responsive breakpoints ──────────────────────────────────────── */}
       <style>{`
+        /* ≤860 → hamburger, hide center nav and auth row */
         @media (max-width: 860px) {
-          .desktop-nav { display: none !important; }
+          .desktop-nav   { display: none !important; }
           .hamburger-btn { display: flex !important; }
         }
+        /* ≥861 → always show desktop nav, always hide mobile menu */
         @media (min-width: 861px) {
-          .mobile-menu { display: none !important; }
+          .mobile-menu   { display: none !important; }
+          .hamburger-btn { display: none !important; }
         }
-        /* Hide START BUILD text label on medium screens to give auth buttons room */
-        @media (max-width: 1020px) and (min-width: 861px) {
-          .nav-start-build .btn-primary { padding: 9px 14px !important; font-size: 0.68rem !important; }
-          .nav-auth-btns button { padding: 7px 10px !important; font-size: 0.68rem !important; }
-        }
-        /* Hide build badge on very tight screens */
-        @media (max-width: 920px) and (min-width: 861px) {
+        /* 861–1060: tighten CTAs */
+        @media (max-width: 1060px) and (min-width: 861px) {
+          .nav-auth-row a { font-size: 0.58rem !important; }
           .nav-build-badge { display: none !important; }
         }
       `}</style>
