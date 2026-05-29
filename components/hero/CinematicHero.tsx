@@ -49,7 +49,7 @@ export default function CinematicHero({ introComplete }: Props) {
   useEffect(() => {
     if (!introComplete) return
     if (reduced) { setChaosLive(true); return }
-    const t = setTimeout(() => setChaosLive(true), 4520)
+    const t = setTimeout(() => setChaosLive(true), 3200)
     return () => clearTimeout(t)
   }, [introComplete, reduced])
 
@@ -71,12 +71,16 @@ export default function CinematicHero({ introComplete }: Props) {
   return (
     <section
       ref={sectionRef}
+      className="hero-section"
       style={{
         position: 'relative',
         height: '100vh',
         minHeight: 600,
         overflow: 'hidden',
         background: '#050505',
+        display: 'flex',
+        alignItems: 'center',
+        paddingBottom: 'var(--status-h)',
       }}
       aria-label="Hero"
     >
@@ -349,20 +353,18 @@ export default function CinematicHero({ introComplete }: Props) {
       <div
         className="hero-text-panel"
         style={{
-          position: 'absolute',
-          top: 'calc(50% - var(--nav-h) / 2)',
-          transform: 'translateY(calc(-50% - 5vh))',
-          left: 0,
+          position: 'relative',
+          zIndex: 10,
           paddingLeft: 'clamp(96px, 9vw, 188px)',
           paddingRight: '5vw',
           maxWidth: 'clamp(420px, 50vw, 780px)',
-          zIndex: 10,
           pointerEvents: 'none',
+          flexShrink: 0,
         }}
       >
 
         {/* EYEBROW — spec: .hero__meta, 13px tactical, 700, .42em tracking */}
-        <motion.div {...fadeUp(1.8)} style={{ marginBottom: 14, pointerEvents: 'none' }}>
+        <motion.div {...fadeUp(0.6)} style={{ marginBottom: 14, pointerEvents: 'none' }}>
           <span style={{
             fontFamily: 'var(--font-tactical)',
             fontSize: '13px',
@@ -394,7 +396,7 @@ export default function CinematicHero({ introComplete }: Props) {
                 ? { opacity: 1, y: 0, filter: 'blur(0px)' }
                 : { opacity: 0, y: 20, filter: 'blur(14px)' }
               }
-              transition={{ duration: 1.4, ease: [0.2, 0.7, 0.2, 1], delay: 2.1 }}
+              transition={{ duration: 1.4, ease: [0.2, 0.7, 0.2, 1], delay: 0.9 }}
               style={{
                 display: 'block',
                 color: 'var(--ink)',
@@ -413,7 +415,7 @@ export default function CinematicHero({ introComplete }: Props) {
                   ? { opacity: 1, y: 0, filter: 'blur(0px)' }
                   : { opacity: 0, y: 20, filter: 'blur(14px)' }
               }
-              transition={{ duration: 1.4, ease: [0.2, 0.7, 0.2, 1], delay: 2.5 }}
+              transition={{ duration: 1.4, ease: [0.2, 0.7, 0.2, 1], delay: 1.2 }}
               style={{
                 display: 'block',
                 color: 'var(--orange)',
@@ -428,7 +430,7 @@ export default function CinematicHero({ introComplete }: Props) {
         </div>
 
         {/* BODY TEXT — spec: .hero__sub, 16px body, weight 300, ink-dim */}
-        <motion.div {...fadeUp(3.8)} style={{ marginBottom: 22, pointerEvents: 'auto' }}>
+        <motion.div {...fadeUp(1.8)} style={{ marginBottom: 22, pointerEvents: 'auto' }}>
           <p style={{
             fontFamily: 'var(--font-body)',
             fontSize: '16px',
@@ -444,7 +446,7 @@ export default function CinematicHero({ introComplete }: Props) {
 
         {/* CTA BUTTONS — spec: btn-hero 13.5px, display font, 600, .3em tracking */}
         <motion.div
-          {...fadeUp(4.2)}
+          {...fadeUp(2.2)}
           style={{ display: 'flex', gap: 12, flexWrap: 'wrap', pointerEvents: 'auto' }}
         >
           <Link href="/build">
@@ -458,10 +460,10 @@ export default function CinematicHero({ introComplete }: Props) {
               style={{
                 fontFamily: 'var(--font-display)',
                 fontWeight: 600,
-                fontSize: '13.5px',
-                letterSpacing: '0.3em',
+                fontSize: '15px',
+                letterSpacing: '0.28em',
                 textTransform: 'uppercase',
-                padding: '16px 28px',
+                padding: '20px 40px',
                 background: 'var(--orange)',
                 color: '#0a0604',
                 border: 'none',
@@ -492,10 +494,10 @@ export default function CinematicHero({ introComplete }: Props) {
               style={{
                 fontFamily: 'var(--font-display)',
                 fontWeight: 600,
-                fontSize: '13.5px',
-                letterSpacing: '0.3em',
+                fontSize: '15px',
+                letterSpacing: '0.28em',
                 textTransform: 'uppercase',
-                padding: '16px 22px',
+                padding: '20px 32px',
                 background: 'rgba(243,237,226,0.02)',
                 border: '1px solid rgba(243,237,226,0.14)',
                 color: 'var(--ink-dim)',
@@ -519,18 +521,13 @@ export default function CinematicHero({ introComplete }: Props) {
       {/* ── RESPONSIVE ──────────────────────────────────────────────── */}
       <style>{`
         @media (max-width: 768px) {
+          .hero-section {
+            align-items: flex-end !important;
+            padding-bottom: calc(var(--status-h) + 14%) !important;
+          }
           .hero-text-panel {
-            top: auto !important;
-            bottom: 12% !important;
-            transform: none !important;
             max-width: 92% !important;
             padding-right: clamp(20px, 4vw, 48px) !important;
-          }
-        }
-        @media (min-width: 769px) and (max-height: 780px) {
-          .hero-text-panel {
-            top: calc(50% - var(--nav-h) / 2) !important;
-            transform: translateY(calc(-50% - 8vh)) !important;
           }
         }
       `}</style>
