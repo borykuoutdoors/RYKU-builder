@@ -5,7 +5,7 @@ import { persist } from 'zustand/middleware'
 import type { Vehicle } from '@/types/vehicle'
 import type { Product } from '@/types/product'
 
-export type BuildStep = 1 | 2 | 3 | 4 | 5 | 6
+export type BuildStep = 1 | 2 | 3 | 4 | 5 | 6 | 7
 
 // Map purpose IDs → legacy mission strings
 const PURPOSE_TO_MISSION: Record<string, string> = {

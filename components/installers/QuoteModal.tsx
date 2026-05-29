@@ -52,13 +52,22 @@ function QInput({
 }
 
 // ── Props ─────────────────────────────────────────────────────────────────────
+interface BuildContext {
+  vehicleName: string
+  buildName:   string
+  neededServices: string[]
+  total:       number
+  itemCount:   number
+}
+
 interface Props {
-  installer: Installer | null
-  onClose: () => void
+  installer:    Installer | null
+  onClose:      () => void
+  buildContext?: BuildContext
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export default function QuoteModal({ installer, onClose }: Props) {
+export default function QuoteModal({ installer, onClose, buildContext }: Props) {
   const [name,     setName]     = useState('')
   const [email,    setEmail]    = useState('')
   const [phone,    setPhone]    = useState('')
@@ -67,9 +76,23 @@ export default function QuoteModal({ installer, onClose }: Props) {
   const [loading,  setLoading]  = useState(false)
   const [sent,     setSent]     = useState(false)
 
-  // Pre-select installer's services when opened
+  // Pre-select services and pre-fill notes when opened
   useEffect(() => {
-    if (installer) setServices(installer.services.slice())
+    if (installer) {
+      if (buildContext?.neededServices?.length) {
+        const relevant = installer.services.filter(s => buildContext.neededServices.includes(s))
+        setServices(relevant.length ? relevant : installer.services.slice())
+        if (buildContext.vehicleName) {
+          setNotes(
+            `Vehicle: ${buildContext.vehicleName}` +
+            (buildContext.buildName && buildContext.buildName !== 'MY BUILD' ? `\nBuild: ${buildContext.buildName}` : '') +
+            `\nEstimated total: $${buildContext.total.toLocaleString()}`
+          )
+        }
+      } else {
+        setServices(installer.services.slice())
+      }
+    }
   }, [installer?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Escape key
@@ -250,6 +273,32 @@ export default function QuoteModal({ installer, onClose }: Props) {
                     </div>
 
                     <QInput label="Phone (optional)" type="tel" value={phone} onChange={setPhone} placeholder="(555) 000-0000" />
+
+                    {/* Build summary (when requested from build flow) */}
+                    {buildContext && buildContext.itemCount > 0 && (
+                      <div style={{
+                        background: 'rgba(255,85,31,0.04)',
+                        border: '1px solid rgba(255,85,31,0.14)',
+                        borderRadius: 4, padding: '10px 14px',
+                      }}>
+                        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '0.15em', color: 'rgba(255,85,31,0.6)', marginBottom: 7 }}>
+                          YOUR BUILD
+                        </div>
+                        <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+                          {buildContext.vehicleName && (
+                            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'rgba(255,255,255,0.55)' }}>
+                              🚗 {buildContext.vehicleName}
+                            </span>
+                          )}
+                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'rgba(255,255,255,0.42)' }}>
+                            ⚙️ {buildContext.itemCount} items
+                          </span>
+                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--orange)' }}>
+                            ${buildContext.total.toLocaleString()} total
+                          </span>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Services */}
                     <div>

@@ -25,7 +25,7 @@ export default function ReviewStep() {
   const laborTotal  = useBuildStore(s => s.laborTotal)
   const buildTotal  = useBuildStore(s => s.buildTotal)
 
-  const [engaging, setEngaging] = useState(false)
+  const [saving, setSaving] = useState(false)
 
   const itemCount = Object.keys(items).length
   const gear  = gearTotal()
@@ -40,12 +40,12 @@ export default function ReviewStep() {
     ? `${purposeCount} Purpose${purposeCount !== 1 ? 's' : ''} Selected`
     : '—'
 
-  function handleEngage() {
-    setEngaging(true)
+  function handleSave() {
+    setSaving(true)
     setTimeout(() => {
       setCompleted(true)
       router.push('/my-build')
-    }, 1200)
+    }, 900)
   }
 
   const REVIEW_CARDS = [
@@ -265,29 +265,37 @@ export default function ReviewStep() {
           ← BACK
         </button>
 
-        <button
-          className="btn btn-primary btn-lg"
-          onClick={handleEngage}
-          disabled={!vehicle || engaging}
-          style={{
-            opacity: vehicle ? 1 : 0.4,
-            cursor: vehicle ? 'pointer' : 'not-allowed',
-            minWidth: '200px', justifyContent: 'center',
-          }}
-        >
-          {engaging ? (
-            <>
-              <span style={{
-                display: 'inline-block', width: 10, height: 10, border: '2px solid #000',
-                borderTopColor: 'transparent', borderRadius: '50%',
-                animation: 'spin 0.7s linear infinite',
-              }} />
-              ENGAGING...
-            </>
-          ) : (
-            <>⚡ ENGAGE PROTOCOL</>
-          )}
-        </button>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          {/* Secondary: save directly without finding installers */}
+          <button
+            className="btn btn-ghost btn-sm"
+            onClick={handleSave}
+            disabled={!vehicle || saving}
+            style={{
+              opacity: vehicle ? 1 : 0.35,
+              cursor: vehicle ? 'pointer' : 'not-allowed',
+            }}
+          >
+            {saving ? 'SAVING...' : 'SAVE BUILD'}
+          </button>
+
+          {/* Primary: move to Find Installers step */}
+          <button
+            className="btn btn-primary btn-lg"
+            onClick={() => setStep(7)}
+            disabled={!vehicle}
+            style={{
+              opacity: vehicle ? 1 : 0.4,
+              cursor: vehicle ? 'pointer' : 'not-allowed',
+              minWidth: '200px', justifyContent: 'center',
+            }}
+          >
+            FIND INSTALLERS
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ marginLeft: '6px' }}>
+              <path d="M2 7h10M8 3l4 4-4 4" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
       <style>{`

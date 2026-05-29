@@ -14,11 +14,12 @@ interface Step {
 
 
 const STEPS: Step[] = [
-  { num: 1, label: 'VEHICLE'  },
-  { num: 2, label: 'MISSION'  },
-  { num: 3, label: 'BUDGET'   },
-  { num: 4, label: 'RECON'    },
-  { num: 5, label: 'REVIEW'   },
+  { num: 1, label: 'VEHICLE'    },
+  { num: 2, label: 'MISSION'    },
+  { num: 3, label: 'BUDGET'     },
+  { num: 4, label: 'RECON'      },
+  { num: 5, label: 'REVIEW'     },
+  { num: 7, label: 'INSTALLERS' },
 ]
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -66,7 +67,7 @@ export default function StepBar() {
             {idx > 0 && (
               <div
                 style={{
-                  width: '28px',
+                  width: '18px',
                   height: '1px',
                   background: isDone
                     ? 'rgba(74,222,128,0.4)'
@@ -112,7 +113,7 @@ export default function StepBar() {
                   </svg>
                 ) : (
                   <span style={{ fontSize: '0.6rem', fontFamily: 'var(--font-mono), monospace' }}>
-                    {step.num}
+                    {idx + 1}
                   </span>
                 )}
               </div>

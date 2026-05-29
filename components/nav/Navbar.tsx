@@ -11,13 +11,12 @@ import BtnColorful from '@/components/ui/BtnColorful'
 
 /* ─── Nav links ─────────────────────────────────────────────────────────── */
 const NAV_LINKS = [
-  { label: 'HOME',       href: '/' },
-  { label: 'BUILDS',     href: '/builds' },
-  { label: 'GEAR',       href: '/gear' },
-  { label: 'INSTALLERS', href: '/installers' },
-  { label: 'PRICING',    href: '/pricing' },
-  { label: 'ABOUT',      href: '/about' },
-  { label: 'CONTACT',    href: '/contact' },
+  { label: 'HOME',    href: '/' },
+  { label: 'BUILDS',  href: '/builds' },
+  { label: 'GEAR',    href: '/gear' },
+  { label: 'PRICING', href: '/pricing' },
+  { label: 'ABOUT',   href: '/about' },
+  { label: 'CONTACT', href: '/contact' },
 ]
 
 /* ─── Premium menu toggle icon ──────────────────────────────────────────── */

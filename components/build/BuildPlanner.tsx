@@ -9,6 +9,7 @@ import BudgetSelector from './BudgetSelector'
 import RecommendationsStep from './RecommendationsStep'
 import ReviewStep from './ReviewStep'
 import Configurator from './Configurator'
+import InstallerStep from './InstallerStep'
 
 export default function BuildPlanner() {
   const step    = useBuildStore(s => s.step)
@@ -94,6 +95,20 @@ export default function BuildPlanner() {
               style={{ height: '100%', overflow: 'auto' }}
             >
               <ReviewStep />
+            </motion.div>
+          )}
+
+          {step === 7 && (
+            <motion.div
+              key="step-7"
+              variants={slideVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              style={{ height: '100%', minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
+            >
+              <InstallerStep />
             </motion.div>
           )}
 
