@@ -4,6 +4,7 @@ import './globals.css'
 import Navbar from '@/components/nav/Navbar'
 import StatusBar from '@/components/nav/StatusBar'
 import SiteFooter from '@/components/nav/SiteFooter'
+import BotWidget from '@/components/bot/BotWidget'
 
 const saira = Saira_Condensed({
   weight: ['400', '600', '700', '800'],
@@ -71,6 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </main>
         <SiteFooter />
         <StatusBar />
+        <BotWidget />
       </body>
     </html>
   )
