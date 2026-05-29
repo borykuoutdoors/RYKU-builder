@@ -3,11 +3,30 @@
 import { Suspense, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type Mode = 'signin' | 'create'
+
+// ─── SSR-safe deterministic embers ───────────────────────────────────────────
+
+function lcg(s: number) {
+  return ((1664525 * s + 1013904223) & 0x7fffffff) / 0x7fffffff
+}
+
+const AUTH_EMBERS = Array.from({ length: 10 }, (_, i) => ({
+  id:     i,
+  left:   2  + Math.round(lcg(i * 9 + 1) * 58),   // left 60% of page
+  top:    12 + Math.round(lcg(i * 9 + 2) * 680) / 10,
+  size:   parseFloat((0.5 + lcg(i * 9 + 3) * 1.6).toFixed(1)),
+  op:     parseFloat((0.05 + lcg(i * 9 + 4) * 0.14).toFixed(2)),
+  dur:    parseFloat((11 + lcg(i * 9 + 5) * 16).toFixed(1)),
+  dly:    parseFloat((lcg(i * 9 + 6) * 20).toFixed(1)),
+  driftX: Math.round((lcg(i * 9 + 7) - 0.5) * 36),
+  rise:   Math.round(55 + lcg(i * 9 + 8) * 90),
+  amber:  lcg(i * 9 + 9) > 0.62,
+}))
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -564,8 +583,35 @@ function AuthFormInner() {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function LoginPage() {
+  const reduced = useReducedMotion()
+
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#040404' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', position: 'relative' }}>
+
+      {/* ── Page-level embers — float above GlobalBackground ─────────── */}
+      {!reduced && (
+        <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden', zIndex: 0 }}>
+          {AUTH_EMBERS.map(p => (
+            <motion.div
+              key={p.id}
+              animate={{
+                y:       [0, -p.rise * 0.55, -p.rise],
+                x:       [0, p.driftX * 0.4, p.driftX],
+                opacity: [0, p.op, p.op * 0.5, 0],
+                scale:   [0.1, 1, 0.6, 0],
+              }}
+              transition={{ duration: p.dur, delay: p.dly, repeat: Infinity, ease: [0.12, 0, 0.88, 1] }}
+              style={{
+                position: 'absolute',
+                left: p.left + '%', top: p.top + '%',
+                width: p.size, height: p.size, borderRadius: '50%',
+                background: p.amber ? 'rgba(255,200,87,0.88)' : 'rgba(255,90,18,0.92)',
+                boxShadow: `0 0 ${p.size * 3}px ${p.amber ? 'rgba(255,165,48,0.52)' : 'rgba(255,78,16,0.65)'}`,
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       {/* ── LEFT: Benefits panel ──────────────────────────────────────── */}
       <motion.div
@@ -577,25 +623,52 @@ export default function LoginPage() {
           flex: '0 0 48%',
           position: 'relative',
           overflow: 'hidden',
-          background: 'linear-gradient(150deg, #0d0704 0%, #070503 60%, #040404 100%)',
           padding: 'clamp(80px,8vh,104px) clamp(36px,5vw,60px) 56px',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
           gap: '36px',
+          zIndex: 1,
         }}
       >
-        {/* Grid texture */}
-        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', backgroundImage: 'var(--bg-grid)', backgroundSize: 'var(--bg-grid-size)', opacity: 0.35 }} />
+        {/* Left-side warmth — makes this half feel warmer without a solid bg */}
+        <div style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'radial-gradient(ellipse 100% 75% at 8% 52%, rgba(255,85,31,0.088) 0%, transparent 68%)',
+        }} />
 
-        {/* Orange glow — bottom-left */}
-        <div style={{ position: 'absolute', bottom: -120, left: -120, width: 480, height: 480, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,85,31,0.13) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        {/* Blueprint grid — masked to left zone */}
+        <div style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          backgroundImage: [
+            'linear-gradient(rgba(102,255,255,0.011) 1px, transparent 1px)',
+            'linear-gradient(90deg, rgba(102,255,255,0.011) 1px, transparent 1px)',
+          ].join(', '),
+          backgroundSize: '100px 100px',
+          opacity: 0.55,
+          maskImage: 'radial-gradient(ellipse 75% 90% at 15% 50%, black 20%, transparent 78%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 75% 90% at 15% 50%, black 20%, transparent 78%)',
+        }} />
 
-        {/* Gold accent — top-right */}
-        <div style={{ position: 'absolute', top: -60, right: -60, width: 280, height: 280, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,200,87,0.055) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        {/* Orange warmth pool — lower-left */}
+        <div style={{
+          position: 'absolute', bottom: -120, left: -120, width: 520, height: 520,
+          borderRadius: '50%', pointerEvents: 'none',
+          background: 'radial-gradient(circle, rgba(255,85,31,0.09) 0%, transparent 68%)',
+        }} />
 
-        {/* Right-edge separator */}
-        <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: 1, background: 'linear-gradient(to bottom, transparent, rgba(255,85,31,0.18) 30%, rgba(255,85,31,0.1) 70%, transparent)', pointerEvents: 'none' }} />
+        {/* Amber accent — upper area */}
+        <div style={{
+          position: 'absolute', top: -50, left: '30%', width: 320, height: 320,
+          borderRadius: '50%', pointerEvents: 'none',
+          background: 'radial-gradient(circle, rgba(255,200,87,0.042) 0%, transparent 68%)',
+        }} />
+
+        {/* Soft atmospheric right-edge fade — blends into the right panel seamlessly */}
+        <div style={{
+          position: 'absolute', top: 0, right: 0, bottom: 0, width: '30%', pointerEvents: 'none',
+          background: 'linear-gradient(to right, transparent, rgba(5,8,17,0.18))',
+        }} />
 
         {/* ── Logo + headline ───────────────────────────────────────── */}
         <div style={{ position: 'relative', zIndex: 1 }}>
@@ -668,16 +741,15 @@ export default function LoginPage() {
           alignItems: 'center',
           justifyContent: 'center',
           padding: 'clamp(80px,10vh,104px) clamp(20px,5vw,48px) 40px',
-          background: '#060504',
           position: 'relative',
           overflow: 'hidden',
+          zIndex: 1,
         }}
       >
-        {/* Top scan line */}
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(to right, transparent, rgba(255,85,31,0.28) 50%, transparent)', pointerEvents: 'none' }} />
-
-        {/* Ambient glow */}
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,85,31,0.04) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        {/* Centered form ambient glow */}
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 560, height: 560, borderRadius: '50%', pointerEvents: 'none', background: 'radial-gradient(circle, rgba(255,85,31,0.055) 0%, transparent 66%)' }} />
+        {/* Cyan accent — upper right */}
+        <div style={{ position: 'absolute', top: -60, right: -60, width: 280, height: 280, borderRadius: '50%', pointerEvents: 'none', background: 'radial-gradient(circle, rgba(102,255,255,0.032) 0%, transparent 68%)' }} />
 
         <div style={{ width: '100%', maxWidth: '400px', position: 'relative', zIndex: 1 }}>
 
@@ -687,7 +759,7 @@ export default function LoginPage() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
             style={{
-              background: 'rgba(14,9,5,0.84)',
+              background: 'rgba(8,10,20,0.86)',
               backdropFilter: 'blur(24px)',
               WebkitBackdropFilter: 'blur(24px)',
               border: '1px solid rgba(255,85,31,0.13)',
