@@ -19,33 +19,103 @@ const NAV_LINKS = [
   { label: 'CONTACT',    href: '/contact' },
 ]
 
-/* ─── Animated hamburger icon ───────────────────────────────────────────── */
-function HamburgerIcon({ open }: { open: boolean }) {
+/* ─── Premium menu toggle icon ──────────────────────────────────────────── */
+function MenuToggleIcon({ open, hovered }: { open: boolean; hovered: boolean }) {
+  const showRing = open || hovered
+
   return (
-    <div style={{ width: 22, height: 16, position: 'relative', flexShrink: 0 }}>
-      {[0, 1, 2].map(i => (
-        <motion.span
-          key={i}
-          style={{
-            display: 'block',
-            position: 'absolute',
-            left: 0, right: 0,
-            height: 1.5,
-            borderRadius: 2,
-            background: open ? '#FF551F' : 'rgba(255,255,255,0.72)',
-            top: i === 0 ? 0 : i === 1 ? 7 : 14,
-            transformOrigin: 'center',
-          }}
-          animate={
-            open
-              ? i === 0 ? { top: 7, rotate: 45 }
-              : i === 1 ? { opacity: 0, scaleX: 0 }
-              : { top: 7, rotate: -45 }
-              : { top: i === 0 ? 0 : i === 1 ? 7 : 14, rotate: 0, opacity: 1, scaleX: 1 }
+    <div style={{
+      width: 40, height: 40,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      position: 'relative', flexShrink: 0,
+    }}>
+      {/* Aiming reticle ring */}
+      <motion.div
+        aria-hidden="true"
+        animate={{
+          opacity:  showRing ? 1 : 0,
+          scale:    showRing ? 1 : 0.62,
+        }}
+        transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          position:     'absolute',
+          inset:        0,
+          borderRadius: '50%',
+          border:       `1px solid ${open ? 'rgba(255,85,31,0.58)' : 'rgba(255,85,31,0.35)'}`,
+          background:   open ? 'rgba(255,85,31,0.07)' : 'transparent',
+          transition:   'border-color 0.22s, background 0.22s',
+          pointerEvents:'none',
+        }}
+      />
+
+      {/* SVG morph — asymmetric hamburger → precise X */}
+      <svg
+        width="20" height="12"
+        viewBox="0 0 20 12"
+        fill="none"
+        aria-hidden="true"
+        style={{
+          filter:     open ? 'drop-shadow(0 0 5px rgba(255,85,31,0.62))' : 'none',
+          transition: 'filter 0.26s',
+          flexShrink: 0,
+        }}
+      >
+        {/* Line 1 — top (full) → first arm of X */}
+        <motion.line
+          x1={0} y1={1} x2={20} y2={1}
+          animate={open
+            ? { x1: 1, y1: 1, x2: 19, y2: 11, stroke: '#FF551F' }
+            : { x1: 0, y1: 1, x2: 20, y2: 1,  stroke: 'rgba(255,255,255,0.80)' }
           }
-          transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+          strokeWidth="1.5"
+          strokeLinecap="round"
         />
-      ))}
+        {/* Line 2 — middle, offset-shorter (asymmetric = premium) → fades */}
+        <motion.line
+          x1={3} y1={6} x2={20} y2={6}
+          animate={open
+            ? { x1: 10, y1: 6, x2: 10, y2: 6, opacity: 0, stroke: '#FF551F' }
+            : { x1: 3,  y1: 6, x2: 20, y2: 6, opacity: 1, stroke: 'rgba(255,255,255,0.80)' }
+          }
+          transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+        {/* Line 3 — bottom, shorter still (stepped) → second arm of X */}
+        <motion.line
+          x1={0} y1={11} x2={14} y2={11}
+          animate={open
+            ? { x1: 19, y1: 1, x2: 1, y2: 11, stroke: '#FF551F' }
+            : { x1: 0,  y1: 11, x2: 14, y2: 11, stroke: 'rgba(255,255,255,0.80)' }
+          }
+          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+      </svg>
+
+      {/* Center pulse dot — active system indicator */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ duration: 0.20, ease: [0.16, 1, 0.3, 1] }}
+            aria-hidden="true"
+            style={{
+              position:     'absolute',
+              width:         4,
+              height:        4,
+              borderRadius: '50%',
+              background:   '#FF551F',
+              boxShadow:    '0 0 8px rgba(255,85,31,0.85)',
+              pointerEvents:'none',
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
@@ -166,10 +236,11 @@ export default function Navbar() {
 
   const isHomepage = pathname === '/'
 
-  const [scrolled,   setScrolled]   = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const [shopOpen,   setShopOpen]   = useState(false)
-  const [navVisible, setNavVisible] = useState(!isHomepage)
+  const [scrolled,         setScrolled]         = useState(false)
+  const [mobileOpen,       setMobileOpen]       = useState(false)
+  const [shopOpen,         setShopOpen]         = useState(false)
+  const [navVisible,       setNavVisible]       = useState(!isHomepage)
+  const [hamburgerHovered, setHamburgerHovered] = useState(false)
 
   /* scroll → scrolled state */
   useEffect(() => {
@@ -383,18 +454,20 @@ export default function Navbar() {
               aria-expanded={mobileOpen}
               data-action="toggle-mobile-menu"
               onClick={() => setMobileOpen(v => !v)}
+              onMouseEnter={() => setHamburgerHovered(true)}
+              onMouseLeave={() => setHamburgerHovered(false)}
               style={{
                 background: 'none',
                 border:     'none',
                 cursor:     'pointer',
-                padding:    '8px',
+                padding:    '4px',
                 display:    'none',
                 alignItems: 'center',
                 justifyContent: 'center',
-                borderRadius: 4,
+                borderRadius: '50%',
               }}
             >
-              <HamburgerIcon open={mobileOpen} />
+              <MenuToggleIcon open={mobileOpen} hovered={hamburgerHovered} />
             </button>
           </div>
         </div>
