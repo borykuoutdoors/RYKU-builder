@@ -13,7 +13,7 @@ export default function ReviewStep() {
   const vehicle     = useBuildStore(s => s.vehicle)
   const year        = useBuildStore(s => s.year)
   const trim        = useBuildStore(s => s.trim)
-  const mission     = useBuildStore(s => s.mission)
+  const purposes    = useBuildStore(s => s.purposes)
   const budget      = useBuildStore(s => s.budget)
   const items       = useBuildStore(s => s.items)
   const buildName   = useBuildStore(s => s.buildName)
@@ -34,9 +34,10 @@ export default function ReviewStep() {
   const remaining = budget - total
   const isOverBudget = remaining < 0
 
-  const budgetFmt = budget >= 99999 ? 'Unlimited' : formatCurrency(budget)
-  const missionLabel = mission
-    ? mission.charAt(0).toUpperCase() + mission.slice(1)
+  const budgetFmt    = budget >= 99999 ? 'Unlimited' : formatCurrency(budget)
+  const purposeCount = purposes.length
+  const purposeLabel = purposeCount > 0
+    ? `${purposeCount} Purpose${purposeCount !== 1 ? 's' : ''} Selected`
     : '—'
 
   function handleEngage() {
@@ -57,10 +58,12 @@ export default function ReviewStep() {
     },
     {
       label: 'MISSION PROFILE',
-      value: missionLabel,
-      sub:   'Use purpose',
+      value: purposeLabel,
+      sub:   purposeCount > 0
+        ? purposes.slice(0, 2).map(id => id.replace('p_', '')).join(' · ').toUpperCase() + (purposeCount > 2 ? ` +${purposeCount - 2}` : '')
+        : 'No purposes selected',
       icon:  '🎯',
-      ok:    !!mission,
+      ok:    purposeCount > 0,
     },
     {
       label: 'BUILD BUDGET',

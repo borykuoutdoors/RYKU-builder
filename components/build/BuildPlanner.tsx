@@ -1,6 +1,6 @@
 'use client'
 
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { useBuildStore } from '@/store/buildStore'
 import StepBar from './StepBar'
 import VehicleSelector from './VehicleSelector'
@@ -10,15 +10,16 @@ import RecommendationsStep from './RecommendationsStep'
 import ReviewStep from './ReviewStep'
 import Configurator from './Configurator'
 
-const slideVariants = {
-  initial: { opacity: 0, x: 60 },
-  animate: { opacity: 1, x: 0 },
-  exit:    { opacity: 0, x: -60 },
-}
-
 export default function BuildPlanner() {
   const step    = useBuildStore(s => s.step)
   const setStep = useBuildStore(s => s.setStep)
+  const reduced = useReducedMotion()
+
+  const slideVariants = {
+    initial: reduced ? {} : { opacity: 0, x: 60 },
+    animate: { opacity: 1, x: 0 },
+    exit:    reduced ? {} : { opacity: 0, x: -60 },
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'hidden' }}>

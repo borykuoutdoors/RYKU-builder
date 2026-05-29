@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 
 // ─── SSR-safe deterministic particles ────────────────────────────────────────
 function lcg(s: number) {
@@ -46,10 +46,19 @@ export default function LoadingScreen({ onComplete }: Props) {
   const [shaking,   setShaking]   = useState(false)
   const [flashOn,   setFlashOn]   = useState(false)
   const firedRef = useRef(false)
+  const reduced  = useReducedMotion()
 
   function handlePress() {
     if (phase !== 'idle' || firedRef.current) return
     firedRef.current = true
+
+    if (reduced) {
+      // Skip animation entirely — immediate transition
+      setPhase('exiting')
+      setLedsGreen(true)
+      onComplete()
+      return
+    }
 
     // t=0: shake + LEDs start (pre-armed = red already shown)
     setPhase('firing')
