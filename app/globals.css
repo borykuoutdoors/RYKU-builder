@@ -66,6 +66,7 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;  /* prevent horizontal scroll from any overflowing descendants */
 }
 
 body {
@@ -330,6 +331,11 @@ a { color: inherit; text-decoration: none; }
   .grid--2, .grid--3, .grid--4 { grid-template-columns: 1fr; }
   .desktop-nav { display: none !important; }
   .hamburger-btn { display: flex !important; }
+}
+
+/* ≤480: tightest phones (375px iPhone SE range) */
+@media (max-width: 480px) {
+  :root { --pad-x: 14px; }
 }
 
 /* ─── PLANNER LAYOUT ─────────────────────────────────────────────────────── */
