@@ -417,7 +417,7 @@ export default function PricingPage() {
             fontSize: '16px', color: 'rgba(255,255,255,0.42)',
             margin: '0 auto 36px', maxWidth: '440px', lineHeight: 1.65,
           }}>
-            Choose the plan that fits your mission. Start free — upgrade when you're ready.
+            Choose the plan that fits your mission. Start free — upgrade when you&apos;re ready.
           </p>
 
           {/* Billing toggle */}

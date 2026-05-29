@@ -172,7 +172,7 @@ function NewsletterForm() {
         </div>
         <div>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: '#22c55e', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '2px' }}>MISSION JOINED</div>
-          <div style={{ fontFamily: 'var(--font-tactical)', fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>You're on the list. Stay ready.</div>
+          <div style={{ fontFamily: 'var(--font-tactical)', fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>You&apos;re on the list. Stay ready.</div>
         </div>
       </motion.div>
     )
