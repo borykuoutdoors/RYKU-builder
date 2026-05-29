@@ -150,10 +150,10 @@ function NavLink({
     gap: 0,
     fontFamily: 'var(--font-mono)',
     fontWeight: 400,
-    fontSize: '0.6rem',
+    fontSize: '0.68rem',
     letterSpacing: '0.18em',
     textTransform: 'uppercase',
-    padding: '6px 10px',
+    padding: '6px 14px',
     color: textColor,
     background: 'transparent',
     border: 'none',
@@ -294,15 +294,15 @@ export default function Navbar() {
             <Link
               href="/"
               aria-label="BŌRYKU home"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 11, textDecoration: 'none', lineHeight: 1 }}
+              style={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none', lineHeight: 1 }}
             >
               <motion.div
                 whileHover={{ scale: 1.04 }}
                 transition={{ duration: 0.2 }}
-                style={{ display: 'flex', alignItems: 'center', gap: 11 }}
+                style={{ display: 'flex', alignItems: 'center' }}
               >
                 <div style={{
-                  filter: `drop-shadow(0 0 ${scrolled ? 14 : 8}px rgba(255,85,31,${scrolled ? 0.55 : 0.40}))`,
+                  filter: `drop-shadow(0 0 ${scrolled ? 18 : 10}px rgba(255,85,31,${scrolled ? 0.60 : 0.45}))`,
                   transition: 'filter 0.4s ease',
                   flexShrink: 0,
                 }}>
@@ -310,22 +310,12 @@ export default function Navbar() {
                     src="/brand/mark.png"
                     alt=""
                     aria-hidden="true"
-                    width={34}
-                    height={34}
+                    width={44}
+                    height={44}
                     priority
                     style={{ objectFit: 'contain' }}
                   />
                 </div>
-                <span style={{
-                  fontFamily:  'var(--font-bebas)',
-                  fontSize:    '1.6rem',
-                  letterSpacing: '0.08em',
-                  color:       '#fff',
-                  lineHeight:  1,
-                  textShadow:  '0 1px 20px rgba(0,0,0,0.5)',
-                }}>
-                  B<span style={{ color: '#FF551F' }}>Ō</span>RYKU
-                </span>
               </motion.div>
             </Link>
           </div>
@@ -337,7 +327,7 @@ export default function Navbar() {
             style={{
               display:    'flex',
               alignItems: 'center',
-              gap:        2,
+              gap:        6,
             }}
           >
             {NAV_LINKS.map(({ label, href }) => {
