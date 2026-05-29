@@ -5,8 +5,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import LoadingScreen from '@/components/hero/LoadingScreen'
 import CinematicHero from '@/components/hero/CinematicHero'
-import { MISSIONS } from '@/data/missions'
-import { CATEGORIES } from '@/data/products'
+import { buildPurposes, gearCategories as GEAR_CATALOG } from '@/lib/catalog'
 
 /* ─── Animation helpers ─────────────────────────────────────────────────── */
 const fadeUp = {
@@ -143,7 +142,7 @@ function MissionsSection() {
       <SectionHeader eyebrow="MISSION PROFILES" title="CHOOSE YOUR MISSION" center />
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {MISSIONS.map((m, i) => (
+        {buildPurposes.map((m, i) => (
           <motion.div
             key={m.id}
             className="mission-card"
@@ -154,14 +153,14 @@ function MissionsSection() {
             whileInView="visible"
             viewport={{ once: true, margin: '-40px' }}
           >
-            <div className="text-3xl mb-3" role="img" aria-label={m.name}>
+            <div className="text-3xl mb-3" role="img" aria-label={m.label}>
               {m.icon}
             </div>
             <h3 className="font-bebas text-[1.1rem] tracking-wider text-[var(--text)] mb-1">
-              {m.name}
+              {m.label}
             </h3>
             <p className="font-rajdhani text-[0.8rem] text-[var(--text-3)] leading-snug">
-              {m.description}
+              {m.sub}
             </p>
           </motion.div>
         ))}
@@ -179,11 +178,8 @@ const BRANDS = [
   'BF GOODRICH', 'ROOFNEST', 'DECKED', 'GOAL ZERO', 'GARMIN',
 ]
 
-// Only show the 6 gear-focused categories from CATEGORIES
-const GEAR_CATS = ['Suspension', 'Roof Racks', 'Rooftop Tents', 'Lighting', 'Recovery', 'Wheels & Tires']
-
 function GearSection() {
-  const gearCategories = CATEGORIES.filter(c => GEAR_CATS.includes(c.id))
+  const gearCategories = GEAR_CATALOG.slice(0, 6)
   // duplicate for seamless marquee
   const marqueeItems = [...BRANDS, ...BRANDS]
 
@@ -224,7 +220,7 @@ function GearSection() {
               className="card card-interactive p-6 flex flex-col gap-2 group block"
               data-category={cat.id}
             >
-              <span className="text-2xl" role="img" aria-label={cat.label}>{cat.emoji}</span>
+              <span className="text-2xl" role="img" aria-label={cat.label}>{cat.icon}</span>
               <h3 className="font-bebas text-[1.2rem] tracking-wider text-[var(--text)] group-hover:text-[var(--orange)] transition-colors">
                 {cat.label}
               </h3>

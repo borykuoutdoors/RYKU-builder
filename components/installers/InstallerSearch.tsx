@@ -1,12 +1,10 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { MOCK_INSTALLERS } from '@/data/mockInstallers'
+import { installers as CATALOG_INSTALLERS } from '@/lib/catalog'
 import type { Installer } from '@/types/installer'
 import InstallerCard from './InstallerCard'
 import LoadingBar from '@/components/ui/LoadingBar'
-
-// TODO: Replace with Google Places API when GOOGLE_PLACES_API_KEY configured
 
 const SERVICES = ['Off-Road', 'Suspension', 'Overland', 'Lighting', 'Recovery', 'Armor'] as const
 type ServiceType = typeof SERVICES[number]
@@ -35,18 +33,16 @@ export default function InstallerSearch() {
     setIsLoading(true)
     setHasSearched(true)
 
-    // Simulate async search with mock data
     setTimeout(() => {
-      let filtered = MOCK_INSTALLERS
+      let filtered: Installer[] = CATALOG_INSTALLERS
 
-      // Filter by selected service types
       if (selectedServices.length > 0) {
         filtered = filtered.filter((inst) =>
           selectedServices.some((svc) =>
-            inst.tags.some(
-              (tag) =>
-                tag.toLowerCase().includes(svc.toLowerCase()) ||
-                svc.toLowerCase().includes(tag.toLowerCase())
+            inst.specialty.some(
+              (s) =>
+                s.toLowerCase().includes(svc.toLowerCase()) ||
+                svc.toLowerCase().includes(s.toLowerCase())
             )
           )
         )
