@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import SectionEyebrow from '@/components/ui/SectionEyebrow'
+import BtnColorful from '@/components/ui/BtnColorful'
 
 // ─── Subject options ─────────────────────────────────────────────────────────
 
@@ -305,15 +306,16 @@ export default function ContactPage() {
                 </div>
 
                 {/* Submit */}
-                <button
+                <BtnColorful
                   type="submit"
-                  className="btn btn-primary"
-                  style={{ width: '100%', padding: '13px', fontSize: '15px' }}
+                  variant="secondary"
+                  arrow
+                  style={{ width: '100%' }}
                   disabled={isLoading}
                   data-action="submit-contact"
                 >
                   {isLoading ? 'SENDING...' : 'SEND MESSAGE'}
-                </button>
+                </BtnColorful>
               </div>
             </form>
           )}

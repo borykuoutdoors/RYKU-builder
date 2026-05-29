@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import LoadingScreen from '@/components/hero/LoadingScreen'
 import CinematicHero from '@/components/hero/CinematicHero'
 import { buildPurposes, gearCategories as GEAR_CATALOG } from '@/lib/catalog'
+import BtnColorful from '@/components/ui/BtnColorful'
 
 /* ─── Animation helpers ─────────────────────────────────────────────────── */
 const fadeUp = {
@@ -348,12 +349,8 @@ function AboutSection() {
             {/* CTA */}
             <div className="mt-auto pt-2">
               {plan.highlight ? (
-                <Link
-                  href="/build"
-                  className="btn btn-primary w-full justify-center"
-                  data-plan="pro"
-                >
-                  START BUILD
+                <Link href="/build" data-plan="pro">
+                  <BtnColorful arrow style={{ width: '100%' }}>START BUILD</BtnColorful>
                 </Link>
               ) : (
                 <Link
@@ -371,8 +368,8 @@ function AboutSection() {
 
       {/* Bottom CTA */}
       <div className="text-center">
-        <Link href="/build" className="btn btn-primary btn-lg" data-cta="hero-bottom">
-          START BUILD
+        <Link href="/build" data-cta="hero-bottom">
+          <BtnColorful size="lg" arrow>START BUILD</BtnColorful>
         </Link>
       </div>
     </Section>

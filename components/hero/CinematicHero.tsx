@@ -452,33 +452,41 @@ export default function CinematicHero({ introComplete }: Props) {
           <Link href="/build">
             <motion.button
               whileHover={{
-                boxShadow: 'inset 0 1px 0 rgba(255,255,255,.35), 0 18px 50px rgba(255,85,31,.55), 0 0 60px rgba(255,85,31,.35)',
-                scale: 1.02,
+                boxShadow: '0 6px 40px rgba(255,85,31,0.62), 0 0 0 1px rgba(255,200,87,0.32), inset 0 1px 0 rgba(255,255,255,.32)',
+                scale: 1.03,
+                filter: 'brightness(1.10)',
               }}
               whileTap={{ scale: 0.97 }}
-              transition={{ duration: 0.15 }}
+              transition={{ duration: 0.18, ease: [0.2, 0.7, 0.2, 1] }}
               style={{
+                position: 'relative',
                 fontFamily: 'var(--font-display)',
                 fontWeight: 600,
                 fontSize: '15px',
                 letterSpacing: '0.28em',
                 textTransform: 'uppercase',
                 padding: '20px 40px',
-                background: 'var(--orange)',
-                color: '#0a0604',
+                background: 'linear-gradient(to right, #FF551F, #FFC857)',
+                color: '#0d0704',
                 border: 'none',
-                borderRadius: 2,
+                borderRadius: 3,
                 cursor: 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 10,
-                boxShadow: 'inset 0 1px 0 rgba(255,255,255,.25), 0 12px 30px rgba(255,85,31,.36), 0 0 0 1px rgba(255,85,31,.4)',
-                transition: 'box-shadow 0.15s, transform 0.15s',
+                overflow: 'hidden',
+                boxShadow: '0 4px 28px rgba(255,85,31,0.44), 0 0 0 1px rgba(255,180,60,0.18), inset 0 1px 0 rgba(255,255,255,0.22)',
               }}
               data-action="hero-start-build"
             >
-              START YOUR BUILD
-              <span style={{ display: 'inline-block', transition: 'width 0.35s', fontSize: '0.9em' }}>→</span>
+              {/* Glass shimmer */}
+              <span aria-hidden="true" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '52%', background: 'linear-gradient(180deg,rgba(255,255,255,0.20) 0%,rgba(255,255,255,0) 100%)', pointerEvents: 'none' }} />
+              {/* Amber bloom */}
+              <span aria-hidden="true" style={{ position: 'absolute', bottom: '-50%', left: '5%', right: '5%', height: '80%', background: 'radial-gradient(ellipse at center,rgba(255,200,87,0.26),transparent 65%)', pointerEvents: 'none' }} />
+              <span style={{ position: 'relative', zIndex: 1, display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+                START YOUR BUILD
+                <span style={{ fontSize: '0.9em' }}>→</span>
+              </span>
             </motion.button>
           </Link>
 

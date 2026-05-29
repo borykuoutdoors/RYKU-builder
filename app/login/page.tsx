@@ -4,6 +4,7 @@ import { Suspense, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import SectionEyebrow from '@/components/ui/SectionEyebrow'
+import BtnColorful from '@/components/ui/BtnColorful'
 
 type Mode = 'login' | 'signup'
 
@@ -138,13 +139,14 @@ function LoginForm() {
           />
         </div>
 
-        <button
+        <BtnColorful
           type="submit"
-          className="btn btn-primary"
-          style={{ width: '100%', padding: '13px', fontSize: '14px', marginTop: '4px' }}
+          variant="secondary"
+          arrow
+          style={{ width: '100%', marginTop: '4px' }}
         >
           {mode === 'login' ? 'LOG IN TO BŌRYKU' : 'CREATE FREE ACCOUNT'}
-        </button>
+        </BtnColorful>
       </form>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '20px 0' }}>

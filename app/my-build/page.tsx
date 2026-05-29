@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useBuildStore } from '@/store/buildStore'
+import BtnColorful from '@/components/ui/BtnColorful'
 
 function formatCurrency(n: number) {
   return '$' + n.toLocaleString('en-US')
@@ -110,9 +111,7 @@ export default function MyBuildPage() {
           rig and get personalized gear recommendations.
         </p>
         <Link href="/build">
-          <button className="btn btn-primary btn-lg">
-            ⚡ START YOUR BUILD
-          </button>
+          <BtnColorful size="lg" arrow>START YOUR BUILD</BtnColorful>
         </Link>
       </div>
     )

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import SectionEyebrow from '@/components/ui/SectionEyebrow'
 import { buildsGallery, buildFilterChips } from '@/lib/catalog'
+import BtnColorful from '@/components/ui/BtnColorful'
 
 export default function BuildsPage() {
   const [activeFilter, setActiveFilter] = useState('all')
@@ -37,7 +38,7 @@ export default function BuildsPage() {
             }}>
               FEATURED<br /><span style={{ color: 'var(--orange)' }}>BUILDS</span>
             </h1>
-            <Link href="/build" className="btn btn-primary">+ START YOUR BUILD</Link>
+            <Link href="/build"><BtnColorful arrow>START YOUR BUILD</BtnColorful></Link>
           </div>
         </div>
       </section>

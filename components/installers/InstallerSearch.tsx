@@ -5,6 +5,7 @@ import { installers as CATALOG_INSTALLERS } from '@/lib/catalog'
 import type { Installer } from '@/types/installer'
 import InstallerCard from './InstallerCard'
 import LoadingBar from '@/components/ui/LoadingBar'
+import BtnColorful from '@/components/ui/BtnColorful'
 
 const SERVICES = ['Off-Road', 'Suspension', 'Overland', 'Lighting', 'Recovery', 'Armor'] as const
 type ServiceType = typeof SERVICES[number]
@@ -303,15 +304,16 @@ export default function InstallerSearch() {
         </div>
 
         {/* Search button */}
-        <button
-          className="btn btn-primary"
-          style={{ width: '100%', padding: '14px', fontSize: '15px' }}
+        <BtnColorful
+          variant="secondary"
+          arrow
+          style={{ width: '100%' }}
           onClick={runSearch}
           data-action="find-installers"
           disabled={isLoading}
         >
           {isLoading ? 'SEARCHING...' : 'FIND INSTALLERS'}
-        </button>
+        </BtnColorful>
       </div>
 
       {/* Loading bar */}

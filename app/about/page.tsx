@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import SectionEyebrow from '@/components/ui/SectionEyebrow'
+import BtnColorful from '@/components/ui/BtnColorful'
 
 export const metadata = {
   title: 'About — BŌRYKU',
@@ -62,7 +63,7 @@ export default function AboutPage() {
             with real installer connections and intelligent mission-based recommendations.
           </p>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <Link href="/build" className="btn btn-primary">Start Your Build</Link>
+            <Link href="/build"><BtnColorful arrow>Start Your Build</BtnColorful></Link>
             <Link href="/contact" className="btn btn-ghost">Get in Touch</Link>
           </div>
         </div>
@@ -149,9 +150,9 @@ export default function AboutPage() {
                   </li>
                 ))}
               </ul>
-              <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', opacity: 0.6, cursor: 'not-allowed' }} disabled>
+              <BtnColorful disabled style={{ width: '100%' }}>
                 Upgrade to PRO
-              </button>
+              </BtnColorful>
             </div>
           </div>
         </div>
@@ -169,7 +170,7 @@ export default function AboutPage() {
             Your mission. Your build. Your control.
           </p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/build" className="btn btn-primary btn-lg">Start Build Now</Link>
+            <Link href="/build"><BtnColorful size="lg" arrow>Start Build Now</BtnColorful></Link>
             <Link href="/gear" className="btn btn-outline btn-lg">Browse Gear</Link>
           </div>
         </div>
