@@ -113,6 +113,59 @@ const FAQ = [
   },
 ]
 
+// ─── Benefits data ───────────────────────────────────────────────────────────
+
+const FREE_BENEFITS = [
+  { icon: '🗂️', label: 'Save Builds',             desc: 'Save and revisit your configurations anytime' },
+  { icon: '🚙', label: 'Create Your Garage',        desc: 'Manage multiple vehicle profiles' },
+  { icon: '📌', label: 'Save Products',             desc: 'Gear wishlist and build tracker' },
+  { icon: '📋', label: 'Track Build History',       desc: 'Version control for your rig' },
+  { icon: '👥', label: 'Community Builds',          desc: 'Browse and showcase your setup' },
+  { icon: '🔧', label: 'Installer Network Access',  desc: 'Find certified shops near you' },
+]
+
+const PRO_BENEFITS = [
+  { icon: '♾️', label: 'Unlimited Saved Loadouts',  desc: 'No limits on saved configurations' },
+  { icon: '☁️', label: 'Cloud Sync Across Devices', desc: 'Access your builds anywhere' },
+  { icon: '⚡', label: 'Priority Installer Quotes', desc: 'Get shop responses within 24 hours' },
+  { icon: '📦', label: 'Monthly Supply Drops',       desc: 'Exclusive member-only gear drops' },
+  { icon: '🎯', label: 'Early Access To New Gear',   desc: 'First look at new catalog additions' },
+  { icon: '📊', label: 'Build Cost Analytics',       desc: 'Track and optimize every dollar' },
+  { icon: '⭐', label: 'Featured Community Profile', desc: 'Get spotlighted in the builder community' },
+  { icon: '🛡️', label: 'Priority Support',           desc: 'Direct access to the RYKU team' },
+  { icon: '🔮', label: 'Future Premium Features',    desc: 'First access as new features launch' },
+]
+
+// ─── BenefitItem ──────────────────────────────────────────────────────────────
+
+function BenefitItem({ icon, label, desc, pro }: { icon: string; label: string; desc: string; pro: boolean }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+      <div style={{
+        width: 36, height: 36, borderRadius: '6px', flexShrink: 0,
+        background: pro ? 'rgba(255,85,31,0.08)' : 'rgba(255,255,255,0.04)',
+        border: `1px solid ${pro ? 'rgba(255,85,31,0.22)' : 'rgba(255,255,255,0.08)'}`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: '16px',
+      }}>
+        {icon}
+      </div>
+      <div>
+        <div className="font-mono" style={{
+          fontSize: '11px', letterSpacing: '0.06em', textTransform: 'uppercase',
+          color: pro ? 'rgba(255,255,255,0.82)' : 'rgba(255,255,255,0.65)',
+          marginBottom: '2px',
+        }}>
+          {label}
+        </div>
+        <div className="font-rajdhani" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.32)', lineHeight: 1.4 }}>
+          {desc}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ─── FAQ Item ─────────────────────────────────────────────────────────────────
 
 function FaqItem({ q, a, index }: { q: string; a: string; index: number }) {
@@ -372,9 +425,6 @@ export default function PricingPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'var(--dark)',
-      backgroundImage: 'var(--bg-grid)',
-      backgroundSize: 'var(--bg-grid-size)',
       paddingBottom: '100px',
     }}>
 
@@ -383,7 +433,7 @@ export default function PricingPage() {
         position: 'relative',
         padding: 'clamp(88px,10vh,108px) 24px 60px',
         textAlign: 'center',
-        borderBottom: '1px solid rgba(255,85,31,0.1)',
+        borderBottom: '1px solid rgba(255,255,255,0.04)',
         overflow: 'hidden',
       }}>
         {/* Ambient glow */}
@@ -516,6 +566,99 @@ export default function PricingPage() {
         </span>
       </motion.div>
 
+      {/* ── Account Benefits ──────────────────────────────────────── */}
+      <div style={{ maxWidth: '1120px', margin: '88px auto 0', padding: '0 24px' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.65, ease: [0.16, 1, 0.3, 1] }}
+          style={{ textAlign: 'center', marginBottom: '48px' }}
+        >
+          <SectionEyebrow>WHAT&apos;S INCLUDED</SectionEyebrow>
+          <h2 className="font-bebas" style={{
+            fontSize: 'clamp(32px, 4vw, 56px)',
+            letterSpacing: '0.05em', color: '#fff', margin: '8px 0 12px',
+          }}>
+            EVERY ACCOUNT. EVERY BENEFIT.
+          </h2>
+          <p className="font-rajdhani" style={{
+            fontSize: '15px', color: 'rgba(255,255,255,0.36)',
+            margin: '0 auto', maxWidth: '480px', lineHeight: 1.65,
+          }}>
+            Whether you&apos;re starting free or going Pro, BŌRYKU is built to move with your mission.
+          </p>
+        </motion.div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(440px, 1fr))', gap: '16px' }} className="benefits-grid">
+
+          {/* Explorer / Free card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.48, delay: 0.72, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              background: 'rgba(8,10,20,0.70)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              border: '1px solid rgba(255,255,255,0.07)',
+              borderRadius: '6px',
+              padding: '32px 28px',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px' }}>
+              <span className="font-mono" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', whiteSpace: 'nowrap' }}>
+                EXPLORER
+              </span>
+              <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)' }} />
+              <span className="font-mono" style={{ fontSize: '9px', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)', whiteSpace: 'nowrap' }}>
+                FREE
+              </span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {FREE_BENEFITS.map(b => (
+                <BenefitItem key={b.label} icon={b.icon} label={b.label} desc={b.desc} pro={false} />
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Pro Builder card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.48, delay: 0.82, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <ShineBorder variant="featured" borderRadius={6} style={{ height: '100%' }}>
+              <div style={{
+                background: 'linear-gradient(160deg, #130a05 0%, #1c1008 50%, rgba(8,10,20,0.95) 100%)',
+                borderRadius: '6px',
+                padding: '32px 28px',
+                height: '100%',
+                boxSizing: 'border-box',
+                position: 'relative',
+                overflow: 'hidden',
+              }}>
+                <div style={{ position: 'absolute', top: -60, left: '50%', transform: 'translateX(-50%)', width: 320, height: 200, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(255,85,31,0.10) 0%, transparent 70%)', pointerEvents: 'none' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px', position: 'relative' }}>
+                  <span className="font-mono" style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--orange)', whiteSpace: 'nowrap' }}>
+                    PRO BUILDER
+                  </span>
+                  <div style={{ flex: 1, height: 1, background: 'linear-gradient(to right, rgba(255,85,31,0.28), transparent)' }} />
+                  <span className="font-mono" style={{ fontSize: '9px', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,85,31,0.6)', whiteSpace: 'nowrap' }}>
+                    $12.99 / mo
+                  </span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+                  {PRO_BENEFITS.map(b => (
+                    <BenefitItem key={b.label} icon={b.icon} label={b.label} desc={b.desc} pro={true} />
+                  ))}
+                </div>
+              </div>
+            </ShineBorder>
+          </motion.div>
+
+        </div>
+      </div>
+
       {/* ── FAQ ───────────────────────────────────────────────────── */}
       <div style={{ maxWidth: '680px', margin: '88px auto 0', padding: '0 24px' }}>
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
@@ -542,6 +685,9 @@ export default function PricingPage() {
             max-width: 480px;
             margin-left: auto;
             margin-right: auto;
+          }
+          .benefits-grid {
+            grid-template-columns: 1fr !important;
           }
         }
       `}</style>

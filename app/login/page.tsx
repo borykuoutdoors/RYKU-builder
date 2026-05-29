@@ -15,31 +15,18 @@ function lcg(s: number) {
   return ((1664525 * s + 1013904223) & 0x7fffffff) / 0x7fffffff
 }
 
-const AUTH_EMBERS = Array.from({ length: 10 }, (_, i) => ({
+const AUTH_EMBERS = Array.from({ length: 16 }, (_, i) => ({
   id:     i,
-  left:   2  + Math.round(lcg(i * 9 + 1) * 58),   // left 60% of page
-  top:    12 + Math.round(lcg(i * 9 + 2) * 680) / 10,
+  left:   2  + Math.round(lcg(i * 9 + 1) * 94),
+  top:    5  + Math.round(lcg(i * 9 + 2) * 880) / 10,
   size:   parseFloat((0.5 + lcg(i * 9 + 3) * 1.6).toFixed(1)),
-  op:     parseFloat((0.05 + lcg(i * 9 + 4) * 0.14).toFixed(2)),
-  dur:    parseFloat((11 + lcg(i * 9 + 5) * 16).toFixed(1)),
-  dly:    parseFloat((lcg(i * 9 + 6) * 20).toFixed(1)),
-  driftX: Math.round((lcg(i * 9 + 7) - 0.5) * 36),
-  rise:   Math.round(55 + lcg(i * 9 + 8) * 90),
-  amber:  lcg(i * 9 + 9) > 0.62,
+  op:     parseFloat((0.04 + lcg(i * 9 + 4) * 0.11).toFixed(2)),
+  dur:    parseFloat((11 + lcg(i * 9 + 5) * 18).toFixed(1)),
+  dly:    parseFloat((lcg(i * 9 + 6) * 24).toFixed(1)),
+  driftX: Math.round((lcg(i * 9 + 7) - 0.5) * 40),
+  rise:   Math.round(60 + lcg(i * 9 + 8) * 95),
+  amber:  lcg(i * 9 + 9) > 0.60,
 }))
-
-// ─── Data ─────────────────────────────────────────────────────────────────────
-
-const BENEFITS = [
-  { id: 'builds',     label: 'Save Builds',            desc: 'Never lose your configuration' },
-  { id: 'garage',     label: 'Create Your Garage',      desc: 'Multi-vehicle management' },
-  { id: 'products',   label: 'Save Products',           desc: 'Gear wishlist & tracker' },
-  { id: 'history',    label: 'Track Build History',     desc: 'Version control for your rig' },
-  { id: 'community',  label: 'Community Builds',        desc: 'Join & showcase your setup' },
-  { id: 'featured',   label: 'Build of the Month',      desc: 'Compete & get featured' },
-  { id: 'pro',        label: 'Access Pro Features',     desc: 'Export, priority matching' },
-  { id: 'installers', label: 'Connect With Installers', desc: 'Verified local shops' },
-]
 
 const VEHICLE_MAKES = ['Toyota', 'Ford', 'Jeep', 'Ram', 'Chevrolet', 'GMC', 'Land Rover', 'Other']
 
@@ -177,38 +164,6 @@ function SocialBtn({ provider }: { provider: 'google' | 'apple' }) {
       )}
       Continue with {provider === 'google' ? 'Google' : 'Apple'}
     </button>
-  )
-}
-
-// ─── BenefitRow ───────────────────────────────────────────────────────────────
-
-function BenefitRow({ benefit, index }: { benefit: typeof BENEFITS[0]; index: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: -14 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.42, delay: 0.44 + index * 0.055, ease: [0.16, 1, 0.3, 1] }}
-      style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
-    >
-      <div style={{
-        width: 18, height: 18, borderRadius: '50%', flexShrink: 0,
-        background: 'rgba(255,85,31,0.1)',
-        border: '1px solid rgba(255,85,31,0.28)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-      }}>
-        <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
-          <path d="M1 3l2 2 4-4" stroke="#FF551F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      </div>
-      <div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'rgba(255,255,255,0.72)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-          {benefit.label}
-        </div>
-        <div style={{ fontFamily: 'var(--font-rajdhani)', fontSize: '12px', color: 'rgba(255,255,255,0.28)', lineHeight: 1.4 }}>
-          {benefit.desc}
-        </div>
-      </div>
-    </motion.div>
   )
 }
 
@@ -586,9 +541,16 @@ export default function LoginPage() {
   const reduced = useReducedMotion()
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', position: 'relative' }}>
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+      padding: 'clamp(80px,10vh,104px) clamp(20px,4vw,48px) 60px',
+    }}>
 
-      {/* ── Page-level embers — float above GlobalBackground ─────────── */}
+      {/* ── Page-level embers ─────────────────────────────────────────── */}
       {!reduced && (
         <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden', zIndex: 0 }}>
           {AUTH_EMBERS.map(p => (
@@ -613,198 +575,60 @@ export default function LoginPage() {
         </div>
       )}
 
-      {/* ── LEFT: Benefits panel ──────────────────────────────────────── */}
-      <motion.div
-        className="auth-left"
-        initial={{ opacity: 0, x: -28 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-        style={{
-          flex: '0 0 48%',
-          position: 'relative',
-          overflow: 'hidden',
-          padding: 'clamp(80px,8vh,104px) clamp(36px,5vw,60px) 56px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          gap: '36px',
-          zIndex: 1,
-        }}
-      >
-        {/* Left-side warmth — makes this half feel warmer without a solid bg */}
-        <div style={{
-          position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: 'radial-gradient(ellipse 100% 75% at 8% 52%, rgba(255,85,31,0.088) 0%, transparent 68%)',
-        }} />
+      {/* Atmospheric depth — centered warmth */}
+      <div aria-hidden="true" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 720, height: 720, borderRadius: '50%', pointerEvents: 'none', background: 'radial-gradient(circle, rgba(255,85,31,0.052) 0%, transparent 60%)', zIndex: 0 }} />
+      <div aria-hidden="true" style={{ position: 'absolute', top: -80, right: -80, width: 440, height: 440, borderRadius: '50%', pointerEvents: 'none', background: 'radial-gradient(circle, rgba(102,255,255,0.028) 0%, transparent 65%)', zIndex: 0 }} />
+      <div aria-hidden="true" style={{ position: 'absolute', bottom: -100, left: -100, width: 520, height: 520, borderRadius: '50%', pointerEvents: 'none', background: 'radial-gradient(circle, rgba(255,85,31,0.055) 0%, transparent 62%)', zIndex: 0 }} />
+      <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', backgroundImage: 'linear-gradient(rgba(102,255,255,0.009) 1px,transparent 1px),linear-gradient(90deg,rgba(102,255,255,0.009) 1px,transparent 1px)', backgroundSize: '80px 80px', zIndex: 0 }} />
 
-        {/* Blueprint grid — masked to left zone */}
-        <div style={{
-          position: 'absolute', inset: 0, pointerEvents: 'none',
-          backgroundImage: [
-            'linear-gradient(rgba(102,255,255,0.011) 1px, transparent 1px)',
-            'linear-gradient(90deg, rgba(102,255,255,0.011) 1px, transparent 1px)',
-          ].join(', '),
-          backgroundSize: '100px 100px',
-          opacity: 0.55,
-          maskImage: 'radial-gradient(ellipse 75% 90% at 15% 50%, black 20%, transparent 78%)',
-          WebkitMaskImage: 'radial-gradient(ellipse 75% 90% at 15% 50%, black 20%, transparent 78%)',
-        }} />
+      {/* ── Centered auth card ────────────────────────────────────────── */}
+      <div style={{ width: '100%', maxWidth: '420px', position: 'relative', zIndex: 1 }}>
 
-        {/* Orange warmth pool — lower-left */}
-        <div style={{
-          position: 'absolute', bottom: -120, left: -120, width: 520, height: 520,
-          borderRadius: '50%', pointerEvents: 'none',
-          background: 'radial-gradient(circle, rgba(255,85,31,0.09) 0%, transparent 68%)',
-        }} />
-
-        {/* Amber accent — upper area */}
-        <div style={{
-          position: 'absolute', top: -50, left: '30%', width: 320, height: 320,
-          borderRadius: '50%', pointerEvents: 'none',
-          background: 'radial-gradient(circle, rgba(255,200,87,0.042) 0%, transparent 68%)',
-        }} />
-
-        {/* Soft atmospheric right-edge fade — blends into the right panel seamlessly */}
-        <div style={{
-          position: 'absolute', top: 0, right: 0, bottom: 0, width: '30%', pointerEvents: 'none',
-          background: 'linear-gradient(to right, transparent, rgba(5,8,17,0.18))',
-        }} />
-
-        {/* ── Logo + headline ───────────────────────────────────────── */}
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'rgba(255,85,31,0.55)', letterSpacing: '0.24em', textTransform: 'uppercase', marginBottom: '14px' }}>
-              OPERATOR ACCESS
-            </div>
-
-            <h2 style={{
-              fontFamily: 'var(--font-bebas)',
-              fontSize: 'clamp(38px, 3.8vw, 56px)',
-              letterSpacing: '0.04em',
-              color: '#fff',
-              lineHeight: 1.04,
-              margin: '0 0 14px',
-            }}>
-              YOUR BUILD.<br />
-              YOUR MISSION.
-            </h2>
-
-            <p style={{ fontFamily: 'var(--font-rajdhani)', fontSize: '15px', color: 'rgba(255,255,255,0.36)', lineHeight: 1.65, margin: 0, maxWidth: '300px' }}>
-              Join the BŌRYKU network. Plan, track, and share your overland build with a platform built for the mission.
-            </p>
-          </motion.div>
-        </div>
-
-        {/* ── Benefits list ─────────────────────────────────────────── */}
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'rgba(255,255,255,0.2)', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: '16px' }}>
-            ACCOUNT BENEFITS
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {BENEFITS.map((b, i) => (
-              <BenefitRow key={b.id} benefit={b} index={i} />
-            ))}
-          </div>
-        </div>
-
-        {/* ── Free forever status ───────────────────────────────────── */}
         <motion.div
+          initial={{ opacity: 0, y: 24, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.58, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            background: 'rgba(8,10,20,0.86)',
+            backdropFilter: 'blur(24px)',
+            WebkitBackdropFilter: 'blur(24px)',
+            border: '1px solid rgba(255,85,31,0.13)',
+            borderRadius: '8px',
+            padding: 'clamp(28px,4vw,42px)',
+            boxShadow: '0 28px 72px rgba(0,0,0,0.58), 0 0 0 1px rgba(255,255,255,0.024)',
+          }}
+        >
+          {/* Card eyebrow */}
+          <div style={{ textAlign: 'center', marginBottom: '6px' }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'rgba(255,85,31,0.48)', letterSpacing: '0.24em', textTransform: 'uppercase' }}>
+              BŌRYKU // SECURE ACCESS
+            </div>
+          </div>
+
+          <Suspense fallback={
+            <div style={{ padding: '40px 0', textAlign: 'center', color: 'rgba(255,255,255,0.18)', fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '0.1em' }}>
+              INITIALIZING...
+            </div>
+          }>
+            <AuthFormInner />
+          </Suspense>
+        </motion.div>
+
+        {/* Terms */}
+        <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 1.0 }}
-          style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: '8px' }}
+          transition={{ duration: 0.4, delay: 0.55 }}
+          style={{ textAlign: 'center', fontFamily: 'var(--font-rajdhani)', fontSize: '12px', color: 'rgba(255,255,255,0.17)', marginTop: '16px', lineHeight: 1.6 }}
         >
-          <motion.div
-            animate={{ opacity: [1, 0.25, 1] }}
-            transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-            style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 8px rgba(34,197,94,0.65)', flexShrink: 0 }}
-          />
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.27)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-            Free forever · No credit card required
-          </span>
-        </motion.div>
-      </motion.div>
+          By continuing you agree to our{' '}
+          <Link href="/terms" style={{ color: 'rgba(255,85,31,0.42)', textDecoration: 'none' }}>Terms of Service</Link>
+          {' '}and{' '}
+          <Link href="/privacy" style={{ color: 'rgba(255,85,31,0.42)', textDecoration: 'none' }}>Privacy Policy</Link>.
+        </motion.p>
+      </div>
 
-      {/* ── RIGHT: Auth form ──────────────────────────────────────────── */}
-      <motion.div
-        className="auth-right"
-        initial={{ opacity: 0, x: 28 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-        style={{
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 'clamp(80px,10vh,104px) clamp(20px,5vw,48px) 40px',
-          position: 'relative',
-          overflow: 'hidden',
-          zIndex: 1,
-        }}
-      >
-        {/* Centered form ambient glow */}
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 560, height: 560, borderRadius: '50%', pointerEvents: 'none', background: 'radial-gradient(circle, rgba(255,85,31,0.055) 0%, transparent 66%)' }} />
-        {/* Cyan accent — upper right */}
-        <div style={{ position: 'absolute', top: -60, right: -60, width: 280, height: 280, borderRadius: '50%', pointerEvents: 'none', background: 'radial-gradient(circle, rgba(102,255,255,0.032) 0%, transparent 68%)' }} />
-
-        <div style={{ width: '100%', maxWidth: '400px', position: 'relative', zIndex: 1 }}>
-
-          {/* Glassmorphism card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
-            style={{
-              background: 'rgba(8,10,20,0.86)',
-              backdropFilter: 'blur(24px)',
-              WebkitBackdropFilter: 'blur(24px)',
-              border: '1px solid rgba(255,85,31,0.13)',
-              borderRadius: '8px',
-              padding: 'clamp(28px,4vw,40px)',
-              boxShadow: '0 28px 72px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.024)',
-            }}
-          >
-            {/* Card eyebrow */}
-            <div style={{ textAlign: 'center', marginBottom: '6px' }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'rgba(255,85,31,0.48)', letterSpacing: '0.24em', textTransform: 'uppercase' }}>
-                BŌRYKU // SECURE ACCESS
-              </div>
-            </div>
-
-            <Suspense fallback={
-              <div style={{ padding: '40px 0', textAlign: 'center', color: 'rgba(255,255,255,0.18)', fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '0.1em' }}>
-                INITIALIZING...
-              </div>
-            }>
-              <AuthFormInner />
-            </Suspense>
-          </motion.div>
-
-          {/* Terms */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.55 }}
-            style={{ textAlign: 'center', fontFamily: 'var(--font-rajdhani)', fontSize: '12px', color: 'rgba(255,255,255,0.17)', marginTop: '16px', lineHeight: 1.6 }}
-          >
-            By continuing you agree to our{' '}
-            <Link href="/terms" style={{ color: 'rgba(255,85,31,0.42)', textDecoration: 'none' }}>Terms of Service</Link>
-            {' '}and{' '}
-            <Link href="/privacy" style={{ color: 'rgba(255,85,31,0.42)', textDecoration: 'none' }}>Privacy Policy</Link>.
-          </motion.p>
-        </div>
-      </motion.div>
-
-      {/* ── Responsive + misc ─────────────────────────────────────────── */}
       <style>{`
-        @media (max-width: 768px) {
-          .auth-left  { display: none !important; }
-          .auth-right { padding: 90px 20px 40px !important; }
-        }
         select option { background: #0f0a06; color: rgba(255,255,255,0.8); }
         input::placeholder { color: rgba(255,255,255,0.22); }
       `}</style>

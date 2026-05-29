@@ -15,6 +15,7 @@ const NAV_LINKS = [
   { label: 'BUILDS',     href: '/builds' },
   { label: 'GEAR',       href: '/gear' },
   { label: 'INSTALLERS', href: '/installers' },
+  { label: 'PRICING',    href: '/pricing' },
   { label: 'ABOUT',      href: '/about' },
   { label: 'CONTACT',    href: '/contact' },
 ]

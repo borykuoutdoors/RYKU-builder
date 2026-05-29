@@ -169,8 +169,8 @@ function injectBotStyles() {
       100% { opacity: 0;    transform: translate(-50%, -50%) scale(2.4); }
     }
     @keyframes bot-glow-idle {
-      0%, 100% { box-shadow: 0 0 14px rgba(255,85,31,0.35), 0 8px 28px rgba(0,0,0,0.55); }
-      50%       { box-shadow: 0 0 30px rgba(255,85,31,0.65), 0 8px 28px rgba(0,0,0,0.55); }
+      0%, 100% { box-shadow: 0 0 14px rgba(255,170,40,0.50), 0 8px 28px rgba(0,0,0,0.55); }
+      50%       { box-shadow: 0 0 34px rgba(255,170,40,0.85), 0 8px 28px rgba(0,0,0,0.55); }
     }
     @keyframes bot-dot {
       0%, 60%, 100% { opacity: 0.18; transform: scale(0.72); }
@@ -202,8 +202,8 @@ function injectBotStyles() {
 }
 
 // ── BŌT hex icon SVG ──────────────────────────────────────────────────────────
-function BotHexIcon({ size = 24, dim = false }: { size?: number; dim?: boolean }) {
-  const c = dim ? 'rgba(255,85,31,0.55)' : '#FF551F'
+function BotHexIcon({ size = 24, dim = false, color }: { size?: number; dim?: boolean; color?: string }) {
+  const c = color ?? (dim ? 'rgba(255,85,31,0.55)' : '#FF551F')
   return (
     <svg width={size} height={size} viewBox="0 0 28 28" fill="none" aria-hidden>
       <path d="M14 2.5L23.5 7.75v10.5L14 23.5 4.5 18.25V7.75L14 2.5z"
@@ -688,8 +688,8 @@ export default function BotWidget() {
             width: 56, height: 56, borderRadius: '50%', border: 'none',
             background: open
               ? 'rgba(8,5,5,0.97)'
-              : 'linear-gradient(135deg, #FF551F 0%, rgba(255,85,31,0.82) 100%)',
-            outline: `2px solid ${open ? 'rgba(255,85,31,0.38)' : 'rgba(255,200,87,0.2)'}`,
+              : 'linear-gradient(135deg, #FF551F 0%, #FFC857 100%)',
+            outline: `2px solid ${open ? 'rgba(255,85,31,0.38)' : 'rgba(255,200,87,0.38)'}`,
             outlineOffset: 2,
             cursor: 'pointer', position: 'relative',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -717,7 +717,7 @@ export default function BotWidget() {
                 exit={{ rotate: -90, opacity: 0, scale: 0.55 }}
                 transition={{ duration: 0.18 }}
               >
-                <BotHexIcon size={26} />
+                <BotHexIcon size={26} color="#000" />
               </motion.div>
             )}
           </AnimatePresence>
