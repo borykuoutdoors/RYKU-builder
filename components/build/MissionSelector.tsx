@@ -1,45 +1,29 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { useBuildStore } from '@/store/buildStore'
-import { MISSIONS } from '@/data/missions'
-import type { MissionId } from '@/types/mission'
+import { buildPurposes } from '@/lib/catalog'
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function MissionSelector() {
-  const setMission   = useBuildStore(s => s.setMission)
+  const setPurposes  = useBuildStore(s => s.setPurposes)
   const setStep      = useBuildStore(s => s.setStep)
-  const storeMission = useBuildStore(s => s.mission)
+  const storePurposes = useBuildStore(s => s.purposes)
 
-  const [selectedId, setSelectedId] = useState<string | null>(storeMission)
+  const [selected, setSelected] = useState<string[]>(storePurposes)
 
-  const gridRef = useRef<HTMLDivElement>(null)
+  const canConfirm = selected.length > 0
 
-  const canConfirm = selectedId !== null
-
-  // Wire up data-mid click delegation — no inline onclick
-  useEffect(() => {
-    const grid = gridRef.current
-    if (!grid) return
-
-    function handleClick(e: Event) {
-      const target = (e.target as HTMLElement).closest('[data-mid]') as HTMLElement | null
-      if (!target) return
-
-      const mid = target.getAttribute('data-mid')
-      if (!mid) return
-
-      setSelectedId(mid)
-    }
-
-    grid.addEventListener('click', handleClick)
-    return () => grid.removeEventListener('click', handleClick)
-  }, [])
+  function toggleSelected(id: string) {
+    setSelected(prev =>
+      prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]
+    )
+  }
 
   function handleConfirm() {
-    if (!selectedId) return
-    setMission(selectedId as MissionId)
+    if (!canConfirm) return
+    setPurposes(selected)
     setStep(3)
   }
 
@@ -56,30 +40,29 @@ export default function MissionSelector() {
             color: 'var(--text)',
           }}
         >
-          SELECT YOUR MISSION
+          SELECT YOUR PURPOSE
         </h2>
         <p style={{ color: 'var(--text-3)', fontSize: '0.875rem', marginTop: '4px' }}>
-          Your mission profile determines which gear loadouts we recommend.
+          Select all that apply. RYKU intelligence ranks gear loadouts from your full mission profile.
         </p>
       </div>
 
-      {/* Mission grid (4 columns × 2 rows) */}
+      {/* Purpose grid (3 columns) */}
       <div
-        ref={gridRef}
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridTemplateColumns: 'repeat(3, 1fr)',
           gap: '12px',
         }}
-        className="mission-grid"
+        className="purpose-grid"
       >
-        {MISSIONS.map(m => {
-          const isSelected = selectedId === m.id
+        {buildPurposes.map(p => {
+          const isSelected = selected.includes(p.id)
           return (
             <div
-              key={m.id}
-              data-mid={m.id}
+              key={p.id}
               className="mission-card"
+              onClick={() => toggleSelected(p.id)}
               style={{
                 borderColor: isSelected ? 'var(--orange)' : undefined,
                 background: isSelected ? 'var(--orange-dim)' : undefined,
@@ -110,10 +93,10 @@ export default function MissionSelector() {
 
               {/* Icon */}
               <div style={{ fontSize: '2rem', lineHeight: 1, marginBottom: '10px' }}>
-                {m.icon}
+                {p.icon}
               </div>
 
-              {/* Name */}
+              {/* Label */}
               <div
                 style={{
                   fontFamily: 'var(--font-bebas), sans-serif',
@@ -123,10 +106,10 @@ export default function MissionSelector() {
                   marginBottom: '6px',
                 }}
               >
-                {m.name}
+                {p.label}
               </div>
 
-              {/* Description */}
+              {/* Sub */}
               <p
                 style={{
                   fontSize: '0.75rem',
@@ -135,7 +118,7 @@ export default function MissionSelector() {
                   margin: 0,
                 }}
               >
-                {m.description}
+                {p.sub}
               </p>
             </div>
           )
@@ -153,7 +136,7 @@ export default function MissionSelector() {
             cursor: canConfirm ? 'pointer' : 'not-allowed',
           }}
         >
-          CONFIRM MISSION
+          CONFIRM PURPOSE
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ marginLeft: '4px' }}>
             <path d="M2 7h10M8 3l4 4-4 4" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -162,11 +145,11 @@ export default function MissionSelector() {
 
       {/* Responsive */}
       <style>{`
-        @media (max-width: 900px) {
-          .mission-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        @media (max-width: 720px) {
+          .purpose-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
-        @media (max-width: 500px) {
-          .mission-grid { grid-template-columns: repeat(1, 1fr) !important; }
+        @media (max-width: 480px) {
+          .purpose-grid { grid-template-columns: repeat(1, 1fr) !important; }
         }
       `}</style>
     </div>

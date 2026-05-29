@@ -3,31 +3,17 @@
 import { useBuildStore } from '@/store/buildStore'
 import { rankRecommendations, budgetToTierId } from '@/lib/rank'
 
-// Mission ID → catalog purpose ID bridge (old store keys → lib/catalog keys)
-const MISSION_TO_PURPOSE: Record<string, string> = {
-  overland:   'p_over',
-  camping:    'p_camp',
-  daily:      'p_daily',
-  offroad:    'p_offroad',
-  expedition: 'p_travel',
-  tactical:   'p_util',
-  recovery:   'p_offroad',
-  utility:    'p_work',
-}
-
 export default function RecommendationsStep() {
-  const mission = useBuildStore(s => s.mission)
-  const budget  = useBuildStore(s => s.budget)
-  const setStep = useBuildStore(s => s.setStep)
+  const purposes = useBuildStore(s => s.purposes)
+  const budget   = useBuildStore(s => s.budget)
+  const setStep  = useBuildStore(s => s.setStep)
 
-  // Convert legacy store values → catalog IDs for rank engine
-  const purposeIds  = mission ? [MISSION_TO_PURPOSE[mission] ?? 'p_over'] : ['p_over']
+  const purposeIds   = purposes.length > 0 ? purposes : ['p_over']
   const budgetTierId = budgetToTierId(budget)
   const ranked       = rankRecommendations(purposeIds, budgetTierId)
 
-  const missionLabel = mission
-    ? mission.charAt(0).toUpperCase() + mission.slice(1)
-    : 'Overland'
+  const n = purposeIds.length
+  const profileLabel = `${n} mission profile${n !== 1 ? 's' : ''}`
   const budgetFmt = budget >= 99999
     ? 'Unlimited'
     : '$' + budget.toLocaleString('en-US')
@@ -44,8 +30,7 @@ export default function RecommendationsStep() {
           RECOMMENDED LOADOUT
         </h2>
         <p style={{ color: 'var(--text-3)', fontSize: '0.875rem', marginTop: '4px' }}>
-          Based on your <strong style={{ color: 'var(--orange)' }}>{missionLabel}</strong> mission profile
-          and a <strong style={{ color: 'var(--orange)' }}>{budgetFmt}</strong> budget.
+          Based on <strong style={{ color: 'var(--orange)' }}>{profileLabel}</strong> and a <strong style={{ color: 'var(--orange)' }}>{budgetFmt}</strong> budget.
         </p>
       </div>
 
