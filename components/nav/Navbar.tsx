@@ -239,7 +239,6 @@ export default function Navbar() {
   const [scrolled,         setScrolled]         = useState(false)
   const [mobileOpen,       setMobileOpen]       = useState(false)
   const [shopOpen,         setShopOpen]         = useState(false)
-  const [navVisible,       setNavVisible]       = useState(!isHomepage)
   const [hamburgerHovered, setHamburgerHovered] = useState(false)
 
   /* scroll → scrolled state */
@@ -248,14 +247,6 @@ export default function Navbar() {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
-
-  /* homepage: wait for intro-complete; other pages: instant */
-  useEffect(() => {
-    if (!isHomepage) { setNavVisible(true); return }
-    const handler = () => setNavVisible(true)
-    window.addEventListener('ryku:intro-complete', handler)
-    return () => window.removeEventListener('ryku:intro-complete', handler)
-  }, [isHomepage])
 
   /* close mobile menu on navigation */
   useEffect(() => { setMobileOpen(false) }, [pathname])
@@ -271,15 +262,14 @@ export default function Navbar() {
       <motion.nav
         role="navigation"
         aria-label="Primary navigation"
-        initial={isHomepage ? false : { y: -68, opacity: 0 }}
-        animate={{ y: navVisible ? 0 : -72, opacity: navVisible ? 1 : 0 }}
-        transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ opacity: 0, y: isHomepage ? 0 : -68 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1], delay: isHomepage ? 0.1 : 0 }}
         style={{
           position:         'fixed',
           top: 0, left: 0, right: 0,
           height:           'var(--nav-h)',
           zIndex:           30,
-          pointerEvents:    navVisible ? 'auto' : 'none',
           background:       navBg,
           borderBottom:     `1px solid ${navBorder}`,
           backdropFilter:   navBlur,

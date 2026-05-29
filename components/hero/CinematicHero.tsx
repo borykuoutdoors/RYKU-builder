@@ -10,18 +10,31 @@ function lcg(s: number) {
   return ((1664525 * s + 1013904223) & 0x7fffffff) / 0x7fffffff
 }
 
-// Embers — distributed across full width
-const EMBERS = Array.from({ length: 14 }, (_, i) => ({
-  id:     i,
-  left:   4 + Math.round(lcg(i * 11 + 1) * 88),
-  top:    25 + Math.round(lcg(i * 11 + 2) * 550) / 10,
-  size:   parseFloat((0.7 + lcg(i * 11 + 3) * 1.4).toFixed(1)),
-  op:     parseFloat((0.14 + lcg(i * 11 + 4) * 0.22).toFixed(2)),
-  dur:    parseFloat((6 + lcg(i * 11 + 5) * 10).toFixed(1)),
-  dly:    parseFloat((lcg(i * 11 + 6) * 10).toFixed(1)),
-  driftX: Math.round((lcg(i * 11 + 7) - 0.5) * 36),
-  rise:   Math.round(50 + lcg(i * 11 + 8) * 80),
-}))
+// Ember color palette
+type EmberColor = 'orange' | 'amber' | 'cyan'
+const EMBER_PALETTE: Record<EmberColor, { bg: string; glow: string }> = {
+  orange: { bg: 'rgba(255,90,18,0.92)',   glow: 'rgba(255,78,16,0.65)' },
+  amber:  { bg: 'rgba(255,200,87,0.88)',  glow: 'rgba(255,165,48,0.52)' },
+  cyan:   { bg: 'rgba(102,255,255,0.72)', glow: 'rgba(100,240,255,0.38)' },
+}
+
+// 28 embers — distributed across full viewport height
+const EMBERS = Array.from({ length: 28 }, (_, i) => {
+  const r = lcg(i * 13 + 9)
+  const colorType: EmberColor = r < 0.62 ? 'orange' : r < 0.88 ? 'amber' : 'cyan'
+  return {
+    id:     i,
+    left:   2 + Math.round(lcg(i * 13 + 1) * 94),
+    top:    8  + Math.round(lcg(i * 13 + 2) * 760) / 10,
+    size:   parseFloat((0.5 + lcg(i * 13 + 3) * 2.2).toFixed(1)),
+    op:     parseFloat((0.08 + lcg(i * 13 + 4) * 0.22).toFixed(2)),
+    dur:    parseFloat((9  + lcg(i * 13 + 5) * 15).toFixed(1)),
+    dly:    parseFloat((lcg(i * 13 + 6) * 18).toFixed(1)),
+    driftX: Math.round((lcg(i * 13 + 7) - 0.5) * 48),
+    rise:   Math.round(55 + lcg(i * 13 + 8) * 110),
+    colorType,
+  }
+})
 
 // ─── Geometric shape elements ─────────────────────────────────────────────────
 function TechShapes({ show }: { show: boolean }) {
@@ -154,19 +167,16 @@ const STATS = [
   { value: '4,200+', label: 'Builds Configured' },
 ]
 
-interface Props { introComplete: boolean }
-
-export default function CinematicHero({ introComplete }: Props) {
+export default function CinematicHero() {
   const sectionRef = useRef<HTMLElement>(null)
   const reduced    = useReducedMotion()
   const [chaosLive, setChaosLive] = useState(false)
 
   useEffect(() => {
-    if (!introComplete) return
     if (reduced) { setChaosLive(true); return }
-    const t = setTimeout(() => setChaosLive(true), 3200)
+    const t = setTimeout(() => setChaosLive(true), 2800)
     return () => clearTimeout(t)
-  }, [introComplete, reduced])
+  }, [reduced])
 
   const { scrollYProgress } = useScroll({
     target:  sectionRef,
@@ -174,11 +184,9 @@ export default function CinematicHero({ introComplete }: Props) {
   })
   const bgY = useTransform(scrollYProgress, [0, 1], ['0%', reduced ? '0%' : '10%'])
 
-  const show = introComplete
-
   const fadeUp = (delay = 0) => ({
     initial:    reduced ? false : { opacity: 0, y: 14, filter: 'blur(8px)' },
-    animate:    show ? { opacity: 1, y: 0, filter: 'blur(0px)' } : (reduced ? {} : { opacity: 0, y: 14, filter: 'blur(8px)' }),
+    animate:    { opacity: 1, y: 0, filter: 'blur(0px)' },
     transition: { duration: reduced ? 0 : 1.0, ease: [0.2, 0.7, 0.2, 1] as const, delay: reduced ? 0 : delay },
   })
 
@@ -196,6 +204,7 @@ export default function CinematicHero({ introComplete }: Props) {
         alignItems:     'center',
         justifyContent: 'center',
         paddingBottom:  'var(--status-h)',
+        marginTop:      'calc(-1 * var(--nav-h))',
       }}
       aria-label="Hero"
     >
@@ -205,7 +214,7 @@ export default function CinematicHero({ introComplete }: Props) {
       ══════════════════════════════════════════════════════════════════ */}
       <motion.div
         initial={{ opacity: 0 }}
-        animate={show ? { opacity: 1 } : { opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
         style={{
           position: 'absolute', inset: '-4%',
@@ -314,29 +323,32 @@ export default function CinematicHero({ introComplete }: Props) {
       </motion.div>
 
       {/* ── GEOMETRIC TECH SHAPES ─────────────────────────────────────────── */}
-      <TechShapes show={show} />
+      <TechShapes show />
 
-      {/* ── EMBERS (full-width, low opacity to not compete with headline) ─── */}
+      {/* ── EMBERS ────────────────────────────────────────────────────────── */}
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden', zIndex: 3 }}>
-        {EMBERS.map(p => (
-          <motion.div
-            key={p.id}
-            animate={{
-              y:       [0, -p.rise, -p.rise * 1.2],
-              x:       [0, p.driftX * 0.3, p.driftX],
-              opacity: [0, p.op, p.op * 0.5, 0],
-              scale:   [0.1, 1, 0.55, 0],
-            }}
-            transition={{ duration: p.dur, delay: p.dly, repeat: Infinity, ease: [0.12, 0, 0.88, 1] }}
-            style={{
-              position: 'absolute',
-              left: p.left + '%', top: p.top + '%',
-              width: p.size, height: p.size, borderRadius: '50%',
-              background: 'rgba(255,90,18,0.9)',
-              boxShadow: `0 0 ${p.size * 2.8}px rgba(255,78,16,0.65)`,
-            }}
-          />
-        ))}
+        {!reduced && EMBERS.map(p => {
+          const c = EMBER_PALETTE[p.colorType]
+          return (
+            <motion.div
+              key={p.id}
+              animate={{
+                y:       [0, -p.rise * 0.6, -p.rise],
+                x:       [0, p.driftX * 0.4, p.driftX],
+                opacity: [0, p.op, p.op * 0.55, 0],
+                scale:   [0.1, 1, 0.6, 0],
+              }}
+              transition={{ duration: p.dur, delay: p.dly, repeat: Infinity, ease: [0.12, 0, 0.88, 1] }}
+              style={{
+                position: 'absolute',
+                left: p.left + '%', top: p.top + '%',
+                width: p.size, height: p.size, borderRadius: '50%',
+                background: c.bg,
+                boxShadow: `0 0 ${p.size * 3}px ${c.glow}`,
+              }}
+            />
+          )
+        })}
       </div>
 
       {/* ── SCANNING LINE ─────────────────────────────────────────────────── */}
@@ -352,16 +364,16 @@ export default function CinematicHero({ introComplete }: Props) {
 
       {/* ── CORNER BRACKETS ───────────────────────────────────────────────── */}
       {([
-        { top: 20,    left: 20,   borderTop:    '1px solid rgba(243,237,226,0.22)', borderLeft:   '1px solid rgba(243,237,226,0.22)' },
-        { top: 20,    right: 20,  borderTop:    '1px solid rgba(102,255,255,0.16)', borderRight:  '1px solid rgba(102,255,255,0.16)' },
-        { bottom: 54, left: 20,   borderBottom: '1px solid rgba(243,237,226,0.22)', borderLeft:   '1px solid rgba(243,237,226,0.22)' },
-        { bottom: 54, right: 20,  borderBottom: '1px solid rgba(102,255,255,0.16)', borderRight:  '1px solid rgba(102,255,255,0.16)' },
+        { top: 'calc(var(--nav-h) + 12px)', left: 20,   borderTop:    '1px solid rgba(243,237,226,0.22)', borderLeft:   '1px solid rgba(243,237,226,0.22)' },
+        { top: 'calc(var(--nav-h) + 12px)', right: 20,  borderTop:    '1px solid rgba(102,255,255,0.16)', borderRight:  '1px solid rgba(102,255,255,0.16)' },
+        { bottom: 54,                       left: 20,   borderBottom: '1px solid rgba(243,237,226,0.22)', borderLeft:   '1px solid rgba(243,237,226,0.22)' },
+        { bottom: 54,                       right: 20,  borderBottom: '1px solid rgba(102,255,255,0.16)', borderRight:  '1px solid rgba(102,255,255,0.16)' },
       ] as React.CSSProperties[]).map((s, i) => (
         <motion.div
           key={i}
           initial={{ opacity: 0, scale: 0.7 }}
-          animate={show ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.7 }}
-          transition={{ duration: 0.65, delay: 2.6 + i * 0.06, ease: [0.2, 0.7, 0.2, 1] }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.65, delay: 1.8 + i * 0.06, ease: [0.2, 0.7, 0.2, 1] }}
           style={{ position: 'absolute', width: 24, height: 24, pointerEvents: 'none', zIndex: 10, ...s }}
         />
       ))}
@@ -369,12 +381,12 @@ export default function CinematicHero({ introComplete }: Props) {
       {/* ── LEFT HUD TICKS ────────────────────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0 }}
-        animate={show ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 0.9, delay: 1.6 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.9, delay: 1.2 }}
         style={{
           position: 'absolute', left: 22, top: 0, bottom: 38,
           display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly',
-          paddingTop: 70, paddingBottom: 55,
+          paddingTop: 'calc(var(--nav-h) + 20px)', paddingBottom: 55,
           pointerEvents: 'none', zIndex: 10,
         }}
       >
@@ -395,10 +407,10 @@ export default function CinematicHero({ introComplete }: Props) {
       {/* ── TOP-RIGHT HUD ─────────────────────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0 }}
-        animate={show ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 0.9, delay: 1.7 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.9, delay: 1.3 }}
         style={{
-          position: 'absolute', top: 22, right: 22,
+          position: 'absolute', top: 'calc(var(--nav-h) + 14px)', right: 22,
           display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4,
           pointerEvents: 'none', zIndex: 10,
           fontFamily: 'var(--font-mono)', fontSize: '9px',
@@ -413,8 +425,8 @@ export default function CinematicHero({ introComplete }: Props) {
       {/* ── BOTTOM-RIGHT HUD ──────────────────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0 }}
-        animate={show ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 0.9, delay: 1.8 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.9, delay: 1.4 }}
         style={{
           position: 'absolute', right: 24, bottom: 44,
           display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6,
@@ -468,7 +480,7 @@ export default function CinematicHero({ introComplete }: Props) {
       >
 
         {/* EYEBROW */}
-        <motion.div {...fadeUp(0.6)} style={{ marginBottom: 20, pointerEvents: 'none' }}>
+        <motion.div {...fadeUp(0.4)} style={{ marginBottom: 20, pointerEvents: 'none' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14 }}>
             <div style={{
               width: 24, height: 1,
@@ -506,11 +518,8 @@ export default function CinematicHero({ introComplete }: Props) {
           }}>
             <motion.span
               initial={{ opacity: 0, y: 24, filter: 'blur(16px)' }}
-              animate={show
-                ? { opacity: 1, y: 0, filter: 'blur(0px)' }
-                : { opacity: 0, y: 24, filter: 'blur(16px)' }
-              }
-              transition={{ duration: 1.4, ease: [0.2, 0.7, 0.2, 1], delay: 0.9 }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ duration: 1.4, ease: [0.2, 0.7, 0.2, 1], delay: 0.6 }}
               style={{
                 display:    'block',
                 color:      'var(--ink)',
@@ -524,11 +533,9 @@ export default function CinematicHero({ introComplete }: Props) {
               initial={{ opacity: 0, y: 24, filter: 'blur(16px)' }}
               animate={chaosLive
                 ? { opacity: 1, y: 0, filter: 'blur(0px)' }
-                : show
-                  ? { opacity: 1, y: 0, filter: 'blur(0px)' }
-                  : { opacity: 0, y: 24, filter: 'blur(16px)' }
+                : { opacity: 1, y: 0, filter: 'blur(0px)' }
               }
-              transition={{ duration: 1.4, ease: [0.2, 0.7, 0.2, 1], delay: 1.2 }}
+              transition={{ duration: 1.4, ease: [0.2, 0.7, 0.2, 1], delay: 0.9 }}
               style={{
                 display:    'block',
                 color:      'var(--orange)',
@@ -543,7 +550,7 @@ export default function CinematicHero({ introComplete }: Props) {
         </div>
 
         {/* SUBHEADLINE */}
-        <motion.div {...fadeUp(1.8)} style={{ marginBottom: 40, pointerEvents: 'auto' }}>
+        <motion.div {...fadeUp(1.3)} style={{ marginBottom: 40, pointerEvents: 'auto' }}>
           <p style={{
             fontFamily: 'var(--font-body)',
             fontSize:   'clamp(14px, 1.6vw, 16px)',
@@ -560,7 +567,7 @@ export default function CinematicHero({ introComplete }: Props) {
 
         {/* CTA BUTTONS */}
         <motion.div
-          {...fadeUp(2.2)}
+          {...fadeUp(1.6)}
           style={{
             display:        'flex',
             gap:            14,
@@ -617,7 +624,7 @@ export default function CinematicHero({ introComplete }: Props) {
 
         {/* STATS STRIP — centered with dividers */}
         <motion.div
-          {...fadeUp(2.6)}
+          {...fadeUp(1.9)}
           style={{
             display:        'flex',
             alignItems:     'center',

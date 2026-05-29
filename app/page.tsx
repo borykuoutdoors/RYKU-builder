@@ -1,9 +1,7 @@
 'use client'
 
-import { useState, useCallback } from 'react'
 import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
-import LoadingScreen from '@/components/hero/LoadingScreen'
+import { motion } from 'framer-motion'
 import CinematicHero from '@/components/hero/CinematicHero'
 import { buildPurposes, gearCategories as GEAR_CATALOG } from '@/lib/catalog'
 import BtnColorful from '@/components/ui/BtnColorful'
@@ -456,21 +454,9 @@ function ContactSection() {
    Page
    ══════════════════════════════════════════════════════════════════════════ */
 export default function HomePage() {
-  const [introComplete, setIntroComplete] = useState(false)
-
-  const handleIntroComplete = useCallback(() => {
-    setIntroComplete(true)
-    window.dispatchEvent(new CustomEvent('ryku:intro-complete'))
-  }, [])
-
   return (
     <>
-      <AnimatePresence>
-        {!introComplete && (
-          <LoadingScreen onComplete={handleIntroComplete} />
-        )}
-      </AnimatePresence>
-      <CinematicHero introComplete={introComplete} />
+      <CinematicHero />
       <FeaturesStrip />
       <MissionsSection />
       <GearSection />
