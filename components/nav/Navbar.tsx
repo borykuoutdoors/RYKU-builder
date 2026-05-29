@@ -435,16 +435,6 @@ export default function Navbar() {
                   LOG IN TO BŌRYKU
                 </BtnColorful>
               </Link>
-
-              <Link href="/build" aria-label="Start your build" data-action="nav-start-build" style={{ textDecoration: 'none' }}>
-                <BtnColorful
-                  variant="primary"
-                  arrow
-                  style={{ padding: '8px 18px', fontSize: '0.62rem', letterSpacing: '0.16em', whiteSpace: 'nowrap' }}
-                >
-                  START BUILD
-                </BtnColorful>
-              </Link>
             </div>
 
             {/* Hamburger — mobile only */}
@@ -609,15 +599,6 @@ export default function Navbar() {
                   style={{ width: '100%', justifyContent: 'center', padding: '12px 20px' }}
                 >
                   LOG IN TO BŌRYKU
-                </BtnColorful>
-              </Link>
-              <Link href="/build" data-action="mobile-start-build" style={{ textDecoration: 'none', display: 'block' }}>
-                <BtnColorful
-                  variant="primary"
-                  arrow
-                  style={{ width: '100%', justifyContent: 'center', padding: '13px 20px' }}
-                >
-                  START BUILD
                 </BtnColorful>
               </Link>
             </motion.div>

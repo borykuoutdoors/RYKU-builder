@@ -2,7 +2,6 @@
 
 import { Suspense, useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -605,15 +604,6 @@ export default function LoginPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 44 }}>
-              <div style={{ filter: 'drop-shadow(0 0 18px rgba(255,85,31,0.52))' }}>
-                <Image src="/brand/mark.png" alt="BŌRYKU" width={34} height={34} style={{ objectFit: 'contain' }} />
-              </div>
-              <span style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.75rem', letterSpacing: '0.08em', color: '#fff', lineHeight: 1 }}>
-                B<span style={{ color: '#FF551F' }}>Ō</span>RYKU
-              </span>
-            </div>
-
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'rgba(255,85,31,0.55)', letterSpacing: '0.24em', textTransform: 'uppercase', marginBottom: '14px' }}>
               OPERATOR ACCESS
             </div>
