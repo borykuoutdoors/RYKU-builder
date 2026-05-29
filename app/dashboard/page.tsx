@@ -4,6 +4,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useBuildStore } from '@/store/buildStore'
 import ShineBorder from '@/components/ui/ShineBorder'
+import BtnColorful from '@/components/ui/BtnColorful'
+import UpgradeModal from '@/components/modals/UpgradeModal'
 
 // ─── Mock saved builds ────────────────────────────────────────────────────────
 
@@ -51,7 +53,8 @@ type Tab = 'BUILDS' | 'GEAR' | 'ACCOUNT'
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
-  const [activeTab, setActiveTab] = useState<Tab>('BUILDS')
+  const [activeTab,    setActiveTab]    = useState<Tab>('BUILDS')
+  const [upgradeOpen,  setUpgradeOpen]  = useState(false)
 
   const {
     vehicle,
@@ -487,84 +490,76 @@ export default function DashboardPage() {
               </span>
             </div>
 
-            {/* PRO upgrade card — ShineBorder premium */}
+            {/* PRO upgrade card */}
             <ShineBorder variant="premium" borderRadius={6}>
-            <div
-              style={{
-                background: 'linear-gradient(135deg, #1a0e08 0%, var(--carbon) 100%)',
-                borderRadius: '5px',
-                padding: '28px',
-                position: 'relative',
-                overflow: 'hidden',
-              }}
-            >
-              {/* Coming soon badge */}
               <div
                 style={{
-                  position: 'absolute',
-                  top: '16px',
-                  right: '16px',
+                  background: 'linear-gradient(160deg, #130a05 0%, #1a0e08 50%, var(--carbon) 100%)',
+                  borderRadius: '5px',
+                  padding: '28px',
+                  position: 'relative',
+                  overflow: 'hidden',
                 }}
               >
-                <span
-                  className="font-mono"
-                  style={{
-                    fontSize: '10px',
-                    padding: '3px 8px',
-                    borderRadius: '3px',
-                    background: 'rgba(102,255,255,0.1)',
-                    border: '1px solid rgba(102,255,255,0.35)',
-                    color: 'var(--cyan)',
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  COMING SOON
-                </span>
-              </div>
+                {/* Ambient bloom */}
+                <div style={{ position: 'absolute', top: -50, left: '50%', transform: 'translateX(-50%)', width: 280, height: 180, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(255,85,31,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-              <div
-                className="font-bebas"
-                style={{
-                  fontSize: '28px',
-                  color: 'var(--orange)',
-                  letterSpacing: '0.08em',
-                  marginBottom: '6px',
-                }}
-              >
-                UPGRADE TO RYKU PRO
-              </div>
-              <div
-                className="font-rajdhani"
-                style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: '18px' }}
-              >
-                Unlock the full BŌRYKU platform experience
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
-                {PRO_FEATURES.map((feature) => (
-                  <div key={feature} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ color: 'var(--orange)', fontSize: '14px' }}>✓</span>
-                    <span
-                      className="font-rajdhani"
-                      style={{ fontSize: '14px', color: 'rgba(255,255,255,0.62)' }}
-                    >
-                      {feature}
-                    </span>
+                {/* Header */}
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px', marginBottom: '6px', position: 'relative', zIndex: 1 }}>
+                  <div className="font-bebas" style={{ fontSize: '26px', color: 'var(--orange)', letterSpacing: '0.08em', lineHeight: 1.05 }}>
+                    UPGRADE TO RYKU PRO
                   </div>
-                ))}
-              </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+                    <span className="font-bebas" style={{ fontSize: '22px', color: '#fff', letterSpacing: '0.02em' }}>$12.99</span>
+                    <span className="font-mono" style={{ fontSize: '9px', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.07em' }}>/mo</span>
+                  </div>
+                </div>
 
-              <button
-                className="btn btn-primary"
-                disabled
-                style={{ opacity: 0.45, cursor: 'not-allowed' }}
-                data-action="upgrade-pro"
-              >
-                COMING SOON
-              </button>
-            </div>
+                <div className="font-rajdhani" style={{ fontSize: '14px', color: 'rgba(255,255,255,0.42)', marginBottom: '20px', position: 'relative', zIndex: 1 }}>
+                  Unlock the full BŌRYKU platform experience
+                </div>
+
+                {/* Features — 2-col compact */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '22px', position: 'relative', zIndex: 1 }}>
+                  {PRO_FEATURES.map(feature => (
+                    <div key={feature} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div style={{ width: 14, height: 14, borderRadius: '50%', flexShrink: 0, background: 'rgba(255,85,31,0.1)', border: '1px solid rgba(255,85,31,0.28)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <svg width="6" height="4" viewBox="0 0 7 5" fill="none">
+                          <path d="M1 2.5l1.8 1.8L6 .7" stroke="#FF551F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <span className="font-rajdhani" style={{ fontSize: '13px', color: 'rgba(255,255,255,0.62)' }}>{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTAs */}
+                <div style={{ display: 'flex', gap: '10px', position: 'relative', zIndex: 1 }}>
+                  <BtnColorful
+                    variant="primary"
+                    arrow
+                    style={{ flex: 1, justifyContent: 'center' }}
+                    onClick={() => setUpgradeOpen(true)}
+                    data-action="upgrade-pro"
+                  >
+                    UPGRADE TO PRO
+                  </BtnColorful>
+                  <Link href="/pricing" style={{ textDecoration: 'none', flexShrink: 0 }}>
+                    <BtnColorful variant="secondary" style={{ padding: '11px 18px' }} data-action="view-pricing">
+                      VIEW PLANS
+                    </BtnColorful>
+                  </Link>
+                </div>
+
+                {/* Trial note */}
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'rgba(255,255,255,0.18)', letterSpacing: '0.1em', textTransform: 'uppercase', textAlign: 'center', margin: '12px 0 0', position: 'relative', zIndex: 1 }}>
+                  7-DAY FREE TRIAL · CANCEL ANYTIME
+                </p>
+              </div>
             </ShineBorder>
+
+            {/* Upgrade modal */}
+            <UpgradeModal isOpen={upgradeOpen} onClose={() => setUpgradeOpen(false)} trigger="default" />
           </div>
         )}
       </div>
