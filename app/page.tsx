@@ -7,6 +7,7 @@ import LoadingScreen from '@/components/hero/LoadingScreen'
 import CinematicHero from '@/components/hero/CinematicHero'
 import { buildPurposes, gearCategories as GEAR_CATALOG } from '@/lib/catalog'
 import BtnColorful from '@/components/ui/BtnColorful'
+import ShineBorder from '@/components/ui/ShineBorder'
 
 /* ─── Animation helpers ─────────────────────────────────────────────────── */
 const fadeUp = {
@@ -294,76 +295,82 @@ function AboutSection() {
 
       {/* Plan cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-[760px] mx-auto mb-12">
-        {PLANS.map((plan) => (
+
+        {/* FREE card */}
+        {PLANS.filter(p => !p.highlight).map((plan) => (
           <div
             key={plan.tier}
             className="relative rounded-sm p-7 flex flex-col gap-5"
             style={{
-              background:   plan.highlight ? 'rgba(255,85,31,0.04)' : 'var(--carbon)',
-              border:       `1px solid ${plan.borderColor}`,
+              background: 'var(--carbon)',
+              border:     `1px solid ${plan.borderColor}`,
             }}
           >
-            {plan.highlight && (
-              <span
-                className="badge badge-med absolute top-4 right-4"
-                style={{ fontSize: '0.6rem' }}
-              >
-                RECOMMENDED
-              </span>
-            )}
-
-            {/* Tier */}
             <div>
-              <p
-                className="font-mono text-[0.625rem] tracking-[0.2em] uppercase mb-1"
-                style={{ color: plan.color }}
-              >
+              <p className="font-mono text-[0.625rem] tracking-[0.2em] uppercase mb-1" style={{ color: plan.color }}>
                 {plan.tier}
               </p>
               <div className="flex items-baseline gap-1">
-                <span
-                  className="font-bebas text-[2.8rem] leading-none"
-                  style={{ color: plan.highlight ? 'var(--orange)' : 'var(--text)' }}
-                >
+                <span className="font-bebas text-[2.8rem] leading-none" style={{ color: 'var(--text)' }}>
                   {plan.price}
                 </span>
-                <span className="font-mono text-[0.7rem] text-[var(--text-3)]">
-                  {plan.period}
-                </span>
+                <span className="font-mono text-[0.7rem] text-[var(--text-3)]">{plan.period}</span>
               </div>
             </div>
-
-            {/* Feature list */}
             <ul className="flex flex-col gap-2">
               {plan.features.map((feat) => (
-                <li
-                  key={feat}
-                  className="font-rajdhani text-[0.9rem] text-[var(--text-2)] flex items-start gap-2"
-                >
+                <li key={feat} className="font-rajdhani text-[0.9rem] text-[var(--text-2)] flex items-start gap-2">
                   <span style={{ color: plan.color }} aria-hidden="true">▸</span>
                   {feat}
                 </li>
               ))}
             </ul>
-
-            {/* CTA */}
             <div className="mt-auto pt-2">
-              {plan.highlight ? (
-                <Link href="/build" data-plan="pro">
-                  <BtnColorful arrow style={{ width: '100%' }}>START PRO</BtnColorful>
-                </Link>
-              ) : (
-                <Link
-                  href="/build"
-                  className="btn btn-ghost w-full justify-center"
-                  data-plan="free"
-                >
-                  START FREE
-                </Link>
-              )}
+              <Link href="/build" className="btn btn-ghost w-full justify-center" data-plan="free">
+                START FREE
+              </Link>
             </div>
           </div>
         ))}
+
+        {/* PRO card — ShineBorder premium */}
+        {PLANS.filter(p => p.highlight).map((plan) => (
+          <ShineBorder key={plan.tier} variant="premium" borderRadius={2}>
+            <div
+              className="relative p-7 flex flex-col gap-5 h-full"
+              style={{ background: 'rgba(255,85,31,0.04)' }}
+            >
+              <span className="badge badge-med absolute top-4 right-4" style={{ fontSize: '0.6rem' }}>
+                RECOMMENDED
+              </span>
+              <div>
+                <p className="font-mono text-[0.625rem] tracking-[0.2em] uppercase mb-1" style={{ color: plan.color }}>
+                  {plan.tier}
+                </p>
+                <div className="flex items-baseline gap-1">
+                  <span className="font-bebas text-[2.8rem] leading-none" style={{ color: 'var(--orange)' }}>
+                    {plan.price}
+                  </span>
+                  <span className="font-mono text-[0.7rem] text-[var(--text-3)]">{plan.period}</span>
+                </div>
+              </div>
+              <ul className="flex flex-col gap-2">
+                {plan.features.map((feat) => (
+                  <li key={feat} className="font-rajdhani text-[0.9rem] text-[var(--text-2)] flex items-start gap-2">
+                    <span style={{ color: plan.color }} aria-hidden="true">▸</span>
+                    {feat}
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-auto pt-2">
+                <Link href="/build" data-plan="pro">
+                  <BtnColorful arrow style={{ width: '100%' }}>START PRO</BtnColorful>
+                </Link>
+              </div>
+            </div>
+          </ShineBorder>
+        ))}
+
       </div>
 
     </Section>

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useBuildStore } from '@/store/buildStore'
+import ShineBorder from '@/components/ui/ShineBorder'
 
 // ─── Mock saved builds ────────────────────────────────────────────────────────
 
@@ -486,12 +487,12 @@ export default function DashboardPage() {
               </span>
             </div>
 
-            {/* PRO upgrade card */}
+            {/* PRO upgrade card — ShineBorder premium */}
+            <ShineBorder variant="premium" borderRadius={6}>
             <div
               style={{
                 background: 'linear-gradient(135deg, #1a0e08 0%, var(--carbon) 100%)',
-                border: '1px solid rgba(255,85,31,0.35)',
-                borderRadius: '6px',
+                borderRadius: '5px',
                 padding: '28px',
                 position: 'relative',
                 overflow: 'hidden',
@@ -563,6 +564,7 @@ export default function DashboardPage() {
                 COMING SOON
               </button>
             </div>
+            </ShineBorder>
           </div>
         )}
       </div>

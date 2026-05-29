@@ -8,6 +8,7 @@ import { VEHICLES } from '@/data/vehicles'
 import type { Product } from '@/types/product'
 import SectionEyebrow from '@/components/ui/SectionEyebrow'
 import AnimatedSearchBar from '@/components/ui/AnimatedSearchBar'
+import ShineBorder from '@/components/ui/ShineBorder'
 
 // ─── Difficulty helpers ───────────────────────────────────────────────────────
 
@@ -25,31 +26,31 @@ const DIFF_COLOR: Record<string, string> = {
 
 // ─── Inline GearProductCard ───────────────────────────────────────────────────
 
-function GearProductCard({ product }: { product: Product }) {
+function GearProductCard({ product, featured }: { product: Product; featured?: boolean }) {
   return (
     <div
       style={{
-        background: 'var(--carbon)',
-        border: '1px solid rgba(255,85,31,0.14)',
-        borderRadius: '6px',
-        padding: '20px',
-        display: 'flex',
+        background:    'var(--carbon)',
+        border:        featured ? 'none' : '1px solid rgba(255,85,31,0.14)',
+        borderRadius:  '6px',
+        padding:       '20px',
+        display:       'flex',
         flexDirection: 'column',
-        gap: '10px',
-        height: '100%',
-        transition: 'border-color 0.2s, transform 0.2s, box-shadow 0.2s',
-        cursor: 'default',
+        gap:           '10px',
+        height:        '100%',
+        transition:    featured ? 'box-shadow 0.2s' : 'border-color 0.2s, transform 0.2s, box-shadow 0.2s',
+        cursor:        'default',
       }}
       onMouseEnter={(e) => {
         const el = e.currentTarget as HTMLDivElement
-        el.style.borderColor = 'var(--orange)'
-        el.style.transform = 'translateY(-3px)'
+        if (!featured) el.style.borderColor = 'var(--orange)'
+        if (!featured) el.style.transform = 'translateY(-3px)'
         el.style.boxShadow = '0 8px 28px rgba(255,85,31,0.1)'
       }}
       onMouseLeave={(e) => {
         const el = e.currentTarget as HTMLDivElement
-        el.style.borderColor = 'rgba(255,85,31,0.14)'
-        el.style.transform = 'translateY(0)'
+        if (!featured) el.style.borderColor = 'rgba(255,85,31,0.14)'
+        if (!featured) el.style.transform = 'translateY(0)'
         el.style.boxShadow = 'none'
       }}
     >
@@ -416,7 +417,13 @@ export default function GearPage() {
                     exit="exit"
                     layout
                   >
-                    <GearProductCard product={product} />
+                    {product.pop ? (
+                      <ShineBorder variant="featured" borderRadius={6} style={{ height: '100%' }}>
+                        <GearProductCard product={product} featured />
+                      </ShineBorder>
+                    ) : (
+                      <GearProductCard product={product} />
+                    )}
                   </motion.div>
                 ))}
               </motion.div>
