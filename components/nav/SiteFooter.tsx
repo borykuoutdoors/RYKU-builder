@@ -229,8 +229,10 @@ export default function SiteFooter() {
     <footer
       ref={ref}
       style={{
-        background: '#070504',
-        borderTop: '1px solid rgba(255,255,255,0.06)',
+        background: 'rgba(5,7,14,0.94)',
+        backdropFilter: 'blur(32px)',
+        WebkitBackdropFilter: 'blur(32px)',
+        borderTop: '1px solid rgba(255,85,31,0.10)',
         paddingBottom: 'var(--status-h)',
         position: 'relative',
         overflow: 'hidden',
@@ -246,9 +248,9 @@ export default function SiteFooter() {
       {/* Grid texture */}
       <div style={{
         position: 'absolute', inset: 0, pointerEvents: 'none',
-        backgroundImage: 'linear-gradient(rgba(255,85,31,0.014) 1px,transparent 1px),linear-gradient(90deg,rgba(255,85,31,0.014) 1px,transparent 1px)',
-        backgroundSize: '52px 52px',
-        opacity: 0.9,
+        backgroundImage: 'linear-gradient(rgba(102,255,255,0.010) 1px,transparent 1px),linear-gradient(90deg,rgba(102,255,255,0.010) 1px,transparent 1px)',
+        backgroundSize: '80px 80px',
+        opacity: 0.6,
       }} />
 
       {/* Ambient top glow */}

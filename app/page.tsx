@@ -22,17 +22,20 @@ function Section({
   id,
   className = '',
   children,
+  glow,
 }: {
   id?: string
   className?: string
   children: React.ReactNode
+  glow?: React.CSSProperties
 }) {
   return (
-    <section
-      id={id}
-      className={`relative py-20 px-6 ${className}`}
-    >
-      <div className="max-w-[1200px] mx-auto">{children}</div>
+    <section id={id} className={`relative py-20 px-6 ${className}`}>
+      {/* Atmospheric separator — replaces hard border-t */}
+      <div className="section-sep" />
+      {/* Optional per-section ambient glow */}
+      {glow && <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', ...glow }} />}
+      <div className="max-w-[1200px] mx-auto relative">{children}</div>
     </section>
   )
 }
@@ -99,7 +102,7 @@ const FEATURES = [
 
 function FeaturesStrip() {
   return (
-    <Section id="features" className="border-t border-[var(--border)]">
+    <Section id="features">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {FEATURES.map((f, i) => (
           <motion.div
@@ -137,7 +140,7 @@ function MissionsSection() {
   return (
     <Section
       id="missions"
-      className="border-t border-[var(--border)] bg-[var(--carbon)] bg-opacity-40"
+      glow={{ background: 'radial-gradient(ellipse 65% 45% at 50% 55%, rgba(255,85,31,0.04) 0%, transparent 70%)' }}
     >
       <SectionHeader eyebrow="MISSION PROFILES" title="CHOOSE YOUR MISSION" center />
 
@@ -184,7 +187,7 @@ function GearSection() {
   const marqueeItems = [...BRANDS, ...BRANDS]
 
   return (
-    <Section id="gear" className="border-t border-[var(--border)]">
+    <Section id="gear">
       <SectionHeader eyebrow="GEAR SYSTEMS" title="PREMIUM OVERLAND GEAR" />
 
       {/* Brand marquee */}
@@ -278,7 +281,7 @@ function AboutSection() {
   return (
     <Section
       id="about"
-      className="border-t border-[var(--border)] bg-[var(--carbon)] bg-opacity-30"
+      glow={{ background: 'radial-gradient(ellipse 75% 55% at 50% 50%, rgba(255,85,31,0.038) 0%, transparent 68%)' }}
     >
       <div className="text-center mb-16">
         <p className="eyebrow mb-3">JOIN THE NETWORK</p>
@@ -300,7 +303,9 @@ function AboutSection() {
             key={plan.tier}
             className="relative rounded-sm p-7 flex flex-col gap-5"
             style={{
-              background: 'var(--carbon)',
+              background: 'rgba(12,11,20,0.75)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
               border:     `1px solid ${plan.borderColor}`,
             }}
           >
@@ -336,7 +341,7 @@ function AboutSection() {
           <ShineBorder key={plan.tier} variant="premium" borderRadius={2}>
             <div
               className="relative p-7 flex flex-col gap-5 h-full"
-              style={{ background: 'rgba(255,85,31,0.04)' }}
+              style={{ background: 'rgba(255,85,31,0.05)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
             >
               <span className="badge badge-med absolute top-4 right-4" style={{ fontSize: '0.6rem' }}>
                 RECOMMENDED
@@ -407,7 +412,7 @@ const CONTACT_CARDS = [
 
 function ContactSection() {
   return (
-    <Section id="contact" className="border-t border-[var(--border)]">
+    <Section id="contact">
       <SectionHeader eyebrow="CONTACT" title="GET IN TOUCH" />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">

@@ -5,6 +5,7 @@ import Navbar from '@/components/nav/Navbar'
 import StatusBar from '@/components/nav/StatusBar'
 import SiteFooter from '@/components/nav/SiteFooter'
 import BotWidget from '@/components/bot/BotWidget'
+import GlobalBackground from '@/components/ui/GlobalBackground'
 
 const saira = Saira_Condensed({
   weight: ['400', '600', '700', '800'],
@@ -66,6 +67,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${saira.variable} ${chakra.variable} ${stardos.variable} ${inter.variable} ${jetbrains.variable}`}>
       <body>
+        <GlobalBackground />
         <Navbar />
         <main style={{ paddingTop: 'var(--nav-h)' }}>
           {children}
