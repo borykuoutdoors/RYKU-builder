@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation'
 import SiteFooter from './SiteFooter'
 
-const SUPPRESS_FOOTER = ['/build', '/builds', '/gear', '/installers']
+const SUPPRESS_FOOTER = ['/build', '/builds', '/gear', '/installers', '/garage']
 
 export default function FooterWrapper() {
   const pathname = usePathname()
