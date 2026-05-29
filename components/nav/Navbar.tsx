@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useBuildStore } from '@/store/buildStore'
@@ -80,50 +81,35 @@ export default function Navbar() {
         }}>
 
           {/* ── Logo ─────────────────────────────────────────────── */}
-          <Link href="/" aria-label="BŌRYKU home" style={{ display: 'flex', alignItems: 'center', gap: 10, lineHeight: 1, textDecoration: 'none' }}>
+          <Link href="/" aria-label="BŌRYKU home" style={{ display: 'flex', alignItems: 'center', gap: 12, lineHeight: 1, textDecoration: 'none' }}>
             <motion.div
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.04 }}
               transition={{ duration: 0.2 }}
-              style={{ display: 'flex', alignItems: 'center', gap: 10 }}
+              style={{ display: 'flex', alignItems: 'center', gap: 12 }}
             >
-              {/* Flame icon — mix-blend-mode:screen removes dark bg against dark navbar */}
-              <div style={{ filter: 'drop-shadow(0 0 10px rgba(255,85,31,0.55))', flexShrink: 0 }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/ryku-logo.jpeg"
+              {/* Flame icon — transparent PNG, no card, no blend mode */}
+              <div style={{ filter: 'drop-shadow(0 0 10px rgba(255,85,31,0.50))', flexShrink: 0 }}>
+                <Image
+                  src="/brand/mark.png"
                   alt=""
                   aria-hidden="true"
-                  style={{
-                    display: 'block',
-                    width: 36,
-                    height: 36,
-                    objectFit: 'cover',
-                    borderRadius: 4,
-                    mixBlendMode: 'screen',
-                  }}
+                  width={38}
+                  height={38}
+                  priority
+                  style={{ objectFit: 'contain' }}
                 />
               </div>
-              {/* Text */}
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={{
-                  fontFamily: 'var(--font-bebas)',
-                  fontSize: '1.75rem',
-                  letterSpacing: '0.08em',
-                  color: '#fff',
-                  lineHeight: 1,
-                }}>
-                  B<span style={{ color: 'var(--orange)', textShadow: '0 0 20px rgba(255,85,31,0.55)' }}>Ō</span>RYKU
-                </span>
-                <span style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.5rem',
-                  letterSpacing: '0.3em',
-                  color: 'var(--text-3)',
-                  marginTop: '-2px',
-                }}>
-                  RYKU
-                </span>
-              </div>
+              {/* Wordmark */}
+              <span style={{
+                fontFamily: 'var(--font-bebas)',
+                fontSize: '1.75rem',
+                letterSpacing: '0.08em',
+                color: '#fff',
+                lineHeight: 1,
+                textShadow: '0 1px 24px rgba(0,0,0,0.5)',
+              }}>
+                B<span style={{ color: 'var(--orange)' }}>Ō</span>RYKU
+              </span>
             </motion.div>
           </Link>
 
@@ -148,15 +134,15 @@ export default function Navbar() {
                       fontWeight: 700,
                       fontSize: '0.75rem',
                       letterSpacing: '0.18em',
-                      color: isActive ? 'var(--orange)' : 'var(--text-2)',
-                      padding: '6px 12px',
+                      color: isActive ? 'var(--orange)' : 'rgba(255,255,255,0.72)',
+                      padding: '6px 10px',
                       transition: 'color 0.2s',
-                      borderBottom: isActive ? '1px solid var(--orange)' : '1px solid transparent',
+                      textShadow: '0 1px 12px rgba(0,0,0,0.6)',
                     }}
-                    onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text)' }}
-                    onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-2)' }}
+                    onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.color = '#fff' }}
+                    onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(255,255,255,0.72)' }}
                   >
-                    {label}
+                    {isActive ? `[ ${label} ]` : label}
                   </Link>
                   {/* SHOP button — inserted immediately after GEAR */}
                   {label === 'GEAR' && (
@@ -207,27 +193,47 @@ export default function Navbar() {
           {/* ── Right-side controls ───────────────────────────────── */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
 
-            {/* Build badge — shown only when a vehicle is selected */}
+            {/* MY BUILD pill — shown only when a vehicle is selected */}
             {vehicle && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.85 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.85 }}
-                className="nav-build-badge"
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.5625rem',
-                  letterSpacing: '0.16em',
-                  color: 'var(--cyan)',
-                  border: '1px solid rgba(102,255,255,0.25)',
-                  background: 'rgba(102,255,255,0.06)',
-                  padding: '4px 10px',
-                  textTransform: 'uppercase',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {buildName || vehicle.name}
-              </motion.div>
+              <Link href="/my-build" aria-label="View your build" style={{ textDecoration: 'none' }}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.85 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.85 }}
+                  className="nav-build-badge"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '7px',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.5625rem',
+                    letterSpacing: '0.14em',
+                    color: '#fff',
+                    border: '1px solid rgba(255,85,31,0.55)',
+                    background: 'rgba(255,85,31,0.08)',
+                    padding: '6px 13px',
+                    textTransform: 'uppercase',
+                    whiteSpace: 'nowrap',
+                    borderRadius: 20,
+                    cursor: 'pointer',
+                    boxShadow: '0 0 14px rgba(255,85,31,0.25), inset 0 0 8px rgba(255,85,31,0.06)',
+                  }}
+                  whileHover={{
+                    background: 'rgba(255,85,31,0.14)',
+                    borderColor: 'rgba(255,85,31,0.80)',
+                    boxShadow: '0 0 22px rgba(255,85,31,0.40), inset 0 0 10px rgba(255,85,31,0.08)',
+                  }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <span style={{
+                    display: 'inline-block', width: 6, height: 6, borderRadius: '50%',
+                    background: 'var(--orange)',
+                    boxShadow: '0 0 8px rgba(255,85,31,0.9)',
+                    flexShrink: 0,
+                  }} />
+                  MY BUILD
+                </motion.div>
+              </Link>
             )}
 
             {/* Auth buttons — always visible */}
@@ -237,36 +243,34 @@ export default function Navbar() {
             >
               <Link href="/login" aria-label="Log in to your account" data-action="nav-login">
                 <motion.button
-                  whileHover={{ color: '#fff', borderColor: 'rgba(255,255,255,0.25)' }}
+                  whileHover={{ color: '#fff' }}
                   transition={{ duration: 0.15 }}
                   style={{
                     background: 'transparent',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    color: 'rgba(255,255,255,0.55)',
+                    border: 'none',
+                    color: 'rgba(255,255,255,0.52)',
                     fontFamily: 'var(--font-rajdhani)',
                     fontWeight: 700,
                     fontSize: '0.72rem',
                     letterSpacing: '0.16em',
-                    padding: '7px 14px',
+                    padding: '7px 12px',
                     cursor: 'pointer',
                     textTransform: 'uppercase',
-                    borderRadius: 2,
-                    backdropFilter: 'blur(8px)',
-                    WebkitBackdropFilter: 'blur(8px)',
                     whiteSpace: 'nowrap',
+                    textShadow: '0 1px 12px rgba(0,0,0,0.6)',
                   }}
                 >
                   LOG IN
                 </motion.button>
               </Link>
 
-              <Link href="/login?mode=signup" aria-label="Create a free account" data-action="nav-signup">
+              <Link href="/signup" aria-label="Create a free account" data-action="nav-signup">
                 <motion.button
-                  whileHover={{ background: 'rgba(255,85,31,0.18)', borderColor: 'rgba(255,85,31,0.6)', color: '#fff' }}
+                  whileHover={{ color: '#fff' }}
                   transition={{ duration: 0.15 }}
                   style={{
-                    background: 'rgba(255,85,31,0.08)',
-                    border: '1px solid rgba(255,85,31,0.35)',
+                    background: 'transparent',
+                    border: '1px solid rgba(255,85,31,0.45)',
                     color: 'var(--orange)',
                     fontFamily: 'var(--font-rajdhani)',
                     fontWeight: 700,
@@ -276,8 +280,6 @@ export default function Navbar() {
                     cursor: 'pointer',
                     textTransform: 'uppercase',
                     borderRadius: 2,
-                    backdropFilter: 'blur(8px)',
-                    WebkitBackdropFilter: 'blur(8px)',
                     whiteSpace: 'nowrap',
                   }}
                 >
@@ -441,7 +443,7 @@ export default function Navbar() {
                   LOG IN
                 </button>
               </Link>
-              <Link href="/login?mode=signup" style={{ flex: 1 }} data-action="mobile-signup">
+              <Link href="/signup" style={{ flex: 1 }} data-action="mobile-signup">
                 <button
                   style={{
                     width: '100%', background: 'rgba(255,85,31,0.08)',

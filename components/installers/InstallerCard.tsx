@@ -4,36 +4,29 @@ interface Props {
   installer: Installer
 }
 
-function StarRating({ rating }: { rating: number }) {
+function Stars({ rating, reviews }: { rating: number; reviews: number }) {
   const full = Math.round(rating)
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-      <span style={{ color: 'var(--orange)', fontSize: '16px', letterSpacing: '1px' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+      <span style={{ color: 'var(--orange)', fontSize: '14px', letterSpacing: '1px' }}>
         {'★'.repeat(Math.min(full, 5))}
         {'☆'.repeat(Math.max(0, 5 - full))}
       </span>
-      <span
-        className="font-mono"
-        style={{ fontSize: '12px', color: 'rgba(255,255,255,0.55)', marginLeft: '4px' }}
-      >
-        {rating.toFixed(1)}
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-3)' }}>
+        {rating.toFixed(1)} · {reviews} reviews
       </span>
     </div>
   )
 }
 
 export default function InstallerCard({ installer }: Props) {
-  const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-    installer.address
-  )}`
-
   return (
     <div
       style={{
         background: 'var(--carbon)',
         border: '1px solid rgba(255,85,31,0.14)',
-        borderRadius: '6px',
-        padding: '22px',
+        borderRadius: '4px',
+        padding: '20px',
         display: 'flex',
         flexDirection: 'column',
         gap: '12px',
@@ -52,117 +45,61 @@ export default function InstallerCard({ installer }: Props) {
         el.style.boxShadow = 'none'
       }}
     >
-      {/* Header: name + rating */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
-        <div
-          className="font-bebas"
-          style={{
-            fontSize: '20px',
-            color: '#fff',
-            letterSpacing: '0.06em',
-            lineHeight: 1.1,
-          }}
-        >
-          {installer.name}
+      {/* Name + lead time */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+        <div style={{
+          fontFamily: 'var(--font-display)', fontSize: '1rem',
+          letterSpacing: '0.06em', color: 'var(--text)', lineHeight: 1.2,
+        }}>
+          {installer.name.toUpperCase()}
         </div>
-        {/* Distance badge */}
-        <span
-          className="font-mono"
-          style={{
-            fontSize: '11px',
-            color: 'var(--cyan)',
-            border: '1px solid rgba(102,255,255,0.35)',
-            borderRadius: '3px',
-            padding: '3px 8px',
-            whiteSpace: 'nowrap',
-            flexShrink: 0,
-          }}
-        >
-          {installer.distance}
+        <span style={{
+          fontFamily: 'var(--font-mono)', fontSize: '0.5rem',
+          letterSpacing: '0.12em', color: 'var(--text-3)',
+          border: '1px solid rgba(255,255,255,0.12)',
+          padding: '2px 7px', borderRadius: '2px',
+          whiteSpace: 'nowrap', flexShrink: 0,
+        }}>
+          {installer.leadTime}
         </span>
       </div>
 
-      {/* Star rating */}
-      <StarRating rating={installer.rating} />
+      {/* Location */}
+      <div style={{
+        fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
+        letterSpacing: '0.12em', color: 'var(--orange)',
+        textTransform: 'uppercase',
+      }}>
+        📍 {installer.city}, {installer.state}
+      </div>
 
-      {/* Tags */}
-      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-        {installer.tags.map((tag) => (
-          <span
-            key={tag}
-            className="font-mono"
-            style={{
-              fontSize: '10px',
-              padding: '2px 8px',
-              borderRadius: '3px',
-              border: '1px solid rgba(255,85,31,0.4)',
-              color: 'rgba(255,85,31,0.85)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-            }}
-          >
-            {tag}
+      {/* Rating */}
+      <Stars rating={installer.rating} reviews={installer.reviews} />
+
+      {/* Specialties */}
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+        {installer.specialty.map(s => (
+          <span key={s} style={{
+            fontFamily: 'var(--font-mono)', fontSize: '0.5rem',
+            letterSpacing: '0.1em', textTransform: 'uppercase',
+            padding: '2px 8px', borderRadius: '2px',
+            border: '1px solid rgba(255,85,31,0.35)',
+            color: 'rgba(255,85,31,0.8)',
+          }}>
+            {s}
           </span>
         ))}
       </div>
 
-      {/* Address */}
-      <div
-        className="font-mono"
-        style={{
-          fontSize: '11px',
-          color: 'rgba(255,255,255,0.4)',
-          letterSpacing: '0.04em',
-          lineHeight: 1.5,
-        }}
+      {/* CTA */}
+      <button
+        className="btn btn-ghost"
+        style={{ marginTop: 4, width: '100%', fontSize: '0.7rem' }}
+        data-action="save-installer"
+        data-installer-id={installer.id}
       >
-        📍 {installer.address}
-      </div>
-
-      {/* Hours */}
-      {installer.hours && (
-        <div
-          className="font-mono"
-          style={{
-            fontSize: '11px',
-            color: 'rgba(255,255,255,0.35)',
-            letterSpacing: '0.04em',
-          }}
-        >
-          🕐 {installer.hours}
-        </div>
-      )}
-
-      {/* Review count */}
-      <div
-        className="font-mono"
-        style={{ fontSize: '11px', color: 'rgba(255,255,255,0.32)', letterSpacing: '0.06em' }}
-      >
-        {installer.reviewCount} reviews
-      </div>
-
-      {/* Actions */}
-      <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
-        <a
-          href={mapsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn btn-ghost"
-          style={{ flex: 1, textAlign: 'center', fontSize: '12px' }}
-          data-action="get-directions"
-          data-installer-id={installer.id}
-        >
-          GET DIRECTIONS
-        </a>
-        <button
-          className="btn btn-ghost"
-          style={{ flex: 1, fontSize: '12px' }}
-          data-action="save-installer"
-          data-installer-id={installer.id}
-        >
-          SAVE
-        </button>
-      </div>
+        REQUEST QUOTE
+      </button>
     </div>
   )
 }

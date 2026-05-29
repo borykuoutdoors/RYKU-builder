@@ -70,7 +70,7 @@ export default function AboutPage() {
 
       {/* ── STATS ── */}
       <section style={{ borderBottom: '1px solid var(--border)', padding: '48px 24px' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 24 }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }} className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {STATS.map(s => (
             <div key={s.label} style={{ textAlign: 'center', padding: '24px 16px', background: 'var(--carbon)', border: '1px solid var(--border)', borderRadius: 4 }}>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'clamp(1.8rem,3vw,2.5rem)', color: 'var(--orange)', marginBottom: 8 }}>{s.value}</div>
@@ -82,7 +82,7 @@ export default function AboutPage() {
 
       {/* ── MISSION STATEMENT ── */}
       <section style={{ padding: '100px 24px', borderBottom: '1px solid var(--border)' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', alignItems: 'center' }} className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           <div>
             <SectionEyebrow>OUR MISSION</SectionEyebrow>
             <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: 'clamp(2rem,4vw,3.5rem)', letterSpacing: '0.04em', marginBottom: 20, marginTop: 12 }}>
@@ -102,7 +102,7 @@ export default function AboutPage() {
               not automation. Just a precision system built by overlanders, for overlanders.
             </p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div className="grid grid-cols-2 gap-4">
             {TEAM.map(m => (
               <div key={m.name} style={{ background: 'var(--carbon)', border: '1px solid var(--border)', borderRadius: 4, padding: 24, textAlign: 'center' }}>
                 <div style={{ fontSize: 32, marginBottom: 12 }}>{m.emoji}</div>
@@ -122,7 +122,7 @@ export default function AboutPage() {
             <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: 'clamp(2rem,4vw,3rem)', letterSpacing: '0.04em', marginTop: 12 }}>JOIN THE RYKU NETWORK</h2>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* FREE */}
             <div style={{ background: 'var(--carbon)', border: '1px solid var(--border)', borderRadius: 4, padding: 32 }}>
               <div style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.5rem', letterSpacing: '0.1em', marginBottom: 4 }}>FREE</div>

@@ -61,7 +61,7 @@ export default function VehicleSelector() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Eyebrow */}
       <div>
-        <p className="eyebrow" style={{ marginBottom: '4px' }}>STEP 01 / 04</p>
+        <p className="eyebrow" style={{ marginBottom: '4px' }}>STEP 01 / 05</p>
         <h2
           style={{
             fontFamily: 'var(--font-bebas), sans-serif',

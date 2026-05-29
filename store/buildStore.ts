@@ -5,19 +5,35 @@ import { persist } from 'zustand/middleware'
 import type { Vehicle } from '@/types/vehicle'
 import type { Product } from '@/types/product'
 
-export type BuildStep = 1 | 2 | 3 | 4
+export type BuildStep = 1 | 2 | 3 | 4 | 5 | 6
+
+// Map purpose IDs → legacy mission strings
+const PURPOSE_TO_MISSION: Record<string, string> = {
+  p_camp:    'camping',
+  p_over:    'overland',
+  p_daily:   'daily',
+  p_work:    'utility',
+  p_offroad: 'offroad',
+  p_travel:  'expedition',
+  p_tow:     'utility',
+  p_fam:     'daily',
+  p_util:    'utility',
+}
 
 interface BuildState {
   // Config
-  vehicle:   Vehicle | null
-  year:      string
-  trim:      string
-  drive:     string
-  mission:   string | null
-  budget:    number
-  items:     Record<string, Product>   // productId → Product
-  step:      BuildStep
-  buildName: string
+  vehicle:     Vehicle | null
+  year:        string
+  trim:        string
+  drive:       string
+  mission:     string | null
+  purposes:    string[]
+  budget:      number
+  items:       Record<string, Product>   // productId → Product
+  step:        BuildStep
+  buildName:   string
+  summaryNote: string
+  completed:   boolean
 
   // Computed (derived)
   gearTotal:       () => number
@@ -35,28 +51,35 @@ interface BuildState {
   hasWheels:       () => boolean
 
   // Actions
-  setVehicle:   (v: Vehicle, year: string, trim: string, drive: string) => void
-  setMission:   (m: string) => void
-  setBudget:    (b: number) => void
-  toggleItem:   (p: Product) => void
-  removeItem:   (id: string) => void
-  clearBuild:   () => void
-  setStep:      (s: BuildStep) => void
-  setBuildName: (name: string) => void
+  setVehicle:      (v: Vehicle, year: string, trim: string, drive: string) => void
+  setMission:      (m: string) => void
+  setBudget:       (b: number) => void
+  toggleItem:      (p: Product) => void
+  removeItem:      (id: string) => void
+  clearBuild:      () => void
+  setStep:         (s: BuildStep) => void
+  setBuildName:    (name: string) => void
+  setSummaryNote:  (note: string) => void
+  setCompleted:    (val: boolean) => void
+  togglePurpose:   (id: string) => void
+  setPurposes:     (ids: string[]) => void
 }
 
 export const useBuildStore = create<BuildState>()(
   persist(
     (set, get) => ({
-      vehicle:   null,
-      year:      '',
-      trim:      '',
-      drive:     '',
-      mission:   null,
-      budget:    15000,
-      items:     {},
-      step:      1,
-      buildName: 'MY BUILD',
+      vehicle:     null,
+      year:        '',
+      trim:        '',
+      drive:       '',
+      mission:     null,
+      purposes:    [],
+      budget:      15000,
+      items:       {},
+      step:        1,
+      buildName:   'MY BUILD',
+      summaryNote: '',
+      completed:   false,
 
       // ── Computed ────────────────────────────────────────────────────────
       gearTotal: () =>
@@ -107,6 +130,21 @@ export const useBuildStore = create<BuildState>()(
 
       setMission: (m) => set({ mission: m }),
 
+      togglePurpose: (id) =>
+        set(state => {
+          const next = state.purposes.includes(id)
+            ? state.purposes.filter(p => p !== id)
+            : [...state.purposes, id]
+          const mission = next.length > 0 ? (PURPOSE_TO_MISSION[next[0]] ?? null) : null
+          return { purposes: next, mission }
+        }),
+
+      setPurposes: (ids) =>
+        set(() => {
+          const mission = ids.length > 0 ? (PURPOSE_TO_MISSION[ids[0]] ?? null) : null
+          return { purposes: ids, mission }
+        }),
+
       setBudget: (b) => set({ budget: b }),
 
       toggleItem: (p) =>
@@ -129,18 +167,22 @@ export const useBuildStore = create<BuildState>()(
 
       clearBuild: () =>
         set({ vehicle: null, year: '', trim: '', drive: '', mission: null,
-              budget: 15000, items: {}, step: 1, buildName: 'MY BUILD' }),
+              purposes: [], budget: 15000, items: {}, step: 1, buildName: 'MY BUILD',
+              summaryNote: '', completed: false }),
 
       setStep: (s) => set({ step: s }),
 
-      setBuildName: (name) => set({ buildName: name }),
+      setBuildName:   (name) => set({ buildName: name }),
+      setSummaryNote: (note) => set({ summaryNote: note }),
+      setCompleted:   (val)  => set({ completed: val }),
     }),
     {
-      name: 'boryku-build',
+      name: 'ryku.build.v1',
       partialize: (s) => ({
         vehicle: s.vehicle, year: s.year, trim: s.trim, drive: s.drive,
-        mission: s.mission, budget: s.budget, items: s.items,
+        mission: s.mission, purposes: s.purposes, budget: s.budget, items: s.items,
         step: s.step, buildName: s.buildName,
+        summaryNote: s.summaryNote, completed: s.completed,
       }),
     }
   )

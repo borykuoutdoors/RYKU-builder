@@ -1,25 +1,39 @@
-import type { Metadata } from 'next'
-import { Bebas_Neue, Rajdhani, Share_Tech_Mono } from 'next/font/google'
+import type { Metadata, Viewport } from 'next'
+import { Saira_Condensed, Chakra_Petch, Stardos_Stencil, Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/nav/Navbar'
 import StatusBar from '@/components/nav/StatusBar'
 
-const bebas = Bebas_Neue({
-  weight: '400',
+const saira = Saira_Condensed({
+  weight: ['400', '600', '700', '800'],
   subsets: ['latin'],
-  variable: '--font-bebas',
+  variable: '--font-display',
   display: 'swap',
 })
 
-const rajdhani = Rajdhani({
+const chakra = Chakra_Petch({
   weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
-  variable: '--font-rajdhani',
+  variable: '--font-tactical',
   display: 'swap',
 })
 
-const shareTechMono = Share_Tech_Mono({
-  weight: '400',
+const stardos = Stardos_Stencil({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  variable: '--font-stencil',
+  display: 'swap',
+})
+
+const inter = Inter({
+  weight: ['400', '500', '600', '700', '800', '900'],
+  subsets: ['latin'],
+  variable: '--font-body',
+  display: 'swap',
+})
+
+const jetbrains = JetBrains_Mono({
+  weight: ['400', '500', '700'],
   subsets: ['latin'],
   variable: '--font-mono',
   display: 'swap',
@@ -34,11 +48,21 @@ export const metadata: Metadata = {
     description: 'Premium overland vehicle build platform.',
     type: 'website',
   },
+  robots: {
+    index: true,
+    follow: true,
+  },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#0a0a0a',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${bebas.variable} ${rajdhani.variable} ${shareTechMono.variable}`}>
+    <html lang="en" className={`${saira.variable} ${chakra.variable} ${stardos.variable} ${inter.variable} ${jetbrains.variable}`}>
       <body>
         <Navbar />
         <main style={{ paddingTop: 'var(--nav-h)', paddingBottom: 'var(--status-h)' }}>
@@ -49,3 +73,4 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
+

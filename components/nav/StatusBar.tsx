@@ -1,106 +1,88 @@
 'use client'
 
-import { useBuildStore } from '@/store/buildStore'
+import { useEffect, useState } from 'react'
+
+function pad2(n: number) { return String(n).padStart(2, '0') }
+
+function LiveClock() {
+  const [time, setTime] = useState('')
+  useEffect(() => {
+    function tick() {
+      const d = new Date()
+      setTime(`${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`)
+    }
+    tick()
+    const id = setInterval(tick, 1000)
+    return () => clearInterval(id)
+  }, [])
+  return <span>{time}</span>
+}
 
 export default function StatusBar() {
-  const vehicle  = useBuildStore(s => s.vehicle)
-  const mission  = useBuildStore(s => s.mission)
-  const budget   = useBuildStore(s => s.budget)
-  const items    = useBuildStore(s => s.items)
-
-  const vehicleName  = vehicle?.name  ?? '—'
-  const missionName  = mission        ?? '—'
-  const budgetDisplay = budget > 0
-    ? budget.toLocaleString('en-US')
-    : '—'
-  const itemCount = Object.keys(items).length
+  const [feedTime, setFeedTime] = useState('')
+  useEffect(() => {
+    const d = new Date()
+    setFeedTime(`${pad2(d.getHours())}:${pad2(d.getMinutes())}`)
+  }, [])
 
   return (
     <div
       className="status-bar"
       role="status"
-      aria-label="Build status"
-      style={{ gap: '0' }}
+      aria-label="System status"
+      style={{ gap: 0 }}
     >
-      {/* Scrolling ticker content */}
       <div style={{
-        fontFamily: 'var(--font-mono)',
-        fontSize: '0.6125rem',
-        letterSpacing: '0.12em',
-        color: 'var(--text-3)',
         display: 'flex',
         alignItems: 'center',
-        gap: '18px',
-        whiteSpace: 'nowrap',
         width: '100%',
+        height: '100%',
+        fontFamily: 'var(--font-mono)',
+        fontSize: '10px',
+        letterSpacing: '0.4em',
+        color: 'var(--ink-faint)',
         overflow: 'hidden',
       }}>
 
-        {/* Pulsing status dot */}
-        <span style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+        {/* ── Left: branding + coords ─────────────────── */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+          <span>
+            <span style={{ color: 'var(--orange)' }}>BŌRYKU</span>
+            {' // OS v4.2 · Lat 44.4280 · Lon −110.5885'}
+          </span>
+        </div>
+
+        {/* ── Center: expedition feed ─────────────────── */}
+        <div style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          overflow: 'hidden',
+        }}>
           <span
             style={{
-              color: 'var(--orange)',
-              animation: 'statusPulse 2s ease-in-out infinite',
               display: 'inline-block',
+              width: 5,
+              height: 5,
+              borderRadius: '50%',
+              background: 'var(--orange)',
+              flexShrink: 0,
+              animation: 'statusPulse 2s ease-in-out infinite',
             }}
-          >
-            ●
+          />
+          <span style={{ whiteSpace: 'nowrap' }}>
+            Expedition Feed · Live · {feedTime}
           </span>
-          <span style={{ color: 'var(--text-3)' }}>SYSTEMS ONLINE</span>
-        </span>
+        </div>
 
-        <Divider />
-
-        {/* Vehicle */}
-        <span style={{ flexShrink: 0 }}>
-          VEHICLE:{' '}
-          <span style={{ color: vehicle ? 'var(--text)' : 'var(--text-3)' }}>
-            {vehicleName}
-          </span>
-        </span>
-
-        <Divider />
-
-        {/* Mission */}
-        <span style={{ flexShrink: 0 }}>
-          MISSION:{' '}
-          <span style={{ color: mission ? 'var(--text)' : 'var(--text-3)' }}>
-            {missionName}
-          </span>
-        </span>
-
-        <Divider />
-
-        {/* Budget */}
-        <span style={{ flexShrink: 0 }}>
-          BUDGET:{' '}
-          <span style={{ color: budget > 0 ? 'var(--text)' : 'var(--text-3)' }}>
-            {budget > 0 ? `$${budgetDisplay}` : '—'}
-          </span>
-        </span>
-
-        <Divider />
-
-        {/* Item count */}
-        <span style={{ flexShrink: 0 }}>
-          BUILD:{' '}
-          <span style={{ color: itemCount > 0 ? 'var(--text)' : 'var(--text-3)' }}>
-            {itemCount}
-          </span>
-          {' '}ITEMS
-        </span>
-
-        <Divider />
-
-        {/* Branding */}
-        <span style={{ flexShrink: 0 }}>
-          <span style={{ color: 'var(--orange)' }}>BŌRYKU</span>
-          <span style={{ color: 'var(--text-3)' }}> v1.0 // RYKU CONNECTED</span>
-        </span>
+        {/* ── Right: live clock ───────────────────────── */}
+        <div style={{ flexShrink: 0 }}>
+          <LiveClock />
+        </div>
       </div>
 
-      {/* Pulse keyframe */}
       <style>{`
         @keyframes statusPulse {
           0%, 100% { opacity: 1; }
@@ -108,18 +90,5 @@ export default function StatusBar() {
         }
       `}</style>
     </div>
-  )
-}
-
-/** Thin vertical separator */
-function Divider() {
-  return (
-    <span style={{
-      display: 'inline-block',
-      width: '1px',
-      height: '10px',
-      background: 'rgba(255,255,255,0.10)',
-      flexShrink: 0,
-    }} />
   )
 }
