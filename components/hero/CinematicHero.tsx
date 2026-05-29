@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react'
 import Link from 'next/link'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
 
 // ─── SSR-safe deterministic pseudo-random ────────────────────────────────────
 function lcg(s: number) {
@@ -42,28 +42,30 @@ interface Props { introComplete: boolean }
 
 export default function CinematicHero({ introComplete }: Props) {
   const sectionRef = useRef<HTMLElement>(null)
+  const reduced = useReducedMotion()
   // THE CHAOS pulse fires at t=4520ms after introComplete (spec: §ANIMATIONS)
   const [chaosLive, setChaosLive] = useState(false)
 
   useEffect(() => {
     if (!introComplete) return
+    if (reduced) { setChaosLive(true); return }
     const t = setTimeout(() => setChaosLive(true), 4520)
     return () => clearTimeout(t)
-  }, [introComplete])
+  }, [introComplete, reduced])
 
   const { scrollYProgress } = useScroll({
     target:  sectionRef,
     offset:  ['start start', 'end start'],
   })
-  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '10%'])
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', reduced ? '0%' : '10%'])
 
   const show = introComplete
 
   // Spec: fadeUp entries — opacity:0, y:14px, blur:8px → settled
   const fadeUp = (delay = 0) => ({
-    initial:    { opacity: 0, y: 14, filter: 'blur(8px)' },
-    animate:    show ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 0, y: 14, filter: 'blur(8px)' },
-    transition: { duration: 1.0, ease: [0.2, 0.7, 0.2, 1] as const, delay },
+    initial:    reduced ? false : { opacity: 0, y: 14, filter: 'blur(8px)' },
+    animate:    show ? { opacity: 1, y: 0, filter: 'blur(0px)' } : (reduced ? {} : { opacity: 0, y: 14, filter: 'blur(8px)' }),
+    transition: { duration: reduced ? 0 : 1.0, ease: [0.2, 0.7, 0.2, 1] as const, delay: reduced ? 0 : delay },
   })
 
   return (
