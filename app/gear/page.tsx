@@ -30,7 +30,9 @@ function GearProductCard({ product, featured }: { product: Product; featured?: b
   return (
     <div
       style={{
-        background:    'var(--carbon)',
+        background:          'rgba(8,10,20,0.72)',
+        backdropFilter:      'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
         border:        featured ? 'none' : '1px solid rgba(255,85,31,0.14)',
         borderRadius:  '6px',
         padding:       '20px',
@@ -227,49 +229,53 @@ export default function GearPage() {
     <div
       style={{
         minHeight: '100vh',
-        background: 'var(--dark)',
-        backgroundImage: 'var(--bg-grid)',
-        backgroundSize: 'var(--bg-grid-size)',
       }}
     >
       {/* ── Page Header ────────────────────────────────────────────────────── */}
       <div
         style={{
-          borderBottom: '1px solid rgba(255,85,31,0.12)',
           padding: '48px 24px 40px',
           textAlign: 'center',
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        <SectionEyebrow>GEAR CATALOG</SectionEyebrow>
-        <h1
-          className="font-bebas"
-          style={{ fontSize: 'clamp(40px, 6vw, 72px)', letterSpacing: '0.05em', color: '#fff', margin: '8px 0' }}
-        >
-          PREMIUM OVERLAND GEAR
-        </h1>
-        <p
-          className="font-rajdhani"
-          style={{ color: 'rgba(255,255,255,0.5)', fontSize: '16px', margin: 0 }}
-        >
-          {PRODUCTS.length} products across {CATEGORIES.length} categories — curated for the mission
-        </p>
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,85,31,0.014) 1px,transparent 1px),linear-gradient(90deg,rgba(255,85,31,0.014) 1px,transparent 1px)', backgroundSize: '60px 60px', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: -100, left: '50%', transform: 'translateX(-50%)', width: 700, height: 400, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(255,85,31,0.06) 0%, transparent 65%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <SectionEyebrow>GEAR CATALOG</SectionEyebrow>
+          <h1
+            className="font-bebas"
+            style={{ fontSize: 'clamp(40px, 6vw, 72px)', letterSpacing: '0.05em', color: '#fff', margin: '8px 0' }}
+          >
+            PREMIUM OVERLAND GEAR
+          </h1>
+          <p
+            className="font-rajdhani"
+            style={{ color: 'rgba(255,255,255,0.5)', fontSize: '16px', margin: 0 }}
+          >
+            {PRODUCTS.length} products across {CATEGORIES.length} categories — curated for the mission
+          </p>
 
-        <div style={{ maxWidth: '520px', margin: '28px auto 0' }}>
-          <AnimatedSearchBar
-            placeholder="Search gear, brands, or products…"
-            value={searchTerm}
-            onChange={setSearchTerm}
-            aria-label="Search gear catalog"
-            data-search-scope="gear"
-          />
+          <div style={{ maxWidth: '520px', margin: '28px auto 0' }}>
+            <AnimatedSearchBar
+              placeholder="Search gear, brands, or products…"
+              value={searchTerm}
+              onChange={setSearchTerm}
+              aria-label="Search gear catalog"
+              data-search-scope="gear"
+            />
+          </div>
         </div>
       </div>
 
       {/* ── Filter Bar ─────────────────────────────────────────────────────── */}
       <div
         style={{
-          background: 'var(--carbon)',
-          borderBottom: '1px solid rgba(255,85,31,0.12)',
+          background: 'rgba(5,8,17,0.88)',
+          borderBottom: '1px solid rgba(255,255,255,0.04)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
           padding: '16px 24px',
           display: 'flex',
           flexWrap: 'wrap',
@@ -287,7 +293,7 @@ export default function GearPage() {
           onChange={(e) => setSelectedVehicle(e.target.value)}
           data-filter="vehicle"
           style={{
-            background: '#111',
+            background: 'rgba(8,10,20,0.88)',
             border: '1px solid rgba(255,85,31,0.3)',
             color: 'rgba(255,255,255,0.7)',
             padding: '7px 12px',
@@ -343,7 +349,7 @@ export default function GearPage() {
           onChange={(e) => setSort(e.target.value as SortKey)}
           data-filter="sort"
           style={{
-            background: '#111',
+            background: 'rgba(8,10,20,0.88)',
             border: '1px solid rgba(255,85,31,0.3)',
             color: 'rgba(255,255,255,0.7)',
             padding: '7px 12px',

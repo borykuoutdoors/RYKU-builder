@@ -120,39 +120,42 @@ export default function InstallersPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'var(--dark)',
       display: 'flex', flexDirection: 'column',
     }}>
 
       {/* ── Page header ─────────────────────────────────────────────────────── */}
       <div style={{
-        borderBottom: '1px solid rgba(255,85,31,0.1)',
         padding: '44px 24px 36px',
         textAlign: 'center',
-        background: 'linear-gradient(180deg, rgba(255,85,31,0.03) 0%, transparent 100%)',
         flexShrink: 0,
+        position: 'relative',
+        overflow: 'hidden',
       }}>
-        <SectionEyebrow>INSTALLER NETWORK</SectionEyebrow>
-        <h1 className="font-bebas" style={{ fontSize: 'clamp(38px,5.5vw,68px)', letterSpacing: '0.05em', color: '#fff', margin: '8px 0 6px' }}>
-          FIND CERTIFIED SHOPS
-        </h1>
-        <p className="font-rajdhani" style={{ color: 'rgba(255,255,255,0.45)', fontSize: 15, margin: '0 0 24px' }}>
-          Vetted overland and off-road specialists across the RYKU network
-        </p>
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,85,31,0.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,85,31,0.012) 1px,transparent 1px)', backgroundSize: '60px 60px', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: -60, left: '50%', transform: 'translateX(-50%)', width: 600, height: 300, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(255,85,31,0.065) 0%, transparent 65%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <SectionEyebrow>INSTALLER NETWORK</SectionEyebrow>
+          <h1 className="font-bebas" style={{ fontSize: 'clamp(38px,5.5vw,68px)', letterSpacing: '0.05em', color: '#fff', margin: '8px 0 6px' }}>
+            FIND CERTIFIED SHOPS
+          </h1>
+          <p className="font-rajdhani" style={{ color: 'rgba(255,255,255,0.45)', fontSize: 15, margin: '0 0 24px' }}>
+            Vetted overland and off-road specialists across the RYKU network
+          </p>
 
-        {/* Stats */}
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
-          <StatPill icon="🔧" value="2,400+" label="Certified Shops" />
-          <StatPill icon="⭐" value="4.8"    label="Avg Rating" />
-          <StatPill icon="📍" value="48"     label="States Covered" />
-          <StatPill icon="⚡" value="24hr"   label="Avg Response" />
+          {/* Stats */}
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <StatPill icon="🔧" value="2,400+" label="Certified Shops" />
+            <StatPill icon="⭐" value="4.8"    label="Avg Rating" />
+            <StatPill icon="📍" value="48"     label="States Covered" />
+            <StatPill icon="⚡" value="24hr"   label="Avg Response" />
+          </div>
         </div>
       </div>
 
       {/* ── Mobile view toggle ───────────────────────────────────────────────── */}
       <div style={{
         display: 'none',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        borderBottom: '1px solid rgba(255,255,255,0.04)',
         flexShrink: 0,
       }} className="installers-mobile-tabs">
         {(['list', 'map'] as const).map(view => (
@@ -184,6 +187,9 @@ export default function InstallersPage() {
             overflow: 'hidden', flexShrink: 0,
             borderRight: '1px solid rgba(255,85,31,0.1)',
             display: 'flex', flexDirection: 'column',
+            background: 'rgba(5,8,17,0.55)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
           }}
           className="installers-left-panel"
         >

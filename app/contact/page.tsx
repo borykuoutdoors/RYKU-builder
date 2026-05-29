@@ -65,7 +65,7 @@ const DEFAULT_FORM: FormState = {
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  background: '#0f0f0f',
+  background: 'rgba(8,10,20,0.88)',
   border: '1px solid rgba(255,85,31,0.25)',
   borderRadius: '4px',
   color: '#fff',
@@ -127,37 +127,39 @@ export default function ContactPage() {
     <div
       style={{
         minHeight: '100vh',
-        background: 'var(--dark)',
-        backgroundImage: 'var(--bg-grid)',
-        backgroundSize: 'var(--bg-grid-size)',
       }}
     >
       {/* ── Header ───────────────────────────────────────────────────────── */}
       <div
         style={{
-          borderBottom: '1px solid rgba(255,85,31,0.12)',
           padding: '48px 24px 40px',
           textAlign: 'center',
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        <SectionEyebrow>CONTACT</SectionEyebrow>
-        <h1
-          className="font-bebas"
-          style={{
-            fontSize: 'clamp(40px, 6vw, 72px)',
-            letterSpacing: '0.05em',
-            color: '#fff',
-            margin: '8px 0',
-          }}
-        >
-          GET IN TOUCH
-        </h1>
-        <p
-          className="font-rajdhani"
-          style={{ color: 'rgba(255,255,255,0.48)', fontSize: '16px', margin: 0 }}
-        >
-          We respond within 24 hours on business days
-        </p>
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,85,31,0.014) 1px,transparent 1px),linear-gradient(90deg,rgba(255,85,31,0.014) 1px,transparent 1px)', backgroundSize: '60px 60px', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: -60, left: '50%', transform: 'translateX(-50%)', width: 600, height: 300, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(255,85,31,0.055) 0%, transparent 65%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <SectionEyebrow>CONTACT</SectionEyebrow>
+          <h1
+            className="font-bebas"
+            style={{
+              fontSize: 'clamp(40px, 6vw, 72px)',
+              letterSpacing: '0.05em',
+              color: '#fff',
+              margin: '8px 0',
+            }}
+          >
+            GET IN TOUCH
+          </h1>
+          <p
+            className="font-rajdhani"
+            style={{ color: 'rgba(255,255,255,0.48)', fontSize: '16px', margin: 0 }}
+          >
+            We respond within 24 hours on business days
+          </p>
+        </div>
       </div>
 
       {/* ── Two-column body ───────────────────────────────────────────────── */}
@@ -178,7 +180,9 @@ export default function ContactPage() {
             /* Success state */
             <div
               style={{
-                background: 'var(--carbon)',
+                background: 'rgba(8,10,20,0.72)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
                 border: '1px solid rgba(255,85,31,0.35)',
                 borderRadius: '6px',
                 padding: '40px 28px',
@@ -215,7 +219,9 @@ export default function ContactPage() {
             <form ref={formRef} noValidate data-form="contact">
               <div
                 style={{
-                  background: 'var(--carbon)',
+                  background: 'rgba(8,10,20,0.72)',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
                   border: '1px solid rgba(255,85,31,0.14)',
                   borderRadius: '6px',
                   padding: '28px',
@@ -327,7 +333,9 @@ export default function ContactPage() {
             <div
               key={card.label}
               style={{
-                background: 'var(--carbon)',
+                background: 'rgba(8,10,20,0.72)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
                 border: '1px solid rgba(255,85,31,0.12)',
                 borderRadius: '6px',
                 padding: '18px 20px',

@@ -43,12 +43,13 @@ const PLAN_PRO = [
 
 export default function AboutPage() {
   return (
-    <div style={{ background: 'var(--dark)' }}>
+    <div>
 
       {/* ── HERO ── */}
-      <section style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', position: 'relative', overflow: 'hidden', borderBottom: '1px solid var(--border)' }}>
+      <section style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,85,31,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,85,31,.022) 1px,transparent 1px)', backgroundSize: '40px 40px' }} />
         <div style={{ position: 'absolute', bottom: 0, left: 0, width: '40%', height: '60%', background: 'radial-gradient(ellipse at bottom left, rgba(255,85,31,0.06) 0%, transparent 70%)' }} />
+        <div style={{ position: 'absolute', top: -80, right: -80, width: 480, height: 480, borderRadius: '50%', background: 'radial-gradient(circle, rgba(102,255,255,0.025) 0%, transparent 65%)', pointerEvents: 'none' }} />
 
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '80px 24px', position: 'relative', zIndex: 1 }}>
           <SectionEyebrow>THE PLATFORM</SectionEyebrow>
@@ -70,10 +71,10 @@ export default function AboutPage() {
       </section>
 
       {/* ── STATS ── */}
-      <section style={{ borderBottom: '1px solid var(--border)', padding: '48px 24px' }}>
+      <section style={{ padding: '48px 24px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }} className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {STATS.map(s => (
-            <div key={s.label} style={{ textAlign: 'center', padding: '24px 16px', background: 'var(--carbon)', border: '1px solid var(--border)', borderRadius: 4 }}>
+            <div key={s.label} style={{ textAlign: 'center', padding: '24px 16px', background: 'rgba(8,10,20,0.72)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 4, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'clamp(1.8rem,3vw,2.5rem)', color: 'var(--orange)', marginBottom: 8 }}>{s.value}</div>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-3)' }}>{s.label}</div>
             </div>
@@ -82,7 +83,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── MISSION STATEMENT ── */}
-      <section style={{ padding: '100px 24px', borderBottom: '1px solid var(--border)' }}>
+      <section style={{ padding: '100px 24px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', alignItems: 'center' }} className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           <div>
             <SectionEyebrow>OUR MISSION</SectionEyebrow>
@@ -105,7 +106,7 @@ export default function AboutPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             {TEAM.map(m => (
-              <div key={m.name} style={{ background: 'var(--carbon)', border: '1px solid var(--border)', borderRadius: 4, padding: 24, textAlign: 'center' }}>
+              <div key={m.name} style={{ background: 'rgba(8,10,20,0.72)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 4, padding: 24, textAlign: 'center', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
                 <div style={{ fontSize: 32, marginBottom: 12 }}>{m.emoji}</div>
                 <div style={{ fontFamily: 'var(--font-bebas)', fontSize: '1rem', letterSpacing: '0.08em', marginBottom: 6 }}>{m.name}</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', letterSpacing: '0.12em', color: 'var(--text-3)', textTransform: 'uppercase' }}>{m.role}</div>
@@ -116,7 +117,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── PLANS ── */}
-      <section style={{ padding: '100px 24px', borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
+      <section style={{ padding: '100px 24px' }}>
         <div style={{ maxWidth: 960, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 60 }}>
             <SectionEyebrow>MEMBERSHIP</SectionEyebrow>
@@ -125,7 +126,7 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* FREE */}
-            <div style={{ background: 'var(--carbon)', border: '1px solid var(--border)', borderRadius: 4, padding: 32 }}>
+            <div style={{ background: 'rgba(8,10,20,0.72)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 4, padding: 32, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
               <div style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.5rem', letterSpacing: '0.1em', marginBottom: 4 }}>FREE</div>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '2rem', color: 'var(--text)', marginBottom: 24 }}>$0<span style={{ fontSize: '0.875rem', color: 'var(--text-3)' }}>/mo</span></div>
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28 }}>
@@ -139,7 +140,7 @@ export default function AboutPage() {
             </div>
 
             {/* PRO */}
-            <div style={{ background: 'var(--carbon)', border: '1px solid var(--orange)', borderRadius: 4, padding: 32, position: 'relative' }}>
+            <div style={{ background: 'rgba(8,10,20,0.72)', border: '1px solid var(--orange)', borderRadius: 4, padding: 32, position: 'relative', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
               <div style={{ position: 'absolute', top: 16, right: 16, fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', color: 'var(--orange)', border: '1px solid var(--border)', padding: '3px 8px', textTransform: 'uppercase' }}>COMING SOON</div>
               <div style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.5rem', letterSpacing: '0.1em', marginBottom: 4, color: 'var(--orange)' }}>PRO</div>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '2rem', color: 'var(--text)', marginBottom: 24 }}>$12<span style={{ fontSize: '0.875rem', color: 'var(--text-3)' }}>/mo</span></div>

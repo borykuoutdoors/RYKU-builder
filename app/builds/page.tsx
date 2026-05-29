@@ -31,12 +31,11 @@ export default function BuildsPage() {
   }, [activeFilter, searchTerm])
 
   return (
-    <div style={{ background: 'var(--dark)', minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh' }}>
 
       {/* HEADER */}
       <section style={{
         padding: '80px 24px 48px',
-        borderBottom: '1px solid var(--border)',
         position: 'relative',
         overflow: 'hidden',
       }}>
@@ -45,6 +44,8 @@ export default function BuildsPage() {
           backgroundImage: 'linear-gradient(rgba(255,85,31,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,85,31,.022) 1px,transparent 1px)',
           backgroundSize: '40px 40px',
         }} />
+        <div style={{ position: 'absolute', bottom: -80, left: -60, width: 500, height: 400, borderRadius: '50%', pointerEvents: 'none', background: 'radial-gradient(ellipse, rgba(255,85,31,0.07) 0%, transparent 68%)' }} />
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 80, background: 'linear-gradient(to bottom, transparent, rgba(5,8,17,0.35))', pointerEvents: 'none' }} />
         <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <SectionEyebrow>COMMUNITY BUILDS</SectionEyebrow>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 20, marginTop: 12 }}>
@@ -71,12 +72,13 @@ export default function BuildsPage() {
 
       {/* FILTER BAR */}
       <div style={{
-        borderBottom: '1px solid var(--border)',
+        borderBottom: '1px solid rgba(255,255,255,0.04)',
         padding: '16px 24px',
         position: 'sticky',
         top: 'var(--nav-h)',
-        background: 'rgba(10,10,10,0.94)',
+        background: 'rgba(5,8,17,0.88)',
         backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
         zIndex: 50,
       }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -128,7 +130,9 @@ export default function BuildsPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
               style={{
-                background: 'var(--carbon)',
+                background: 'rgba(8,10,20,0.70)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
                 border: '1px solid rgba(255,85,31,0.12)',
                 borderRadius: '4px',
                 overflow: 'hidden',
@@ -139,7 +143,7 @@ export default function BuildsPage() {
             >
               {/* Card header */}
               <div style={{
-                background: 'linear-gradient(135deg, #111 0%, rgba(255,85,31,0.06) 100%)',
+                background: 'linear-gradient(135deg, rgba(255,85,31,0.05) 0%, transparent 100%)',
                 padding: '24px 20px 18px',
                 borderBottom: '1px solid rgba(255,255,255,0.05)',
                 position: 'relative',
