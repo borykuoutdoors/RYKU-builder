@@ -259,7 +259,7 @@ const PLANS = [
   },
   {
     tier: 'PRO',
-    price: '$9',
+    price: '$12.99',
     period: '/ month',
     color: 'var(--orange)',
     borderColor: 'rgba(255,85,31,0.35)',
@@ -350,7 +350,7 @@ function AboutSection() {
             <div className="mt-auto pt-2">
               {plan.highlight ? (
                 <Link href="/build" data-plan="pro">
-                  <BtnColorful arrow style={{ width: '100%' }}>START BUILD</BtnColorful>
+                  <BtnColorful arrow style={{ width: '100%' }}>START PRO</BtnColorful>
                 </Link>
               ) : (
                 <Link
@@ -366,12 +366,6 @@ function AboutSection() {
         ))}
       </div>
 
-      {/* Bottom CTA */}
-      <div className="text-center">
-        <Link href="/build" data-cta="hero-bottom">
-          <BtnColorful size="lg" arrow>START BUILD</BtnColorful>
-        </Link>
-      </div>
     </Section>
   )
 }
