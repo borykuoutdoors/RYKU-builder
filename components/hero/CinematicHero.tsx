@@ -199,7 +199,7 @@ export default function CinematicHero() {
         height:         '100vh',
         minHeight:      600,
         overflow:       'hidden',
-        background:     '#050811',
+        background:     'transparent',
         display:        'flex',
         alignItems:     'center',
         justifyContent: 'center',
@@ -221,9 +221,6 @@ export default function CinematicHero() {
           y: bgY, willChange: 'transform',
         }}
       >
-        {/* Base — deep navy */}
-        <div style={{ position: 'absolute', inset: 0, background: '#050811' }} />
-
         {/* Center orange radial glow — headline illumination */}
         <div style={{
           position: 'absolute', inset: 0,
@@ -266,15 +263,16 @@ export default function CinematicHero() {
           `,
         }} />
 
-        {/* Top/bottom vignette */}
+        {/* Top vignette — fade in from nav; bottom dissolves to transparent for seamless scroll */}
         <div style={{
           position: 'absolute', inset: 0,
           background: `
             linear-gradient(to bottom,
               rgba(5,8,17,0.65)  0%,
               transparent        22%,
-              transparent        70%,
-              rgba(5,8,17,0.80)  100%)
+              transparent        62%,
+              rgba(5,8,17,0.18)  80%,
+              transparent        100%)
           `,
         }} />
 
