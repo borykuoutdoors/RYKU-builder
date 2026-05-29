@@ -20,7 +20,7 @@ function buildSVGString(
   const orange = '#FF551F'
 
   let svg = ''
-  svg += '<svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">'
+  svg += '<svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:120px;display:block">'
   svg += '<defs>'
   svg += '<linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2a2a2a"/><stop offset="100%" stop-color="#111"/></linearGradient>'
   svg += '<linearGradient id="glassGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a3a4a" stop-opacity="0.9"/><stop offset="100%" stop-color="#0a1a22" stop-opacity="0.7"/></linearGradient>'
@@ -216,12 +216,17 @@ export default function VehiclePreview() {
       {/* SVG Preview */}
       <div
         className="w-full rounded"
-        style={{ background: 'rgba(10,10,10,0.8)', border: '1px solid rgba(255,85,31,0.10)', padding: '12px' }}
+        style={{
+          background: 'rgba(10,10,10,0.8)',
+          border: '1px solid rgba(255,85,31,0.10)',
+          padding: '6px 8px',
+          lineHeight: 0,
+        }}
         dangerouslySetInnerHTML={{ __html: svgString }}
       />
 
       {/* Layer tags */}
-      <div className="flex flex-wrap gap-2 justify-center">
+      <div className="flex flex-wrap gap-1.5 justify-center">
         <AnimatePresence>
           {layers.map(layer => (
             <motion.div

@@ -3,7 +3,7 @@ import { Saira_Condensed, Chakra_Petch, Stardos_Stencil, Inter, JetBrains_Mono }
 import './globals.css'
 import Navbar from '@/components/nav/Navbar'
 import StatusBar from '@/components/nav/StatusBar'
-import SiteFooter from '@/components/nav/SiteFooter'
+import FooterWrapper from '@/components/nav/FooterWrapper'
 import BotWidget from '@/components/bot/BotWidget'
 import GlobalBackground from '@/components/ui/GlobalBackground'
 
@@ -72,7 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main style={{ paddingTop: 'var(--nav-h)' }}>
           {children}
         </main>
-        <SiteFooter />
+        <FooterWrapper />
         <StatusBar />
         <BotWidget />
       </body>

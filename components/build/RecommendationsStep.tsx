@@ -19,19 +19,54 @@ export default function RecommendationsStep() {
     : '$' + budget.toLocaleString('en-US')
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-      {/* Eyebrow */}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {/* Eyebrow + heading */}
       <div>
         <p className="eyebrow" style={{ marginBottom: '4px' }}>STEP 04 / 05</p>
         <h2 style={{
-          fontFamily: 'var(--font-display)', fontSize: 'clamp(1.75rem, 3vw, 2.5rem)',
-          letterSpacing: '0.04em', color: 'var(--text)',
+          fontFamily: 'var(--font-display)',
+          fontSize: 'clamp(1.75rem, 3vw, 2.5rem)',
+          letterSpacing: '0.04em',
+          color: 'var(--text)',
+          lineHeight: 1.1,
         }}>
-          RECOMMENDED LOADOUT
+          RECON
         </h2>
         <p style={{ color: 'var(--text-3)', fontSize: '0.875rem', marginTop: '4px' }}>
-          Based on <strong style={{ color: 'var(--orange)' }}>{profileLabel}</strong> and a <strong style={{ color: 'var(--orange)' }}>{budgetFmt}</strong> budget.
+          Review your recommended loadout or take full control of the build.
         </p>
+      </div>
+
+      {/* Recommended setup sub-header */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        paddingBottom: '12px',
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
+      }}>
+        <div style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.5625rem',
+          letterSpacing: '0.15em',
+          color: 'var(--text-3)',
+          textTransform: 'uppercase',
+        }}>
+          RECOMMENDED SETUP
+        </div>
+        <div style={{
+          flex: 1,
+          height: '1px',
+          background: 'rgba(255,255,255,0.04)',
+        }} />
+        <div style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.5rem',
+          letterSpacing: '0.12em',
+          color: 'var(--text-3)',
+        }}>
+          {profileLabel} · <span style={{ color: 'var(--orange)' }}>{budgetFmt}</span>
+        </div>
       </div>
 
       {/* Category cards */}
@@ -44,8 +79,9 @@ export default function RecommendationsStep() {
           <div
             key={cat.id}
             style={{
-              background: 'var(--carbon)',
-              border: '1px solid rgba(255,85,31,0.12)',
+              background: 'rgba(8,10,20,0.72)',
+              backdropFilter: 'blur(12px)',
+              border: '1px solid rgba(255,85,31,0.10)',
               borderRadius: '4px',
               padding: '18px',
               display: 'flex',
@@ -54,7 +90,6 @@ export default function RecommendationsStep() {
               position: 'relative',
             }}
           >
-            {/* Priority badge */}
             {idx < 2 && (
               <span style={{
                 position: 'absolute', top: 12, right: 12,
@@ -129,7 +164,13 @@ export default function RecommendationsStep() {
       </div>
 
       {/* Navigation */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingTop: '8px',
+        borderTop: '1px solid rgba(255,255,255,0.05)',
+      }}>
         <button
           onClick={() => setStep(3)}
           style={{
@@ -146,18 +187,21 @@ export default function RecommendationsStep() {
         </button>
 
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          {/* Secondary: use the recommended setup to proceed to review */}
           <button
-            onClick={() => setStep(6)}
+            onClick={() => setStep(5)}
             className="btn btn-ghost btn-sm"
           >
-            CONFIGURE MANUALLY
+            RECOMMENDED SETUP
           </button>
+
+          {/* Primary: take full manual control */}
           <button
             className="btn btn-primary btn-lg"
-            onClick={() => setStep(5)}
+            onClick={() => setStep(6)}
           >
-            REVIEW BUILD
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ marginLeft: '4px' }}>
+            CONFIGURE MANUALLY
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ marginLeft: '6px' }}>
               <path d="M2 7h10M8 3l4 4-4 4" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
