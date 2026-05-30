@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { useBuildStore } from '@/store/buildStore'
 import ShineBorder from '@/components/ui/ShineBorder'
 import BtnColorful from '@/components/ui/BtnColorful'
-import UpgradeModal from '@/components/modals/UpgradeModal'
 
 // ─── Mock saved builds ────────────────────────────────────────────────────────
 
@@ -53,8 +52,7 @@ type Tab = 'BUILDS' | 'GEAR' | 'ACCOUNT'
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
-  const [activeTab,    setActiveTab]    = useState<Tab>('BUILDS')
-  const [upgradeOpen,  setUpgradeOpen]  = useState(false)
+  const [activeTab, setActiveTab] = useState<Tab>('BUILDS')
 
   const {
     vehicle,
@@ -69,14 +67,7 @@ export default function DashboardPage() {
   const itemCount = Object.keys(items).length
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: 'var(--dark)',
-        backgroundImage: 'var(--bg-grid)',
-        backgroundSize: 'var(--bg-grid-size)',
-      }}
-    >
+    <div style={{ minHeight: '100vh' }}>
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <div
         style={{
@@ -535,15 +526,16 @@ export default function DashboardPage() {
 
                 {/* CTAs */}
                 <div style={{ display: 'flex', gap: '10px', position: 'relative', zIndex: 1 }}>
-                  <BtnColorful
-                    variant="primary"
-                    arrow
-                    style={{ flex: 1, justifyContent: 'center' }}
-                    onClick={() => setUpgradeOpen(true)}
-                    data-action="upgrade-pro"
-                  >
-                    UPGRADE TO PRO
-                  </BtnColorful>
+                  <Link href="/subscribe?plan=pro" style={{ textDecoration: 'none', flex: 1 }}>
+                    <BtnColorful
+                      variant="primary"
+                      arrow
+                      style={{ width: '100%', justifyContent: 'center' }}
+                      data-action="upgrade-pro"
+                    >
+                      UPGRADE TO PRO
+                    </BtnColorful>
+                  </Link>
                   <Link href="/pricing" style={{ textDecoration: 'none', flexShrink: 0 }}>
                     <BtnColorful variant="secondary" style={{ padding: '11px 18px' }} data-action="view-pricing">
                       VIEW PLANS
@@ -558,8 +550,6 @@ export default function DashboardPage() {
               </div>
             </ShineBorder>
 
-            {/* Upgrade modal */}
-            <UpgradeModal isOpen={upgradeOpen} onClose={() => setUpgradeOpen(false)} trigger="default" />
           </div>
         )}
       </div>

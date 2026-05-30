@@ -262,7 +262,7 @@ export default function UpgradeModal({ isOpen, onClose, trigger = 'default', onU
                   transition={{ delay: 0.3, duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
                   style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}
                 >
-                  <Link href="/pricing" onClick={() => { onUpgrade?.(); onClose() }} style={{ textDecoration: 'none', display: 'block' }}>
+                  <Link href="/subscribe?plan=pro" onClick={() => { onUpgrade?.(); onClose() }} style={{ textDecoration: 'none', display: 'block' }}>
                     <BtnColorful
                       variant="primary"
                       arrow
