@@ -310,9 +310,9 @@ export const PRODUCTS: Product[] = [
     note: 'No-drill installation. Cargo containment + organizer system.',
   },
 
-  // ── POWER & COMMS (5) ──────────────────────────────────────────────────
+  // ── POWER SYSTEMS (5) ──────────────────────────────────────────────────
   {
-    id: 'pc1', category: 'Power & Comms', brand: 'Goal Zero', name: 'Yeti 3000X Power Station',
+    id: 'ps1', category: 'Power Systems', brand: 'Goal Zero', name: 'Yeti 3000X Power Station',
     emoji: '⚡', price: 2800, labor: 0, diff: 'easy',
     img: 'https://picsum.photos/seed/ryku-pc1/400/220',
     compat: ['tacoma', '4runner', 'bronco', 'gladiator', 'wrangler', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
@@ -320,7 +320,7 @@ export const PRODUCTS: Product[] = [
     note: '3,032Wh. Charges via solar, wall, or 12V car outlet.',
   },
   {
-    id: 'pc2', category: 'Power & Comms', brand: 'Renogy', name: '200W Flexible Solar Kit',
+    id: 'ps2', category: 'Power Systems', brand: 'Renogy', name: '200W Flexible Solar Kit',
     emoji: '☀️', price: 380, labor: 120, diff: 'med',
     img: 'https://picsum.photos/seed/ryku-pc2/400/220',
     compat: ['tacoma', '4runner', 'bronco', 'gladiator', 'wrangler', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
@@ -328,33 +328,67 @@ export const PRODUCTS: Product[] = [
     note: 'Mounts to roof rack. Requires charge controller (included).',
   },
   {
-    id: 'pc3', category: 'Power & Comms', brand: 'Garmin', name: 'inReach Mini 2 Satellite',
-    emoji: '📡', price: 450, labor: 0, diff: 'easy', pop: true,
-    img: 'https://picsum.photos/seed/ryku-pc3/400/220',
-    compat: ['tacoma', '4runner', 'bronco', 'gladiator', 'wrangler', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
-    mission: ['overland', 'expedition', 'recovery', 'offroad'],
-    note: 'Two-way satellite messaging. SOS capability. Monthly plan required.',
-  },
-  {
-    id: 'pc4', category: 'Power & Comms', brand: 'Midland', name: 'MXT575 GMRS Radio',
-    emoji: '📻', price: 320, labor: 100, diff: 'easy',
-    img: 'https://picsum.photos/seed/ryku-pc4/400/220',
-    compat: ['tacoma', '4runner', 'bronco', 'gladiator', 'wrangler', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
-    mission: ['tactical', 'overland', 'offroad', 'recovery'],
-    note: '50W GMRS. NOAA weather alerts. FCC license required.',
-  },
-  {
-    id: 'pc5', category: 'Power & Comms', brand: 'Optima', name: 'YellowTop D34 Battery',
+    id: 'ps3', category: 'Power Systems', brand: 'Optima', name: 'YellowTop D34 Dual Battery',
     emoji: '🔋', price: 280, labor: 80, diff: 'easy',
     img: 'https://picsum.photos/seed/ryku-pc5/400/220',
     compat: ['tacoma', '4runner', 'bronco', 'gladiator', 'wrangler', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
     mission: ['overland', 'utility', 'expedition', 'daily'],
     note: 'Dual-purpose AGM. 750 CCA. Handles heavy accessory loads.',
   },
-
-  // ── CAMPING GEAR (4) ──────────────────────────────────────────────────
   {
-    id: 'cg1', category: 'Camping Gear', brand: 'ARB', name: 'Elements Fridge 63QT',
+    id: 'ps4', category: 'Power Systems', brand: 'Redarc', name: 'BCDC1250D Dual Battery Manager',
+    emoji: '⚡', price: 580, labor: 480, diff: 'hard', pop: true,
+    img: 'https://picsum.photos/seed/ryku-ps4/400/220',
+    compat: ['tacoma', '4runner', 'bronco', 'gladiator', 'wrangler', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
+    mission: ['overland', 'expedition', 'camping'],
+    note: 'Charges secondary battery from alternator and solar. MPPT included.',
+  },
+  {
+    id: 'ps5', category: 'Power Systems', brand: 'Victron Energy', name: 'MultiPlus 12/1200 Inverter',
+    emoji: '⚡', price: 680, labor: 320, diff: 'hard',
+    img: 'https://picsum.photos/seed/ryku-ps5/400/220',
+    compat: ['tacoma', '4runner', 'bronco', 'gladiator', 'wrangler', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
+    mission: ['expedition', 'overland', 'camping'],
+    note: 'Pure sine wave. 1200W continuous. Bluetooth monitoring via app.',
+  },
+
+  // ── WATER SYSTEMS (4) ──────────────────────────────────────────────────
+  {
+    id: 'ws1', category: 'Water Systems', brand: 'Front Runner', name: 'Water Tank 25L + Pump',
+    emoji: '💧', price: 480, labor: 160, diff: 'med', pop: true,
+    img: 'https://picsum.photos/seed/ryku-ws1/400/220',
+    compat: ['tacoma', '4runner', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
+    mission: ['overland', 'expedition', 'camping'],
+    note: 'Mounts to roof rack crossbar. Includes 12V pump and faucet kit.',
+  },
+  {
+    id: 'ws2', category: 'Water Systems', brand: 'Overland Vehicle Systems', name: '5-Gallon Water Cube Pair',
+    emoji: '💧', price: 160, labor: 0, diff: 'easy',
+    img: 'https://picsum.photos/seed/ryku-ws2/400/220',
+    compat: ['tacoma', '4runner', 'bronco', 'gladiator', 'wrangler', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
+    mission: ['camping', 'overland', 'expedition'],
+    note: 'BPA-free polyethylene. Stackable. Fits most cargo systems.',
+  },
+  {
+    id: 'ws3', category: 'Water Systems', brand: 'MSR', name: 'Guardian Purifier Pump',
+    emoji: '💧', price: 380, labor: 0, diff: 'easy',
+    img: 'https://picsum.photos/seed/ryku-ws3/400/220',
+    compat: ['tacoma', '4runner', 'bronco', 'gladiator', 'wrangler', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
+    mission: ['expedition', 'overland', 'camping'],
+    note: 'Military-grade hollow fiber. 2.5L/min. Removes viruses, bacteria, protozoa.',
+  },
+  {
+    id: 'ws4', category: 'Water Systems', brand: 'National Luna', name: 'Slide-Out Shower System',
+    emoji: '🚿', price: 640, labor: 120, diff: 'med',
+    img: 'https://picsum.photos/seed/ryku-ws4/400/220',
+    compat: ['tacoma', 'f150', 'tundra', 'ram1500', 'colorado', 'gladiator'],
+    mission: ['camping', 'overland', 'expedition'],
+    note: '12V solar pump. 4-gallon heated reservoir. Mounts to bed slide.',
+  },
+
+  // ── CAMPING (4) ──────────────────────────────────────────────────
+  {
+    id: 'cg1', category: 'Camping', brand: 'ARB', name: 'Elements Fridge 63QT',
     emoji: '❄️', price: 1100, labor: 80, diff: 'easy', pop: true,
     img: 'https://picsum.photos/seed/ryku-cg1/400/220',
     compat: ['tacoma', '4runner', 'bronco', 'gladiator', 'wrangler', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
@@ -362,7 +396,7 @@ export const PRODUCTS: Product[] = [
     note: 'Dual zone capable. -8°F to 50°F range. 12/24V compatible.',
   },
   {
-    id: 'cg2', category: 'Camping Gear', brand: 'Trail Kitchens', name: 'Overland Kitchen System',
+    id: 'cg2', category: 'Camping', brand: 'Trail Kitchens', name: 'Overland Kitchen System',
     emoji: '🍳', price: 940, labor: 120, diff: 'med',
     img: 'https://picsum.photos/seed/ryku-cg2/400/220',
     compat: ['tacoma', 'f150', 'tundra', 'ram1500', 'gladiator', 'colorado', 'frontier'],
@@ -370,7 +404,7 @@ export const PRODUCTS: Product[] = [
     note: 'Truck-bed slide-out system. Includes propane burner and workspace.',
   },
   {
-    id: 'cg3', category: 'Camping Gear', brand: 'Overland Vehicle Systems', name: '270° Awning + Walls',
+    id: 'cg3', category: 'Camping', brand: 'Overland Vehicle Systems', name: '270° Awning + Walls',
     emoji: '⛱️', price: 890, labor: 80, diff: 'easy',
     img: 'https://picsum.photos/seed/ryku-cg3/400/220',
     compat: ['tacoma', '4runner', 'bronco', 'gladiator', 'wrangler', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
@@ -378,38 +412,106 @@ export const PRODUCTS: Product[] = [
     note: 'Attaches to roof rack or bed rack side rail.',
   },
   {
-    id: 'cg4', category: 'Camping Gear', brand: 'National Luna', name: 'Camp Shower + Table',
-    emoji: '🚿', price: 480, labor: 60, diff: 'med',
+    id: 'cg4', category: 'Camping', brand: 'Goal Zero', name: 'Yeti 500X + Boulder 50 Kit',
+    emoji: '⚡', price: 680, labor: 0, diff: 'easy',
     img: 'https://picsum.photos/seed/ryku-cg4/400/220',
     compat: ['tacoma', '4runner', 'bronco', 'f150', 'tundra', 'ram1500', 'colorado'],
     mission: ['camping', 'overland', 'expedition'],
-    note: '12V solar shower pump. Fold-out aluminum table included.',
+    note: 'Portable solar + station kit. Charges phones, lights, and small appliances.',
   },
 
-  // ── ARMOR & PROTECTION (4) ──────────────────────────────────────────────
+  // ── COMMUNICATIONS (4) ──────────────────────────────────────────────────
   {
-    id: 'ap1', category: 'Armor & Protection', brand: 'Rough Country', name: 'HD Skid Plate Set',
+    id: 'cm1', category: 'Communications', brand: 'Garmin', name: 'inReach Mini 2 Satellite',
+    emoji: '📡', price: 450, labor: 0, diff: 'easy', pop: true,
+    img: 'https://picsum.photos/seed/ryku-pc3/400/220',
+    compat: ['tacoma', '4runner', 'bronco', 'gladiator', 'wrangler', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
+    mission: ['overland', 'expedition', 'recovery', 'offroad'],
+    note: 'Two-way satellite messaging. SOS capability. Monthly plan required.',
+  },
+  {
+    id: 'cm2', category: 'Communications', brand: 'Midland', name: 'MXT575 GMRS Radio',
+    emoji: '📻', price: 320, labor: 100, diff: 'easy',
+    img: 'https://picsum.photos/seed/ryku-pc4/400/220',
+    compat: ['tacoma', '4runner', 'bronco', 'gladiator', 'wrangler', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
+    mission: ['tactical', 'overland', 'offroad', 'recovery'],
+    note: '50W GMRS. NOAA weather alerts. FCC license required.',
+  },
+  {
+    id: 'cm3', category: 'Communications', brand: 'Uniden', name: 'PRO520XL CB Radio',
+    emoji: '📻', price: 60, labor: 80, diff: 'easy',
+    img: 'https://picsum.photos/seed/ryku-cm3/400/220',
+    compat: ['tacoma', '4runner', 'bronco', 'gladiator', 'wrangler', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
+    mission: ['overland', 'utility', 'recovery'],
+    note: 'Classic 40-channel CB. Weather scan. Universal dash mount.',
+  },
+  {
+    id: 'cm4', category: 'Communications', brand: 'BaoFeng', name: 'UV-5R+ Ham Radio Kit',
+    emoji: '📡', price: 85, labor: 0, diff: 'easy',
+    img: 'https://picsum.photos/seed/ryku-cm4/400/220',
+    compat: ['tacoma', '4runner', 'bronco', 'gladiator', 'wrangler', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
+    mission: ['tactical', 'overland', 'expedition', 'recovery'],
+    note: 'Dual band VHF/UHF. Ham license required. Includes programming cable.',
+  },
+
+  // ── INTERIOR UPGRADES (4) ──────────────────────────────────────────────────
+  {
+    id: 'iu1', category: 'Interior Upgrades', brand: 'Covercraft', name: 'Carhartt SeatSavers (Front Pair)',
+    emoji: '🪑', price: 420, labor: 0, diff: 'easy', pop: true,
+    img: 'https://picsum.photos/seed/ryku-iu1/400/220',
+    compat: ['tacoma', '4runner', 'bronco', 'gladiator', 'wrangler', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
+    mission: ['daily', 'utility', 'overland'],
+    note: 'Vehicle-specific pattern. Rugged Carhartt canvas. Saddle brown or gravel.',
+  },
+  {
+    id: 'iu2', category: 'Interior Upgrades', brand: 'Tuffy Security', name: 'Lock Box Underseat',
+    emoji: '🔒', price: 480, labor: 60, diff: 'easy',
+    img: 'https://picsum.photos/seed/ryku-iu2/400/220',
+    compat: ['tacoma', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
+    mission: ['utility', 'overland', 'tactical'],
+    note: 'Mounts under rear seat. Keyed-alike lock cylinder. 10-gauge steel.',
+  },
+  {
+    id: 'iu3', category: 'Interior Upgrades', brand: 'WeatherTech', name: 'FloorLiner All-Weather Set',
+    emoji: '🪑', price: 240, labor: 0, diff: 'easy',
+    img: 'https://picsum.photos/seed/ryku-iu3/400/220',
+    compat: ['tacoma', '4runner', 'bronco', 'gladiator', 'wrangler', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
+    mission: ['daily', 'utility', 'camping'],
+    note: 'Laser-measured, vehicle-specific. Full perimeter coverage.',
+  },
+  {
+    id: 'iu4', category: 'Interior Upgrades', brand: 'Alien Sunshade', name: 'Folding Windshield Blocker',
+    emoji: '🪟', price: 80, labor: 0, diff: 'easy',
+    img: 'https://picsum.photos/seed/ryku-iu4/400/220',
+    compat: ['tacoma', '4runner', 'bronco', 'gladiator', 'wrangler', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier'],
+    mission: ['camping', 'daily', 'overland'],
+    note: 'Multi-layer reflective. Custom-fit. Keeps cab 40°F cooler.',
+  },
+
+  // ── ARMOR (4) ──────────────────────────────────────────────────
+  {
+    id: 'ap1', category: 'Armor', brand: 'Rough Country', name: 'HD Skid Plate Set',
     emoji: '🛡️', price: 640, labor: 240, diff: 'med',
     img: 'https://picsum.photos/seed/ryku-ap1/400/220',
     compat: ['tacoma', '4runner', 'tundra'], mission: ['offroad', 'overland', 'recovery'],
     note: '3/16" steel. Covers front diff, transfer case, and fuel tank.',
   },
   {
-    id: 'ap2', category: 'Armor & Protection', brand: 'Smittybilt', name: 'XRC Rock Sliders',
+    id: 'ap2', category: 'Armor', brand: 'Smittybilt', name: 'XRC Rock Sliders',
     emoji: '🛡️', price: 480, labor: 280, diff: 'hard',
     img: 'https://picsum.photos/seed/ryku-ap2/400/220',
     compat: ['wrangler', 'gladiator'], mission: ['offroad', 'recovery', 'tactical'],
     note: 'Frame-mounted. 3/16" steel tube. Load-bearing design.',
   },
   {
-    id: 'ap3', category: 'Armor & Protection', brand: 'Westin', name: 'HDX Bandit Bumper',
+    id: 'ap3', category: 'Armor', brand: 'Westin', name: 'HDX Bandit Bumper',
     emoji: '🛡️', price: 1200, labor: 450, diff: 'hard',
     img: 'https://picsum.photos/seed/ryku-ap3/400/220',
     compat: ['f150', 'tundra', 'ram1500'], mission: ['utility', 'offroad', 'daily'],
     note: 'Full-width steel bumper with integrated light mounts.',
   },
   {
-    id: 'ap4', category: 'Armor & Protection', brand: 'Fishbone Offroad', name: 'Tailgate MOLLE Panel',
+    id: 'ap4', category: 'Armor', brand: 'Fishbone Offroad', name: 'Tailgate MOLLE Panel',
     emoji: '🛡️', price: 280, labor: 60, diff: 'easy',
     img: 'https://picsum.photos/seed/ryku-ap4/400/220',
     compat: ['tacoma', 'f150', 'tundra', 'ram1500', 'colorado', 'frontier', 'gladiator'],
@@ -431,14 +533,17 @@ export function getCompatibleProducts(vehicleId: string, missionId?: string): Pr
 }
 
 export const CATEGORIES: { id: string; label: string; emoji: string }[] = [
-  { id: 'Suspension',       label: 'Suspension',      emoji: '🔩' },
-  { id: 'Roof Racks',       label: 'Roof Racks',      emoji: '🔲' },
-  { id: 'Rooftop Tents',    label: 'Rooftop Tents',   emoji: '⛺' },
-  { id: 'Lighting',         label: 'Lighting',        emoji: '💡' },
-  { id: 'Wheels & Tires',   label: 'Wheels & Tires',  emoji: '🛞' },
-  { id: 'Recovery',         label: 'Recovery',        emoji: '🪝' },
-  { id: 'Storage & Cargo',  label: 'Storage & Cargo', emoji: '📦' },
-  { id: 'Power & Comms',    label: 'Power & Comms',   emoji: '⚡' },
-  { id: 'Camping Gear',     label: 'Camping Gear',    emoji: '❄️' },
-  { id: 'Armor & Protection', label: 'Armor',         emoji: '🛡️' },
+  { id: 'Suspension',       label: 'Suspension',       emoji: '🔩' },
+  { id: 'Roof Racks',       label: 'Roof Racks',        emoji: '🔲' },
+  { id: 'Rooftop Tents',    label: 'Rooftop Tents',     emoji: '⛺' },
+  { id: 'Lighting',         label: 'Lighting',          emoji: '💡' },
+  { id: 'Wheels & Tires',   label: 'Wheels & Tires',    emoji: '🛞' },
+  { id: 'Recovery',         label: 'Recovery',          emoji: '🪝' },
+  { id: 'Storage & Cargo',  label: 'Storage & Cargo',   emoji: '📦' },
+  { id: 'Power Systems',    label: 'Power Systems',     emoji: '⚡' },
+  { id: 'Water Systems',    label: 'Water Systems',     emoji: '💧' },
+  { id: 'Camping',          label: 'Camping',           emoji: '🏕️' },
+  { id: 'Communications',   label: 'Communications',    emoji: '📡' },
+  { id: 'Interior Upgrades',label: 'Interior Upgrades', emoji: '🪑' },
+  { id: 'Armor',            label: 'Armor',             emoji: '🛡️' },
 ]

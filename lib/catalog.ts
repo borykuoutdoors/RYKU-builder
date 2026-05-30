@@ -277,14 +277,19 @@ export interface GearCategory {
 }
 
 export const gearCategories: GearCategory[] = [
-  { id: 'suspension',  label: 'Suspension',        icon: '⚙️',  sku: '18 SKUs', hint: 'Lifts, shocks, coilovers, UCA' },
-  { id: 'roof-racks',  label: 'Roof Racks',         icon: '🏗️',  sku: '14 SKUs', hint: 'Platform, basket, and tent-ready racks' },
-  { id: 'tents',       label: 'Rooftop Tents',      icon: '⛺',  sku: '11 SKUs', hint: 'Hardshell and softshell RTTs' },
-  { id: 'lighting',    label: 'Lighting',           icon: '💡',  sku: '22 SKUs', hint: 'Light bars, spots, scenes, pods' },
-  { id: 'recovery',    label: 'Recovery',           icon: '🪝',  sku: '16 SKUs', hint: 'Winches, boards, straps, anchors' },
-  { id: 'armor',       label: 'Armor & Protection', icon: '🛡️',  sku: '13 SKUs', hint: 'Bumpers, sliders, skid plates' },
-  { id: 'power',       label: 'Power Systems',      icon: '⚡',  sku: '9 SKUs',  hint: 'Dual battery, inverters, solar' },
-  { id: 'storage',     label: 'Storage & Cargo',    icon: '📦',  sku: '17 SKUs', hint: 'Drawers, bed systems, molle panels' },
+  { id: 'Suspension',        label: 'Suspension',        icon: '🔩', sku: '7 SKUs',  hint: 'Lifts, shocks, coilovers, UCAs' },
+  { id: 'Roof Racks',        label: 'Roof Racks',         icon: '🔲', sku: '5 SKUs',  hint: 'Platform, basket, and tent-ready racks' },
+  { id: 'Rooftop Tents',     label: 'Rooftop Tents',      icon: '⛺', sku: '4 SKUs',  hint: 'Hardshell and softshell RTTs' },
+  { id: 'Lighting',          label: 'Lighting',           icon: '💡', sku: '5 SKUs',  hint: 'Light bars, spots, scenes, pods' },
+  { id: 'Wheels & Tires',    label: 'Wheels & Tires',     icon: '🛞', sku: '4 SKUs',  hint: 'All-terrain and mud-terrain setups' },
+  { id: 'Recovery',          label: 'Recovery',           icon: '🪝', sku: '6 SKUs',  hint: 'Winches, boards, straps, anchors' },
+  { id: 'Storage & Cargo',   label: 'Storage & Cargo',    icon: '📦', sku: '4 SKUs',  hint: 'Drawers, bed systems, molle panels' },
+  { id: 'Power Systems',     label: 'Power Systems',      icon: '⚡', sku: '5 SKUs',  hint: 'Dual battery, inverters, solar' },
+  { id: 'Water Systems',     label: 'Water Systems',      icon: '💧', sku: '4 SKUs',  hint: 'Tanks, pumps, filtration, showers' },
+  { id: 'Camping',           label: 'Camping',            icon: '🏕️', sku: '4 SKUs',  hint: 'Camp kitchen, sleeping, tools' },
+  { id: 'Communications',    label: 'Communications',     icon: '📡', sku: '4 SKUs',  hint: 'Satellite comms, CB, ham radio' },
+  { id: 'Interior Upgrades', label: 'Interior Upgrades',  icon: '🪑', sku: '4 SKUs',  hint: 'Seat covers, lockboxes, floormats' },
+  { id: 'Armor',             label: 'Armor',              icon: '🛡️', sku: '4 SKUs',  hint: 'Bumpers, sliders, skid plates' },
 ]
 
 // ─── Shop featured (8) — coming-soon items ────────────────────────────────────

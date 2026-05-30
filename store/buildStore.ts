@@ -115,7 +115,7 @@ export const useBuildStore = create<BuildState>()(
 
       hasArmor: () =>
         Object.values(get().items).some(
-          p => p.category === 'Armor & Protection' && (p.id === 'rc5' || p.id === 'ap3')
+          p => p.category === 'Armor' && (p.id === 'rc5' || p.id === 'ap3')
         ),
 
       hasSusp: () =>

@@ -39,7 +39,7 @@ export function getBuildWarnings(
   const vals = Object.values(items)
   const hasRack = vals.some(p => p.category === 'Roof Racks')
   const hasRTT  = vals.some(p => p.category === 'Rooftop Tents')
-  const hasShelter = hasRTT || vals.some(p => p.category === 'Camping Gear' && p.id === 'cg3')
+  const hasShelter = hasRTT || vals.some(p => p.category === 'Camping' && p.id === 'cg3')
   const hasWinch = vals.some(p => ['rc1', 'rc2'].includes(p.id))
 
   if (hasRTT && !hasRack) warnings.push('RTT requires a roof rack to mount.')

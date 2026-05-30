@@ -86,7 +86,7 @@ export default function ShopPage() {
           lineHeight: 0.92,
           marginBottom: 24,
         }}>
-          RYKU SHOP
+          BŌRYKU SHOP
         </h1>
 
         {/* Subheading */}
@@ -96,11 +96,11 @@ export default function ShopPage() {
           color: 'var(--text-2)',
           lineHeight: 1.6,
           marginBottom: 40,
-          maxWidth: 420,
+          maxWidth: 460,
           margin: '0 auto 40px',
         }}>
-          The BŌRYKU store is being stocked with premium overland gear.
-          Curated products, verified compatibility, direct-to-door delivery.
+          Official BŌRYKU-branded products — apparel, accessories, and original gear
+          designed in-house. Third-party overland equipment lives in the Gear catalog.
         </p>
 
         {/* Divider line */}
@@ -119,10 +119,10 @@ export default function ShopPage() {
           textAlign: 'left',
         }}>
           {[
-            { icon: '🛡️', text: 'Compatibility-verified gear' },
-            { icon: '🚚', text: 'Free shipping over $150' },
-            { icon: '⚙️',  text: '55+ premium brands' },
-            { icon: '🔧', text: 'Install-ready kits' },
+            { icon: '🎽', text: 'BŌRYKU apparel & hats' },
+            { icon: '🚚', text: 'Free shipping over $75' },
+            { icon: '⚡',  text: 'Exclusive original designs' },
+            { icon: '🔒', text: 'Secure official BŌRYKU store' },
           ].map(({ icon, text }) => (
             <div
               key={text}
@@ -149,7 +149,7 @@ export default function ShopPage() {
 
         {/* CTA buttons */}
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link href="/gear" className="btn btn-primary">
+          <Link href="/gear" className="btn btn-ghost">
             BROWSE GEAR CATALOG
           </Link>
           <Link href="/build" className="btn btn-ghost">
@@ -166,7 +166,7 @@ export default function ShopPage() {
           textTransform: 'uppercase',
           marginTop: 48,
         }}>
-          BŌRYKU SUPPLY CHAIN — INITIALIZING
+          BŌRYKU ORIGINAL — OFFICIAL MERCHANDISE LOADING
         </p>
       </div>
     </main>
