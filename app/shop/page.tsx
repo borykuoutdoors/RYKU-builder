@@ -10,7 +10,6 @@ export default function ShopPage() {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '60px 24px',
-        background: 'var(--dark)',
         position: 'relative',
         overflow: 'hidden',
       }}
