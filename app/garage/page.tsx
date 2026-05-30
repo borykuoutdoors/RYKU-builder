@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import SectionEyebrow from '@/components/ui/SectionEyebrow'
 import {
@@ -15,6 +17,8 @@ import {
   getVehicleBuilds,
   getVehicleTotalValue,
 } from '@/lib/garageData'
+import { useGarageStore, type SavedBuild } from '@/store/garageStore'
+import { useBuildStore } from '@/store/buildStore'
 
 // ─── Progress bar ────────────────────────────────────────────────────────────
 
@@ -333,6 +337,177 @@ function VehicleCard({ vehicle }: { vehicle: GarageVehicle }) {
   )
 }
 
+// ─── Planner Build Card ──────────────────────────────────────────────────────
+
+const SAVED_STATUS_CFG: Record<string, { label: string; color: string; bg: string; dot: string }> = {
+  ACTIVE:    { label: 'ACTIVE',    color: 'var(--green)', bg: 'rgba(155,191,106,0.08)', dot: 'var(--green)' },
+  DRAFT:     { label: 'DRAFT',     color: 'rgba(255,255,255,0.4)', bg: 'rgba(255,255,255,0.04)', dot: 'rgba(255,255,255,0.3)' },
+  COMPLETED: { label: 'COMPLETE',  color: '#66FFFF', bg: 'rgba(102,255,255,0.07)', dot: '#66FFFF' },
+}
+
+function PlannerBuildCard({ build, onDelete, onOpenPlanner }: {
+  build:           SavedBuild
+  onDelete:        () => void
+  onOpenPlanner:   () => void
+}) {
+  const [confirm, setConfirm] = useState(false)
+  const st = SAVED_STATUS_CFG[build.status] ?? SAVED_STATUS_CFG.ACTIVE
+  const isOverBudget = build.spent > build.budget
+
+  return (
+    <div style={{
+      padding: '16px 20px',
+      borderBottom: '1px solid rgba(255,255,255,0.04)',
+      display: 'flex', flexDirection: 'column', gap: 10,
+    }}>
+      {/* Header row */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+          <span style={{
+            fontFamily: 'var(--font-display)', fontSize: '0.95rem',
+            letterSpacing: '0.06em', color: 'var(--text)',
+            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+          }}>
+            {build.name}
+          </span>
+          <span style={{
+            flexShrink: 0,
+            fontFamily: 'var(--font-mono)', fontSize: '0.45rem', letterSpacing: '0.14em',
+            background: st.bg, border: `1px solid ${st.dot}30`, color: st.color,
+            padding: '3px 8px', borderRadius: 2,
+            display: 'flex', alignItems: 'center', gap: 4,
+          }}>
+            <span style={{ width: 4, height: 4, borderRadius: '50%', background: st.dot, display: 'inline-block' }} />
+            {st.label}
+          </span>
+          {build.source?.type === 'community' && (
+            <span style={{
+              fontFamily: 'var(--font-mono)', fontSize: '0.45rem', letterSpacing: '0.10em',
+              background: 'rgba(102,255,255,0.06)', border: '1px solid rgba(102,255,255,0.18)',
+              color: 'rgba(102,255,255,0.7)', padding: '3px 8px', borderRadius: 2, flexShrink: 0,
+            }}>
+              COMMUNITY COPY
+            </span>
+          )}
+        </div>
+        <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+          {confirm ? (
+            <>
+              <button
+                onClick={onDelete}
+                style={{
+                  background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.35)',
+                  color: '#ef4444', fontFamily: 'var(--font-mono)',
+                  fontSize: '0.45rem', letterSpacing: '0.1em',
+                  padding: '5px 10px', cursor: 'pointer', borderRadius: 2,
+                }}
+              >
+                CONFIRM DELETE
+              </button>
+              <button
+                onClick={() => setConfirm(false)}
+                style={{
+                  background: 'transparent', border: '1px solid rgba(255,255,255,0.10)',
+                  color: 'var(--text-3)', fontFamily: 'var(--font-mono)',
+                  fontSize: '0.45rem', letterSpacing: '0.1em',
+                  padding: '5px 10px', cursor: 'pointer', borderRadius: 2,
+                }}
+              >
+                CANCEL
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={onOpenPlanner}
+                style={{
+                  background: 'rgba(255,85,31,0.08)', border: '1px solid rgba(255,85,31,0.22)',
+                  color: 'var(--orange)', fontFamily: 'var(--font-mono)',
+                  fontSize: '0.45rem', letterSpacing: '0.12em',
+                  padding: '5px 10px', cursor: 'pointer', borderRadius: 2, transition: 'all 0.15s',
+                }}
+              >
+                OPEN IN PLANNER
+              </button>
+              <button
+                onClick={() => setConfirm(true)}
+                style={{
+                  background: 'transparent', border: '1px solid rgba(255,255,255,0.08)',
+                  color: 'var(--text-3)', fontFamily: 'var(--font-mono)',
+                  fontSize: '0.45rem', letterSpacing: '0.12em',
+                  padding: '5px 10px', cursor: 'pointer', borderRadius: 2, transition: 'all 0.15s',
+                }}
+              >
+                DELETE
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Progress */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{
+          flex: 1, height: 3, borderRadius: 2,
+          background: 'rgba(255,255,255,0.06)', overflow: 'hidden',
+        }}>
+          <div style={{
+            width: `${Math.min(build.completionPct, 100)}%`,
+            height: '100%', borderRadius: 2,
+            background: isOverBudget ? '#f87171' : st.dot,
+            transition: 'width 0.6s ease',
+          }} />
+        </div>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', color: st.dot, minWidth: 28, textAlign: 'right' }}>
+          {build.completionPct}%
+        </span>
+      </div>
+
+      {/* Meta */}
+      <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+        {[
+          { label: 'ITEMS',  value: build.itemCount },
+          { label: 'BUDGET', value: formatCurrency(build.budget) },
+          { label: 'SPENT',  value: formatCurrency(build.spent), accent: isOverBudget ? '#f87171' : undefined },
+          { label: 'SAVED',  value: build.savedAt },
+        ].map(m => (
+          <div key={m.label}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.45rem', letterSpacing: '0.12em', color: 'var(--text-3)', marginBottom: 1 }}>
+              {m.label}
+            </div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', letterSpacing: '0.06em', color: m.accent ?? 'var(--text-2)' }}>
+              {m.value}
+            </div>
+          </div>
+        ))}
+        {build.categories.length > 0 && (
+          <div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.45rem', letterSpacing: '0.12em', color: 'var(--text-3)', marginBottom: 4 }}>
+              CATEGORIES
+            </div>
+            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+              {build.categories.slice(0, 3).map(cat => (
+                <span key={cat} style={{
+                  fontFamily: 'var(--font-mono)', fontSize: '0.45rem', letterSpacing: '0.08em',
+                  background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)',
+                  color: 'var(--text-3)', padding: '2px 6px', borderRadius: 2,
+                }}>
+                  {cat}
+                </span>
+              ))}
+              {build.categories.length > 3 && (
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.45rem', color: 'var(--text-3)' }}>
+                  +{build.categories.length - 3}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ─── Garage stats bar ────────────────────────────────────────────────────────
 
 const GARAGE_STATS = [
@@ -348,6 +523,33 @@ const GARAGE_STATS = [
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function GaragePage() {
+  const router          = useRouter()
+  const plannerBuilds   = useGarageStore(s => s.builds)
+  const savedProducts   = useGarageStore(s => s.savedProducts)
+  const deleteBuild     = useGarageStore(s => s.deleteBuild)
+  const unsaveProduct   = useGarageStore(s => s.unsaveProduct)
+  const loadBuild       = useBuildStore(s => s.loadBuild)
+
+  const totalBuilds  = GARAGE_BUILDS.length + plannerBuilds.length
+  const activeBuilds = GARAGE_BUILDS.filter(b => b.status === 'ACTIVE').length +
+    plannerBuilds.filter(b => b.status === 'ACTIVE').length
+  const totalInvested = formatCurrency(
+    GARAGE_BUILDS.reduce((s, b) => s + b.spent, 0) +
+    plannerBuilds.reduce((s, b) => s + b.spent, 0)
+  )
+
+  function handleOpenInPlanner(build: SavedBuild) {
+    loadBuild({
+      mission:     build.mission,
+      purposes:    build.purposes,
+      budget:      build.budget,
+      items:       build.items,
+      buildName:   build.name,
+      summaryNote: build.summaryNote,
+    })
+    router.push('/build')
+  }
+
   return (
     <div style={{
       paddingTop: 'var(--page-top)',
@@ -368,7 +570,7 @@ export default function GaragePage() {
                 MY GARAGE
               </h1>
               <p style={{ color: 'var(--text-3)', fontSize: '0.875rem' }}>
-                Your vehicles and build projects, all in one place.
+                Your vehicles, builds, and saved gear — all in one place.
               </p>
             </div>
             <button style={{
@@ -396,31 +598,41 @@ export default function GaragePage() {
           </div>
 
           {/* Stats bar */}
-          <div style={{
-            display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: 1, marginTop: 32,
-            border: '1px solid rgba(255,255,255,0.07)',
-            borderRadius: 6, overflow: 'hidden',
-            background: 'rgba(255,255,255,0.06)',
-          }}>
-            {GARAGE_STATS.map((s, i) => (
-              <div key={s.label} style={{
-                background: 'rgba(8,10,20,0.86)', backdropFilter: 'blur(12px)',
-                padding: '18px 24px',
-                borderRight: i < GARAGE_STATS.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none',
+          {(() => {
+            const stats = [
+              { label: 'VEHICLES',      value: GARAGE_VEHICLES.length },
+              { label: 'TOTAL BUILDS',  value: totalBuilds },
+              { label: 'ACTIVE BUILDS', value: activeBuilds },
+              { label: 'TOTAL INVESTED',value: totalInvested },
+            ]
+            return (
+              <div style={{
+                display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
+                gap: 1, marginTop: 32,
+                border: '1px solid rgba(255,255,255,0.07)',
+                borderRadius: 6, overflow: 'hidden',
+                background: 'rgba(255,255,255,0.06)',
               }}>
-                <div style={{
-                  fontFamily: 'var(--font-display)', fontSize: '1.6rem',
-                  letterSpacing: '0.04em', color: 'var(--text)', marginBottom: 4,
-                }}>
-                  {s.value}
-                </div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', letterSpacing: '0.16em', color: 'var(--text-3)' }}>
-                  {s.label}
-                </div>
+                {stats.map((s, i) => (
+                  <div key={s.label} style={{
+                    background: 'rgba(8,10,20,0.86)', backdropFilter: 'blur(12px)',
+                    padding: '18px 24px',
+                    borderRight: i < stats.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none',
+                  }}>
+                    <div style={{
+                      fontFamily: 'var(--font-display)', fontSize: '1.6rem',
+                      letterSpacing: '0.04em', color: 'var(--text)', marginBottom: 4,
+                    }}>
+                      {s.value}
+                    </div>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', letterSpacing: '0.16em', color: 'var(--text-3)' }}>
+                      {s.label}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            )
+          })()}
         </div>
 
         {/* ── Vehicle cards ─────────────────────────────────────────── */}
@@ -477,6 +689,127 @@ export default function GaragePage() {
             </div>
           </motion.div>
         </div>
+
+        {/* ── Planner Builds ─────────────────────────────────────────── */}
+        {plannerBuilds.length > 0 && (
+          <div style={{ marginTop: 48 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+              <div>
+                <SectionEyebrow>BUILD PLANNER</SectionEyebrow>
+                <h2 style={{
+                  fontFamily: 'var(--font-display)', fontSize: '1.6rem',
+                  letterSpacing: '0.04em', color: 'var(--text)', margin: 0,
+                }}>
+                  MY BUILDS
+                </h2>
+              </div>
+              <Link href="/build" className="btn btn-ghost" style={{ fontSize: '0.7rem', padding: '8px 16px' }}>
+                + NEW BUILD
+              </Link>
+            </div>
+            <div style={{
+              background: 'rgba(8,10,20,0.70)', backdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255,255,255,0.07)',
+              borderRadius: 8, overflow: 'hidden',
+            }}>
+              <div style={{ padding: '12px 20px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', letterSpacing: '0.18em', color: 'var(--text-3)' }}>
+                  BUILDS · {plannerBuilds.length}
+                </span>
+                <div style={{ display: 'flex', gap: 4 }}>
+                  {(['ACTIVE', 'COMPLETED', 'DRAFT'] as const).map(st => {
+                    const count = plannerBuilds.filter(b => b.status === st).length
+                    if (count === 0) return null
+                    const cfg = SAVED_STATUS_CFG[st]
+                    return (
+                      <span key={st} style={{
+                        fontFamily: 'var(--font-mono)', fontSize: '0.45rem', letterSpacing: '0.10em',
+                        background: cfg.bg, border: `1px solid ${cfg.dot}30`,
+                        color: cfg.color, padding: '2px 7px', borderRadius: 2,
+                      }}>
+                        {count} {st}
+                      </span>
+                    )
+                  })}
+                </div>
+              </div>
+              {plannerBuilds.map(build => (
+                <PlannerBuildCard
+                  key={build.id}
+                  build={build}
+                  onDelete={() => deleteBuild(build.id)}
+                  onOpenPlanner={() => handleOpenInPlanner(build)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Saved Products ─────────────────────────────────────────── */}
+        {savedProducts.length > 0 && (
+          <div style={{ marginTop: 48 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+              <div>
+                <SectionEyebrow>GEAR CATALOG</SectionEyebrow>
+                <h2 style={{
+                  fontFamily: 'var(--font-display)', fontSize: '1.6rem',
+                  letterSpacing: '0.04em', color: 'var(--text)', margin: 0,
+                }}>
+                  SAVED PRODUCTS
+                </h2>
+              </div>
+              <Link href="/gear" className="btn btn-ghost" style={{ fontSize: '0.7rem', padding: '8px 16px' }}>
+                BROWSE GEAR
+              </Link>
+            </div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+              gap: 14,
+            }}>
+              {savedProducts.map(product => (
+                <div key={product.id} style={{
+                  background: 'rgba(8,10,20,0.70)', backdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255,85,31,0.12)',
+                  borderRadius: 6, padding: '16px',
+                  display: 'flex', flexDirection: 'column', gap: 10,
+                  position: 'relative',
+                }}>
+                  {/* Remove button */}
+                  <button
+                    onClick={() => unsaveProduct(product.id)}
+                    title="Remove from saved"
+                    style={{
+                      position: 'absolute', top: 10, right: 10,
+                      background: 'transparent', border: 'none',
+                      color: 'rgba(255,255,255,0.25)', fontSize: 14,
+                      cursor: 'pointer', lineHeight: 1,
+                    }}
+                  >
+                    ✕
+                  </button>
+                  <span style={{ fontSize: 32 }}>{product.emoji}</span>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', color: 'var(--orange)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                    {product.brand}
+                  </div>
+                  <Link href={`/gear/${product.id}`} style={{ textDecoration: 'none' }}>
+                    <div style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', color: 'var(--text)', letterSpacing: '0.05em' }}>
+                      {product.name}
+                    </div>
+                  </Link>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', color: 'var(--orange)' }}>
+                    ${product.price.toLocaleString()}
+                  </div>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <Link href={`/gear/${product.id}`} className="btn btn-ghost" style={{ fontSize: '0.6rem', padding: '5px 10px', flex: 1, textAlign: 'center' }}>
+                      VIEW
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Responsive */}

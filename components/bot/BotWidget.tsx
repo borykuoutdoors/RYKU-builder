@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useBuildStore } from '@/store/buildStore'
+import { useGarageStore } from '@/store/garageStore'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -335,6 +336,18 @@ const RESPONSE_PATTERNS: ResponseEntry[] = [
     'Tire sizing depends on your lift and wheel well clearance:\n\n• **Stock or 1–2" lift** → 275/70R17 (~32.2") — no rub\n• **2–3" lift** → 285/70R17 (~33.0") — sweet spot\n• **3–4" lift** → 285/75R17 (~34.8") — capable off-road, minor regear needed\n• **4"+ lift** → 315/70R17 (~35.0") — max capable, regear recommended\n\n**Best all-terrain options:**\n• BFGoodrich KO2 — most proven, road/trail balance\n• Toyo Open Country AT3 — quietest ride\n• Falken Wildpeak AT3W — best value\n\nWhat\'s your current lift height and rim size?',
   ],
 
+  // Garage builds
+  [
+    /\b(my builds?|my garage|show.*builds?|list.*builds?|saved builds?)\b/i,
+    '__GARAGE_BUILDS__',
+  ],
+
+  // Saved products
+  [
+    /\b(my saved products?|saved gear|saved products?|what.*saved)\b/i,
+    '__SAVED_PRODUCTS__',
+  ],
+
   // Pricing / subscription
   [
     /\b(pro|subscription|upgrade|plan|pricing|worth)\b/i,
@@ -478,6 +491,10 @@ export default function BotWidget() {
   // Live build context
   const ctx = useBuildContext()
 
+  // Garage context
+  const garageBuilds   = useGarageStore(s => s.builds)
+  const garageSaved    = useGarageStore(s => s.savedProducts)
+
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, typing])
 
   useEffect(() => {
@@ -608,6 +625,32 @@ export default function BotWidget() {
           ? '**Installation complexity: MODERATE–HIGH.** Suspension and armor work should be done by a certified shop.'
           : '**Installation complexity: MODERATE.** Most of your items can be installed by a general off-road accessories shop.',
       ]
+      return lines.join('\n')
+    }
+
+    if (token === '__GARAGE_BUILDS__') {
+      if (garageBuilds.length === 0) {
+        return 'Your garage is empty. Head to the **Build Planner** to create and save your first build — I\'ll track it here.'
+      }
+      const lines = [`You have **${garageBuilds.length} saved build${garageBuilds.length > 1 ? 's' : ''}** in your garage:`, '']
+      garageBuilds.slice(0, 5).forEach(b => {
+        lines.push(`• **${b.name}** — ${b.vehicleName} · ${b.status}`)
+      })
+      if (garageBuilds.length > 5) lines.push(`...and ${garageBuilds.length - 5} more`)
+      lines.push('', 'Head to **/garage** to view, edit, or continue any build.')
+      return lines.join('\n')
+    }
+
+    if (token === '__SAVED_PRODUCTS__') {
+      if (garageSaved.length === 0) {
+        return 'No saved products yet. Browse the **Gear Catalog** and tap the ♡ on anything you\'re considering — it lands here.'
+      }
+      const lines = [`You have **${garageSaved.length} saved product${garageSaved.length > 1 ? 's' : ''}**:`, '']
+      garageSaved.slice(0, 5).forEach(p => {
+        lines.push(`• **${p.name}** (${p.category}) — $${p.price.toLocaleString()}`)
+      })
+      if (garageSaved.length > 5) lines.push(`...and ${garageSaved.length - 5} more`)
+      lines.push('', 'View them all in your **/garage** → Saved Products tab.')
       return lines.join('\n')
     }
 

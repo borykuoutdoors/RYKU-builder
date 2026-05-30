@@ -7,6 +7,7 @@ import { PRODUCTS, CATEGORIES } from '@/data/products'
 import { VEHICLES } from '@/data/vehicles'
 import type { Product } from '@/types/product'
 import { useBuildStore } from '@/store/buildStore'
+import { useGarageStore } from '@/store/garageStore'
 import SectionEyebrow from '@/components/ui/SectionEyebrow'
 import AnimatedSearchBar from '@/components/ui/AnimatedSearchBar'
 import ShineBorder from '@/components/ui/ShineBorder'
@@ -385,7 +386,6 @@ export default function GearPage() {
   const [sort,            setSort]             = useState<SortKey>('price-asc')
 
   // ── UI state ────────────────────────────────────────────────────────────────
-  const [savedIds,         setSavedIds]         = useState<Set<string>>(new Set())
   const [compareList,      setCompareList]       = useState<string[]>([])
   const [showCompareModal, setShowCompareModal]  = useState(false)
   const [sidebarOpen,      setSidebarOpen]       = useState(false)
@@ -393,6 +393,11 @@ export default function GearPage() {
   // ── Build store ─────────────────────────────────────────────────────────────
   const buildItems  = useBuildStore(s => s.items)
   const toggleItem  = useBuildStore(s => s.toggleItem)
+
+  // ── Garage store (saved products) ───────────────────────────────────────────
+  const savedProducts  = useGarageStore(s => s.savedProducts)
+  const saveProduct    = useGarageStore(s => s.saveProduct)
+  const unsaveProduct  = useGarageStore(s => s.unsaveProduct)
 
   // ── Price range from preset ─────────────────────────────────────────────────
   const priceRange = useMemo(() =>
@@ -494,13 +499,13 @@ export default function GearPage() {
     })
   }, [])
 
-  const toggleSave = useCallback((id: string) => {
-    setSavedIds(prev => {
-      const s = new Set(prev)
-      s.has(id) ? s.delete(id) : s.add(id)
-      return s
-    })
-  }, [])
+  const toggleSave = useCallback((product: Product) => {
+    if (savedProducts.some(p => p.id === product.id)) {
+      unsaveProduct(product.id)
+    } else {
+      saveProduct(product)
+    }
+  }, [savedProducts, saveProduct, unsaveProduct])
 
   const toggleCompare = useCallback((id: string) => {
     setCompareList(prev => {
@@ -921,11 +926,11 @@ export default function GearPage() {
                           product={product}
                           featured
                           inBuild={!!buildItems[product.id]}
-                          saved={savedIds.has(product.id)}
+                          saved={savedProducts.some(p => p.id === product.id)}
                           inCompare={compareList.includes(product.id)}
                           compareCount={compareList.length}
                           onBuild={() => toggleItem(product)}
-                          onSave={() => toggleSave(product.id)}
+                          onSave={() => toggleSave(product)}
                           onCompare={() => toggleCompare(product.id)}
                         />
                       </ShineBorder>
@@ -933,11 +938,11 @@ export default function GearPage() {
                       <ProductCard
                         product={product}
                         inBuild={!!buildItems[product.id]}
-                        saved={savedIds.has(product.id)}
+                        saved={savedProducts.some(p => p.id === product.id)}
                         inCompare={compareList.includes(product.id)}
                         compareCount={compareList.length}
                         onBuild={() => toggleItem(product)}
-                        onSave={() => toggleSave(product.id)}
+                        onSave={() => toggleSave(product)}
                         onCompare={() => toggleCompare(product.id)}
                       />
                     )}

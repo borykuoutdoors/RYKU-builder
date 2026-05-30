@@ -3,29 +3,38 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useBuildStore } from '@/store/buildStore'
+import { useGarageStore, buildFromPlannerState } from '@/store/garageStore'
+import { useSubscriptionStore } from '@/store/subscriptionStore'
+import Link from 'next/link'
 
 function formatCurrency(n: number): string {
   return '$' + n.toLocaleString('en-US')
 }
 
 export default function ReviewStep() {
-  const router      = useRouter()
-  const vehicle     = useBuildStore(s => s.vehicle)
-  const year        = useBuildStore(s => s.year)
-  const trim        = useBuildStore(s => s.trim)
-  const purposes    = useBuildStore(s => s.purposes)
-  const budget      = useBuildStore(s => s.budget)
-  const items       = useBuildStore(s => s.items)
-  const buildName   = useBuildStore(s => s.buildName)
-  const summaryNote = useBuildStore(s => s.summaryNote)
+  const router         = useRouter()
+  const vehicle        = useBuildStore(s => s.vehicle)
+  const year           = useBuildStore(s => s.year)
+  const trim           = useBuildStore(s => s.trim)
+  const mission        = useBuildStore(s => s.mission)
+  const purposes       = useBuildStore(s => s.purposes)
+  const budget         = useBuildStore(s => s.budget)
+  const items          = useBuildStore(s => s.items)
+  const buildName      = useBuildStore(s => s.buildName)
+  const summaryNote    = useBuildStore(s => s.summaryNote)
   const setSummaryNote = useBuildStore(s => s.setSummaryNote)
   const setCompleted   = useBuildStore(s => s.setCompleted)
   const setStep        = useBuildStore(s => s.setStep)
-  const gearTotal   = useBuildStore(s => s.gearTotal)
-  const laborTotal  = useBuildStore(s => s.laborTotal)
-  const buildTotal  = useBuildStore(s => s.buildTotal)
+  const gearTotal      = useBuildStore(s => s.gearTotal)
+  const laborTotal     = useBuildStore(s => s.laborTotal)
+  const buildTotal     = useBuildStore(s => s.buildTotal)
 
-  const [saving, setSaving] = useState(false)
+  const addBuild          = useGarageStore(s => s.addBuild)
+  const garageBuildCount  = useGarageStore(s => s.builds.length)
+  const maxBuilds         = useSubscriptionStore(s => s.maxSavedBuilds)
+
+  const [saving,    setSaving]    = useState(false)
+  const [saveMode,  setSaveMode]  = useState<'idle' | 'saved' | 'limit'>('idle')
 
   const itemCount = Object.keys(items).length
   const gear  = gearTotal()
@@ -33,6 +42,7 @@ export default function ReviewStep() {
   const total = buildTotal()
   const remaining = budget - total
   const isOverBudget = remaining < 0
+  const atLimit = garageBuildCount >= maxBuilds()
 
   const budgetFmt    = budget >= 99999 ? 'Unlimited' : formatCurrency(budget)
   const purposeCount = purposes.length
@@ -40,12 +50,16 @@ export default function ReviewStep() {
     ? `${purposeCount} Purpose${purposeCount !== 1 ? 's' : ''} Selected`
     : '—'
 
-  function handleSave() {
+  function handleSave(status: 'COMPLETED' | 'DRAFT' = 'COMPLETED') {
+    if (atLimit) { setSaveMode('limit'); return }
     setSaving(true)
+    const saved = buildFromPlannerState({ vehicle, year, trim, mission, purposes, budget, items, buildName, summaryNote, gearTotal, laborTotal })
+    addBuild({ ...saved, status })
+    setCompleted(true)
     setTimeout(() => {
-      setCompleted(true)
-      router.push('/my-build')
-    }, 900)
+      setSaveMode('saved')
+      router.push('/garage')
+    }, 600)
   }
 
   const REVIEW_CARDS = [
@@ -265,18 +279,38 @@ export default function ReviewStep() {
           ← BACK
         </button>
 
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          {/* Secondary: save directly without finding installers */}
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+          {/* Subscription limit warning */}
+          {saveMode === 'limit' && (
+            <span style={{
+              fontFamily: 'var(--font-mono)', fontSize: '0.5625rem',
+              color: '#f87171', letterSpacing: '0.08em',
+            }}>
+              Build limit reached —{' '}
+              <Link href="/subscribe?plan=pro" style={{ color: 'var(--orange)', textDecoration: 'underline' }}>
+                upgrade to Pro
+              </Link>
+            </span>
+          )}
+
+          {/* Save as draft */}
           <button
             className="btn btn-ghost btn-sm"
-            onClick={handleSave}
+            onClick={() => handleSave('DRAFT')}
             disabled={!vehicle || saving}
-            style={{
-              opacity: vehicle ? 1 : 0.35,
-              cursor: vehicle ? 'pointer' : 'not-allowed',
-            }}
+            style={{ opacity: vehicle ? 1 : 0.35, cursor: vehicle ? 'pointer' : 'not-allowed' }}
           >
-            {saving ? 'SAVING...' : 'SAVE BUILD'}
+            {saving ? 'SAVING...' : 'SAVE DRAFT'}
+          </button>
+
+          {/* Save & go to garage */}
+          <button
+            className="btn btn-ghost btn-sm"
+            onClick={() => handleSave('COMPLETED')}
+            disabled={!vehicle || saving}
+            style={{ opacity: vehicle ? 1 : 0.35, cursor: vehicle ? 'pointer' : 'not-allowed' }}
+          >
+            {saving ? '...' : 'SAVE TO GARAGE'}
           </button>
 
           {/* Primary: move to Find Installers step */}
@@ -287,7 +321,7 @@ export default function ReviewStep() {
             style={{
               opacity: vehicle ? 1 : 0.4,
               cursor: vehicle ? 'pointer' : 'not-allowed',
-              minWidth: '200px', justifyContent: 'center',
+              minWidth: '190px', justifyContent: 'center',
             }}
           >
             FIND INSTALLERS

@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import ShineBorder from '@/components/ui/ShineBorder'
 import SectionEyebrow from '@/components/ui/SectionEyebrow'
@@ -17,6 +18,30 @@ import {
   formatBuildValue,
   TIER_CONFIG,
 } from '@/lib/communityData'
+import { useGarageStore } from '@/store/garageStore'
+import { useBuildStore } from '@/store/buildStore'
+
+// ─── Category → mission mapping ────────────────────────────────────────────
+
+const CAT_TO_MISSION: Record<string, string> = {
+  OVERLAND:      'overland',
+  EXPEDITION:    'expedition',
+  CAMPING:       'camping',
+  TACTICAL:      'offroad',
+  RECOVERY:      'offroad',
+  'DAILY DRIVER':'daily',
+  'WORK TRUCK':  'utility',
+}
+
+const CAT_TO_PURPOSE: Record<string, string> = {
+  OVERLAND:      'p_over',
+  EXPEDITION:    'p_travel',
+  CAMPING:       'p_camp',
+  TACTICAL:      'p_offroad',
+  RECOVERY:      'p_offroad',
+  'DAILY DRIVER':'p_daily',
+  'WORK TRUCK':  'p_work',
+}
 
 // ─── Community stats ────────────────────────────────────────────────────────
 
@@ -29,8 +54,13 @@ const STATS = [
 
 // ─── Build of the Month card ─────────────────────────────────────────────────
 
-function BotmCard({ build }: { build: CommunityBuild }) {
-  const [liked, setLiked] = useState(false)
+function BotmCard({ build, onCopyToGarage, onUseAsStart }: {
+  build:           CommunityBuild
+  onCopyToGarage:  (b: CommunityBuild) => void
+  onUseAsStart:    (b: CommunityBuild) => void
+}) {
+  const [liked,   setLiked]   = useState(false)
+  const [copied,  setCopied]  = useState(false)
 
   return (
     <ShineBorder variant="featured" borderRadius={8} borderWidth={1}>
@@ -135,7 +165,19 @@ function BotmCard({ build }: { build: CommunityBuild }) {
             ))}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            {/* Installed By badge */}
+            {build.installedBy && (
+              <div style={{
+                fontFamily: 'var(--font-mono)', fontSize: '0.45rem', letterSpacing: '0.10em',
+                color: 'rgba(102,255,255,0.6)', border: '1px solid rgba(102,255,255,0.18)',
+                background: 'rgba(102,255,255,0.04)',
+                padding: '4px 10px', borderRadius: 2,
+                textTransform: 'uppercase', flexShrink: 0,
+              }}>
+                🔧 {build.installedBy.shopName} · {build.installedBy.location}
+              </div>
+            )}
             <div style={{ textAlign: 'right' }}>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', letterSpacing: '0.10em', color: 'var(--text-2)' }}>
                 {build.isVerified ? '✓ ' : ''}{build.builderName}
@@ -151,18 +193,43 @@ function BotmCard({ build }: { build: CommunityBuild }) {
                 border: `1px solid ${liked ? 'rgba(255,85,31,0.40)' : 'rgba(255,255,255,0.10)'}`,
                 color: liked ? '#FF551F' : 'var(--text-3)',
                 fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', letterSpacing: '0.12em',
-                padding: '8px 16px', cursor: 'pointer', borderRadius: 2,
+                padding: '8px 14px', cursor: 'pointer', borderRadius: 2,
                 transition: 'all 0.18s ease',
               }}
             >
               {liked ? '♥ LIKED' : '♡ LIKE'}
+            </button>
+            <button
+              onClick={() => { onCopyToGarage(build); setCopied(true); setTimeout(() => setCopied(false), 2000) }}
+              style={{
+                background: copied ? 'rgba(34,197,94,0.12)' : 'rgba(255,255,255,0.05)',
+                border: `1px solid ${copied ? '#22c55e' : 'rgba(255,255,255,0.14)'}`,
+                color: copied ? '#22c55e' : 'var(--text-3)',
+                fontFamily: 'var(--font-mono)', fontSize: '0.5rem', letterSpacing: '0.10em',
+                padding: '8px 12px', cursor: 'pointer', borderRadius: 2,
+                transition: 'all 0.18s',
+              }}
+            >
+              {copied ? '✓ SAVED' : '📋 COPY TO GARAGE'}
+            </button>
+            <button
+              onClick={() => onUseAsStart(build)}
+              style={{
+                background: 'rgba(102,255,255,0.07)',
+                border: '1px solid rgba(102,255,255,0.22)',
+                color: 'rgba(102,255,255,0.8)',
+                fontFamily: 'var(--font-mono)', fontSize: '0.5rem', letterSpacing: '0.10em',
+                padding: '8px 12px', cursor: 'pointer', borderRadius: 2,
+              }}
+            >
+              ▶ USE AS STARTING POINT
             </button>
             <button style={{
               background: 'rgba(255,85,31,0.10)',
               border: '1px solid rgba(255,85,31,0.28)',
               color: 'var(--orange)',
               fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', letterSpacing: '0.12em',
-              padding: '8px 16px', cursor: 'pointer', borderRadius: 2,
+              padding: '8px 14px', cursor: 'pointer', borderRadius: 2,
             }}>
               VIEW BUILD
             </button>
@@ -175,8 +242,13 @@ function BotmCard({ build }: { build: CommunityBuild }) {
 
 // ─── Build card ──────────────────────────────────────────────────────────────
 
-function BuildCard({ build }: { build: CommunityBuild }) {
-  const [liked, setLiked] = useState(false)
+function BuildCard({ build, onCopyToGarage, onUseAsStart }: {
+  build:          CommunityBuild
+  onCopyToGarage: (b: CommunityBuild) => void
+  onUseAsStart:   (b: CommunityBuild) => void
+}) {
+  const [liked,  setLiked]  = useState(false)
+  const [copied, setCopied] = useState(false)
   const tier = TIER_CONFIG[build.builderTier]
 
   return (
@@ -299,44 +371,81 @@ function BuildCard({ build }: { build: CommunityBuild }) {
       <div style={{
         borderTop: '1px solid rgba(255,255,255,0.04)',
         padding: '10px 20px',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        display: 'flex', flexDirection: 'column', gap: 8,
       }}>
-        <div style={{ display: 'flex', gap: 16 }}>
-          {[
-            { icon: '♥', val: formatLikes(build.likes + (liked ? 1 : 0)) },
-            { icon: '💬', val: build.comments },
-            { icon: '👁', val: formatLikes(build.views) },
-          ].map((s, i) => (
-            <span key={i} style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.5rem',
-              letterSpacing: '0.10em', color: 'var(--text-3)',
-              display: 'flex', alignItems: 'center', gap: 4,
-            }}>
-              {s.icon} {s.val}
-            </span>
-          ))}
-        </div>
-        <div style={{ display: 'flex', gap: 6 }}>
-          <button
-            onClick={e => { e.stopPropagation(); setLiked(v => !v) }}
-            style={{
-              background: 'transparent', border: 'none',
-              color: liked ? '#FF551F' : 'var(--text-3)',
-              fontFamily: 'var(--font-mono)', fontSize: '0.5rem',
-              letterSpacing: '0.10em', cursor: 'pointer', padding: '4px 8px',
-              transition: 'color 0.15s',
-            }}
-          >
-            {liked ? '♥' : '♡'}
-          </button>
-          <button style={{
-            background: 'transparent', border: '1px solid rgba(255,85,31,0.20)',
-            color: 'rgba(255,85,31,0.7)',
-            fontFamily: 'var(--font-mono)', fontSize: '0.45rem', letterSpacing: '0.12em',
-            padding: '4px 10px', cursor: 'pointer', borderRadius: 2,
+        {/* Installed By */}
+        {build.installedBy && (
+          <div style={{
+            fontFamily: 'var(--font-mono)', fontSize: '0.43rem', letterSpacing: '0.10em',
+            color: 'rgba(102,255,255,0.55)', textTransform: 'uppercase',
           }}>
-            VIEW
-          </button>
+            🔧 INSTALLED BY {build.installedBy.shopName} · {build.installedBy.location}
+          </div>
+        )}
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', gap: 14 }}>
+            {[
+              { icon: '♥', val: formatLikes(build.likes + (liked ? 1 : 0)) },
+              { icon: '💬', val: build.comments },
+              { icon: '👁', val: formatLikes(build.views) },
+            ].map((s, i) => (
+              <span key={i} style={{
+                fontFamily: 'var(--font-mono)', fontSize: '0.5rem',
+                letterSpacing: '0.10em', color: 'var(--text-3)',
+                display: 'flex', alignItems: 'center', gap: 4,
+              }}>
+                {s.icon} {s.val}
+              </span>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: 5 }}>
+            <button
+              onClick={e => { e.stopPropagation(); setLiked(v => !v) }}
+              style={{
+                background: 'transparent', border: 'none',
+                color: liked ? '#FF551F' : 'var(--text-3)',
+                fontFamily: 'var(--font-mono)', fontSize: '0.5rem',
+                letterSpacing: '0.10em', cursor: 'pointer', padding: '4px 6px',
+                transition: 'color 0.15s',
+              }}
+            >
+              {liked ? '♥' : '♡'}
+            </button>
+            <button
+              onClick={e => { e.stopPropagation(); onCopyToGarage(build); setCopied(true); setTimeout(() => setCopied(false), 2000) }}
+              style={{
+                background: copied ? 'rgba(34,197,94,0.10)' : 'transparent',
+                border: `1px solid ${copied ? '#22c55e' : 'rgba(255,255,255,0.10)'}`,
+                color: copied ? '#22c55e' : 'var(--text-3)',
+                fontFamily: 'var(--font-mono)', fontSize: '0.43rem', letterSpacing: '0.08em',
+                padding: '4px 8px', cursor: 'pointer', borderRadius: 2, transition: 'all 0.15s',
+              }}
+            >
+              {copied ? '✓' : '📋'}
+            </button>
+            <button
+              onClick={e => { e.stopPropagation(); onUseAsStart(build) }}
+              style={{
+                background: 'rgba(102,255,255,0.06)',
+                border: '1px solid rgba(102,255,255,0.18)',
+                color: 'rgba(102,255,255,0.7)',
+                fontFamily: 'var(--font-mono)', fontSize: '0.43rem', letterSpacing: '0.08em',
+                padding: '4px 8px', cursor: 'pointer', borderRadius: 2,
+              }}
+              title="Use as starting point"
+            >
+              ▶ START
+            </button>
+            <button style={{
+              background: 'transparent', border: '1px solid rgba(255,85,31,0.20)',
+              color: 'rgba(255,85,31,0.7)',
+              fontFamily: 'var(--font-mono)', fontSize: '0.45rem', letterSpacing: '0.12em',
+              padding: '4px 10px', cursor: 'pointer', borderRadius: 2,
+            }}>
+              VIEW
+            </button>
+          </div>
         </div>
       </div>
     </motion.div>
@@ -488,6 +597,43 @@ function LeaderRow({ entry }: { entry: LeaderboardEntry }) {
 
 export default function CommunityPage() {
   const [activeFilter, setActiveFilter] = useState<CategoryFilter>('ALL')
+  const router       = useRouter()
+  const addBuild     = useGarageStore(s => s.addBuild)
+  const setPurposes  = useBuildStore(s => s.setPurposes)
+  const setBuildName = useBuildStore(s => s.setBuildName)
+
+  const handleCopyToGarage = useCallback((build: CommunityBuild) => {
+    const now = new Date().toISOString().slice(0, 10)
+    addBuild({
+      id:           `comm_${build.id}_${Date.now()}`,
+      name:         build.buildName,
+      vehicleId:    'unknown',
+      vehicleName:  build.vehicleName,
+      vehicleEmoji: build.vehicleEmoji,
+      year:         String(build.year),
+      trim:         '',
+      status:       'ACTIVE',
+      budget:       build.buildValue,
+      spent:        build.buildValue,
+      items:        {},
+      itemCount:    0,
+      mission:      CAT_TO_MISSION[build.category] ?? null,
+      purposes:     CAT_TO_PURPOSE[build.category] ? [CAT_TO_PURPOSE[build.category]] : [],
+      summaryNote:  `Copied from community: ${build.builderName} (@${build.builderHandle})`,
+      categories:   build.tags,
+      completionPct:100,
+      savedAt:      now,
+      updatedAt:    now,
+      source:       { type: 'community', originalId: build.id, originalName: build.buildName },
+    })
+  }, [addBuild])
+
+  const handleUseAsStart = useCallback((build: CommunityBuild) => {
+    const purposeId = CAT_TO_PURPOSE[build.category]
+    if (purposeId) setPurposes([purposeId])
+    setBuildName(build.buildName)
+    router.push('/build')
+  }, [setPurposes, setBuildName, router])
 
   const botmBuild = COMMUNITY_BUILDS.find(b => b.isBotm)!
   const filteredBuilds = COMMUNITY_BUILDS.filter(b =>
@@ -535,7 +681,7 @@ export default function CommunityPage() {
 
         {/* ── Build of the Month ─────────────────────────────────────── */}
         <div style={{ marginBottom: 48 }}>
-          <BotmCard build={botmBuild} />
+          <BotmCard build={botmBuild} onCopyToGarage={handleCopyToGarage} onUseAsStart={handleUseAsStart} />
         </div>
 
         {/* ── Category filters ─────────────────────────────────────── */}
@@ -588,7 +734,7 @@ export default function CommunityPage() {
                 }}
               >
                 {filteredBuilds.length > 0 ? filteredBuilds.map(build => (
-                  <BuildCard key={build.id} build={build} />
+                  <BuildCard key={build.id} build={build} onCopyToGarage={handleCopyToGarage} onUseAsStart={handleUseAsStart} />
                 )) : (
                   <div style={{
                     gridColumn: '1 / -1', padding: '48px 0', textAlign: 'center',

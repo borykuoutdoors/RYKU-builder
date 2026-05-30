@@ -63,6 +63,14 @@ interface BuildState {
   setCompleted:    (val: boolean) => void
   togglePurpose:   (id: string) => void
   setPurposes:     (ids: string[]) => void
+  loadBuild:       (config: {
+    mission:     string | null
+    purposes:    string[]
+    budget:      number
+    items:       Record<string, Product>
+    buildName:   string
+    summaryNote: string
+  }) => void
 }
 
 export const useBuildStore = create<BuildState>()(
@@ -175,6 +183,17 @@ export const useBuildStore = create<BuildState>()(
       setBuildName:   (name) => set({ buildName: name }),
       setSummaryNote: (note) => set({ summaryNote: note }),
       setCompleted:   (val)  => set({ completed: val }),
+
+      loadBuild: (config) => set({
+        mission:     config.mission,
+        purposes:    config.purposes,
+        budget:      config.budget,
+        items:       config.items,
+        buildName:   config.buildName,
+        summaryNote: config.summaryNote,
+        step:        4,
+        completed:   false,
+      }),
     }),
     {
       name: 'ryku.build.v1',

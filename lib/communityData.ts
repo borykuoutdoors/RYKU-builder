@@ -11,6 +11,12 @@ export type BuildCategory =
 
 export type BuilderTier = 'EXPLORER' | 'PRO' | 'ELITE'
 
+export interface InstalledByInfo {
+  shopName: string
+  location: string
+  shopId?:  string
+}
+
 export interface CommunityBuild {
   id:            string
   builderName:   string
@@ -29,6 +35,7 @@ export interface CommunityBuild {
   tags:          string[]
   featuredPhoto: string | null
   isBotm:        boolean
+  installedBy?:  InstalledByInfo
 }
 
 export interface FeaturedBuilder {
@@ -74,6 +81,7 @@ export const COMMUNITY_BUILDS: CommunityBuild[] = [
     tags: ['Suspension', 'Roof Rack', 'Lighting', 'RTT'],
     featuredPhoto: null,
     isBotm: true,
+    installedBy: { shopName: 'Rocky Mountain Rigs', location: 'Denver, CO', shopId: 'i3' },
   },
   {
     id: 'b2',
@@ -93,6 +101,7 @@ export const COMMUNITY_BUILDS: CommunityBuild[] = [
     tags: ['Armor', 'Recovery', 'Electrical', 'Tires'],
     featuredPhoto: null,
     isBotm: false,
+    installedBy: { shopName: 'Pacific Overland', location: 'Portland, OR', shopId: 'i1' },
   },
   {
     id: 'b3',
@@ -112,6 +121,7 @@ export const COMMUNITY_BUILDS: CommunityBuild[] = [
     tags: ['Bumpers', 'Winch', 'Skid Plates', 'Lift'],
     featuredPhoto: null,
     isBotm: false,
+    installedBy: { shopName: 'Desert Armor Works', location: 'Phoenix, AZ', shopId: 'i2' },
   },
   {
     id: 'b4',

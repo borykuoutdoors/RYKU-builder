@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
 import { useParams, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { PRODUCTS, CATEGORIES } from '@/data/products'
 import { VEHICLES } from '@/data/vehicles'
 import { useBuildStore } from '@/store/buildStore'
+import { useGarageStore } from '@/store/garageStore'
 import SectionEyebrow from '@/components/ui/SectionEyebrow'
 
 const DIFF_LABEL: Record<string, string> = {
@@ -25,10 +25,12 @@ export default function GearDetailPage() {
 
   if (!product) notFound()
 
-  const [saved, setSaved] = useState(false)
-
-  const buildItems = useBuildStore(s => s.items)
-  const toggleItem = useBuildStore(s => s.toggleItem)
+  const buildItems    = useBuildStore(s => s.items)
+  const toggleItem    = useBuildStore(s => s.toggleItem)
+  const savedProducts = useGarageStore(s => s.savedProducts)
+  const saveProduct   = useGarageStore(s => s.saveProduct)
+  const unsaveProduct = useGarageStore(s => s.unsaveProduct)
+  const saved         = savedProducts.some(p => p.id === product.id)
   const inBuild = !!buildItems[product.id]
 
   const compatVehicles = VEHICLES.filter(v => product.compat.includes(v.id))
@@ -207,7 +209,7 @@ export default function GearDetailPage() {
               {inBuild ? '✓ IN YOUR BUILD' : '+ ADD TO BUILD'}
             </button>
             <button
-              onClick={() => setSaved(s => !s)}
+              onClick={() => saved ? unsaveProduct(product.id) : saveProduct(product)}
               className="font-mono"
               style={{
                 background: saved ? 'rgba(255,85,31,0.15)' : 'rgba(255,255,255,0.04)',

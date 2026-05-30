@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useBuildStore } from '@/store/buildStore'
+import { useGarageStore, buildFromPlannerState } from '@/store/garageStore'
 import { installers as ALL_INSTALLERS } from '@/lib/catalog'
 import InstallerCard from '@/components/installers/InstallerCard'
 import InstallerMapPanel from '@/components/installers/InstallerMapPanel'
@@ -13,29 +14,41 @@ import type { Installer } from '@/types/installer'
 // ── Map product category → installer service ──────────────────────────────────
 
 const CAT_TO_SERVICE: Record<string, string> = {
-  'Suspension':         'Suspension Install',
-  'Roof Racks':         'Roof Rack Install',
-  'Lighting':           'Lighting Install',
-  'Rooftop Tents':      'RTT Install',
-  'Wheels & Tires':     'Suspension Install',
-  'Armor & Protection': 'Armor / Bumper Install',
-  'Recovery':           'Recovery Gear',
-  'Electrical':         'Electrical Systems',
+  'Suspension':        'Suspension Install',
+  'Roof Racks':        'Roof Rack Install',
+  'Lighting':          'Lighting Install',
+  'Rooftop Tents':     'RTT Install',
+  'Wheels & Tires':    'Suspension Install',
+  'Armor':             'Armor / Bumper Install',
+  'Recovery':          'Recovery Gear',
+  'Power Systems':     'Electrical Systems',
+  'Communications':    'Electrical Systems',
+  'Storage & Cargo':   'Fabrication',
+  'Water Systems':     'Fabrication',
+  'Interior Upgrades': 'Fabrication',
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function InstallerStep() {
-  const router       = useRouter()
-  const setStep      = useBuildStore(s => s.setStep)
-  const setCompleted = useBuildStore(s => s.setCompleted)
-  const items        = useBuildStore(s => s.items)
-  const vehicle      = useBuildStore(s => s.vehicle)
-  const year         = useBuildStore(s => s.year)
-  const trim         = useBuildStore(s => s.trim)
-  const buildName    = useBuildStore(s => s.buildName)
-  const totalCost    = useBuildStore(s => s.buildTotal())
-  const itemCount    = Object.keys(items).length
+  const router         = useRouter()
+  const setStep        = useBuildStore(s => s.setStep)
+  const setCompleted   = useBuildStore(s => s.setCompleted)
+  const items          = useBuildStore(s => s.items)
+  const vehicle        = useBuildStore(s => s.vehicle)
+  const year           = useBuildStore(s => s.year)
+  const trim           = useBuildStore(s => s.trim)
+  const mission        = useBuildStore(s => s.mission)
+  const purposes       = useBuildStore(s => s.purposes)
+  const budget         = useBuildStore(s => s.budget)
+  const buildName      = useBuildStore(s => s.buildName)
+  const summaryNote    = useBuildStore(s => s.summaryNote)
+  const gearTotal      = useBuildStore(s => s.gearTotal)
+  const laborTotal     = useBuildStore(s => s.laborTotal)
+  const totalCost      = useBuildStore(s => s.buildTotal())
+  const itemCount      = Object.keys(items).length
+
+  const addBuild = useGarageStore(s => s.addBuild)
 
   const vehicleName = vehicle
     ? [year, vehicle.name, trim].filter(Boolean).join(' ')
@@ -97,9 +110,11 @@ export default function InstallerStep() {
 
   function handleSaveBuild() {
     setSaving(true)
+    const saved = buildFromPlannerState({ vehicle, year, trim, mission, purposes, budget, items, buildName, summaryNote, gearTotal, laborTotal })
+    addBuild(saved)
+    setCompleted(true)
     setTimeout(() => {
-      setCompleted(true)
-      router.push('/my-build')
+      router.push('/garage')
     }, 900)
   }
 
