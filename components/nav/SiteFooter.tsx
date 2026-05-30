@@ -14,10 +14,10 @@ const NAV_COLUMNS = [
     links: [
       { label: 'Home',       href: '/' },
       { label: 'Builds',     href: '/builds' },
+      { label: 'Community',  href: '/community' },
       { label: 'Gear',       href: '/gear' },
       { label: 'Installers', href: '/installers' },
       { label: 'Pricing',    href: '/pricing' },
-      { label: 'Dashboard',  href: '/dashboard' },
     ],
   },
   {
@@ -33,9 +33,9 @@ const NAV_COLUMNS = [
   {
     heading: 'COMMUNITY',
     links: [
-      { label: 'Community Builds',    href: '/builds' },
-      { label: 'Build of the Month',  href: '/builds' },
-      { label: 'Featured Builders',   href: '/builds' },
+      { label: 'Community Hub',       href: '/community' },
+      { label: 'Build of the Month',  href: '/community' },
+      { label: 'Featured Builders',   href: '/community' },
       { label: 'Monthly Supply Drop', href: '/pricing' },
       { label: 'Partner Program',     href: '/about' },
     ],

@@ -209,6 +209,11 @@ const CONTEXT_PROMPTS: Record<string, string[]> = {
     'Is Pro worth it for my build stage?',
     'What\'s the difference between plans?',
   ],
+  '/subscribe': [
+    'What\'s included with Pro Builder?',
+    'Can I cancel my subscription anytime?',
+    'How does the 7-day free trial work?',
+  ],
   '/': [
     'Build me an overland setup under $10k',
     'Recommend a Tacoma build',
