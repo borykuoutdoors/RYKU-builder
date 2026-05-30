@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import SectionEyebrow from '@/components/ui/SectionEyebrow'
-import BtnColorful from '@/components/ui/BtnColorful'
 
 export const metadata = {
   title: 'About — BŌRYKU',
@@ -19,26 +18,6 @@ const TEAM = [
   { name: 'FIELD OPS',    role: 'Product Compatibility', emoji: '🔩' },
   { name: 'INTEL DIV.',   role: 'Build Intelligence',    emoji: '🧭' },
   { name: 'SUPPLY CHAIN', role: 'Gear Partnerships',     emoji: '📦' },
-]
-
-const PLAN_FREE = [
-  '3 build configurations',
-  '1 saved build',
-  'Basic gear catalog',
-  'Installer search',
-  'Quote export (.txt)',
-]
-
-const PLAN_PRO = [
-  'Unlimited builds',
-  'Cloud build sync',
-  'Advanced recommendations',
-  'Full installer access',
-  'Build export (PDF)',
-  'Supply drop entries',
-  'Priority support',
-  'Build comparison',
-  'Send-to-installer flow',
 ]
 
 export default function AboutPage() {
@@ -63,10 +42,7 @@ export default function AboutPage() {
             Every product is compatibility-verified against your exact vehicle platform,
             with real installer connections and intelligent mission-based recommendations.
           </p>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <Link href="/build"><BtnColorful arrow>Start Your Build</BtnColorful></Link>
-            <Link href="/contact" className="btn btn-ghost">Get in Touch</Link>
-          </div>
+          <Link href="/contact" className="btn btn-ghost">Get in Touch</Link>
         </div>
       </section>
 
@@ -83,7 +59,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── MISSION STATEMENT ── */}
-      <section style={{ padding: '100px 24px' }}>
+      <section style={{ padding: '100px 24px 120px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', alignItems: 'center' }} className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           <div>
             <SectionEyebrow>OUR MISSION</SectionEyebrow>
@@ -112,67 +88,6 @@ export default function AboutPage() {
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', letterSpacing: '0.12em', color: 'var(--text-3)', textTransform: 'uppercase' }}>{m.role}</div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── PLANS ── */}
-      <section style={{ padding: '100px 24px' }}>
-        <div style={{ maxWidth: 960, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 60 }}>
-            <SectionEyebrow>MEMBERSHIP</SectionEyebrow>
-            <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: 'clamp(2rem,4vw,3rem)', letterSpacing: '0.04em', marginTop: 12 }}>JOIN THE RYKU NETWORK</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* FREE */}
-            <div style={{ background: 'rgba(8,10,20,0.72)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 4, padding: 32, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
-              <div style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.5rem', letterSpacing: '0.1em', marginBottom: 4 }}>FREE</div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '2rem', color: 'var(--text)', marginBottom: 24 }}>$0<span style={{ fontSize: '0.875rem', color: 'var(--text-3)' }}>/mo</span></div>
-              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28 }}>
-                {PLAN_FREE.map(f => (
-                  <li key={f} style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-2)', display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ color: '#4ade80' }}>✓</span> {f}
-                  </li>
-                ))}
-              </ul>
-              <Link href="/build" className="btn btn-ghost" style={{ width: '100%', justifyContent: 'center' }}>Get Started Free</Link>
-            </div>
-
-            {/* PRO */}
-            <div style={{ background: 'rgba(8,10,20,0.72)', border: '1px solid var(--orange)', borderRadius: 4, padding: 32, position: 'relative', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
-              <div style={{ position: 'absolute', top: 16, right: 16, fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', color: 'var(--orange)', border: '1px solid var(--border)', padding: '3px 8px', textTransform: 'uppercase' }}>COMING SOON</div>
-              <div style={{ fontFamily: 'var(--font-bebas)', fontSize: '1.5rem', letterSpacing: '0.1em', marginBottom: 4, color: 'var(--orange)' }}>PRO</div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '2rem', color: 'var(--text)', marginBottom: 24 }}>$12<span style={{ fontSize: '0.875rem', color: 'var(--text-3)' }}>/mo</span></div>
-              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28 }}>
-                {PLAN_PRO.map(f => (
-                  <li key={f} style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-2)', display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ color: 'var(--orange)' }}>✓</span> {f}
-                  </li>
-                ))}
-              </ul>
-              <BtnColorful disabled style={{ width: '100%' }}>
-                Upgrade to PRO
-              </BtnColorful>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA ── */}
-      <section style={{ padding: '100px 24px', textAlign: 'center' }}>
-        <div style={{ maxWidth: 640, margin: '0 auto' }}>
-          <SectionEyebrow>READY TO BUILD</SectionEyebrow>
-          <h2 style={{ fontFamily: 'var(--font-bebas)', fontSize: 'clamp(2.5rem,5vw,4rem)', letterSpacing: '0.04em', marginBottom: 20, marginTop: 12 }}>
-            CONFIGURE YOUR<br />ULTIMATE RIG
-          </h2>
-          <p style={{ color: 'var(--text-2)', lineHeight: 1.7, marginBottom: 40 }}>
-            10 vehicle platforms. 55+ compatibility-verified products. Real installer network.
-            Your mission. Your build. Your control.
-          </p>
-          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/build"><BtnColorful size="lg" arrow>Start Build Now</BtnColorful></Link>
-            <Link href="/gear" className="btn btn-outline btn-lg">Browse Gear</Link>
           </div>
         </div>
       </section>
